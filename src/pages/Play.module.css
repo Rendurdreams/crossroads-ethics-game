@@ -50,3 +50,130 @@
   font-weight: 600;
   text-align: center;
 }
+
+.finishedText {
+  color: var(--accent);
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 8px;
+}
+
+/* Game content wrapper */
+.gameContent {
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px 24px 24px;
+}
+
+/* Round header */
+.roundHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.headerAvatar {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.roundLabel {
+  font-size: 14px;
+  font-family: var(--sans);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* Waiting after submission */
+.waitingSection {
+  margin-top: 24px;
+  text-align: center;
+}
+
+.waitingText {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin: 0 0 8px 0;
+}
+
+.submittedCounter {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-align: center;
+  margin: 0;
+}
+
+.submittedNumber {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+/* Timer section */
+.timerSection {
+  margin-top: 24px;
+}
+
+/* Pass view */
+.passView {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  text-align: center;
+}
+
+.passText {
+  font-size: 16px;
+  font-family: var(--sans);
+  color: var(--text-muted);
+  margin: 0 0 8px 0;
+}
+
+.passSubtext {
+  font-size: 14px;
+  font-family: var(--sans);
+  color: var(--text-muted);
+  opacity: 0.7;
+  margin: 0;
+}
+
+/* Pass consequence view (round_complete for passers) */
+.passConsequence {
+  padding: 32px 24px;
+  max-width: 480px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.passConsequenceText {
+  font-size: 16px;
+  font-family: var(--sans);
+  color: var(--text-muted);
+  text-align: center;
+  margin: 0 0 32px 0;
+}
+
+/* Meters section (used in passer consequence view) */
+.metersSection {
+  width: 100%;
+}
+
+.metersLabel {
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 16px 0;
+}
+
+.meters {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
