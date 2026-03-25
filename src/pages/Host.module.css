@@ -116,3 +116,41 @@
   margin-top: 24px;
   font-weight: 600;
 }
+
+/* ── Round view (two-panel layout) ── */
+
+.roundView {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  background: var(--bg);
+}
+
+.cityPanel {
+  flex: 3;
+  height: 100%;
+  overflow: hidden;
+}
+
+.statePanel {
+  flex: 2;
+  height: 100%;
+}
+
+/* ── End view ── */
+
+.endView {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+}
+
+.endText {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin-bottom: 16px;
+}
