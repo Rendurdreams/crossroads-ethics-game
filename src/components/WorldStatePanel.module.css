@@ -1,0 +1,63 @@
+.panel {
+  background: var(--bg-surface);
+  border-left: 1px solid #2e303a;
+  padding: 24px;
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+}
+
+.scenarioTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-h);
+  margin: 0 0 4px;
+  font-family: var(--sans);
+}
+
+.weightBadge {
+  font-size: 14px;
+  color: var(--text-muted);
+  margin: 0;
+  font-family: var(--sans);
+}
+
+.sectionLabel {
+  font-size: 14px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 8px;
+  font-family: var(--sans);
+}
+
+.meters {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.actionBtn {
+  width: 100%;
+  padding: 14px 24px;
+  background: var(--accent);
+  color: #0a0a14;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--sans);
+  transition: background 0.15s;
+}
+
+.actionBtn:hover {
+  background: var(--accent-hover);
+}
