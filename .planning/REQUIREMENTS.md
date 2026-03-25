@@ -51,10 +51,10 @@
 
 ### Infrastructure
 
-- [ ] **INFRA-01**: Supabase schema created (sessions, players, choices, reflections tables) with `UNIQUE(player_id, round_number)` constraint on choices
-- [ ] **INFRA-02**: RLS policies configured — anon role can read sessions, insert own player row, insert own choices; verified that real-time subscriptions are not silently blocked
-- [ ] **INFRA-03**: Real-time enabled on sessions, players, and choices tables
-- [ ] **INFRA-04**: Supabase client initialized as singleton with environment variable discipline (service role key never exposed via VITE_ prefix)
+- [x] **INFRA-01**: Supabase schema created (sessions, players, choices, reflections tables) with `UNIQUE(player_id, round_number)` constraint on choices
+- [x] **INFRA-02**: RLS policies configured — anon role can read sessions, insert own player row, insert own choices; verified that real-time subscriptions are not silently blocked
+- [x] **INFRA-03**: Real-time enabled on sessions, players, and choices tables
+- [x] **INFRA-04**: Supabase client initialized as singleton with environment variable discipline (service role key never exposed via VITE_ prefix)
 - [ ] **INFRA-05**: App deploys to Netlify or Vercel from `vite build` output
 
 ### Polish (Required Before Presentation)
@@ -99,10 +99,10 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INFRA-01 | Phase 1 | Pending |
-| INFRA-02 | Phase 1 | Pending |
-| INFRA-03 | Phase 1 | Pending |
-| INFRA-04 | Phase 1 | Pending |
+| INFRA-01 | Phase 1 | Complete |
+| INFRA-02 | Phase 1 | Complete |
+| INFRA-03 | Phase 1 | Complete |
+| INFRA-04 | Phase 1 | Complete |
 | DATA-01 | Phase 1 | Pending |
 | DATA-02 | Phase 1 | Pending |
 | DATA-03 | Phase 1 | Pending |

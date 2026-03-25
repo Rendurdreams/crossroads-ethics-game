@@ -26,7 +26,7 @@ Five phases deliver a working real-time multiplayer ethics game for a classroom 
   5. applyChoicesToWorld() produces the correct weighted world state delta given a known tally of choices
 **Plans:** 2 plans
 Plans:
-- [ ] 01-01-PLAN.md — Scaffold Vite + React project, Supabase client, schema SQL with RLS
+- [x] 01-01-PLAN.md — Scaffold Vite + React project, Supabase client, schema SQL with RLS
 - [ ] 01-02-PLAN.md — Scenario library, framework definitions, detection logic, world state computation
 
 ### Phase 2: Session Flow
