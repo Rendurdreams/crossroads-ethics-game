@@ -1,0 +1,52 @@
+.page {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: var(--bg);
+}
+
+.avatar {
+  font-size: 3rem;
+  margin-bottom: 8px;
+  line-height: 1;
+}
+
+.name {
+  color: var(--text-h);
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 24px;
+  font-family: var(--sans);
+}
+
+.waiting {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.count {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  text-align: center;
+  margin: 0;
+}
+
+.roomReminder {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin-top: 24px;
+  opacity: 0.6;
+  text-align: center;
+}
+
+.starting {
+  color: var(--accent);
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-align: center;
+}
