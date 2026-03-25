@@ -27,7 +27,7 @@ Five phases deliver a working real-time multiplayer ethics game for a classroom 
 **Plans:** 2 plans
 Plans:
 - [x] 01-01-PLAN.md — Scaffold Vite + React project, Supabase client, schema SQL with RLS
-- [ ] 01-02-PLAN.md — Scenario library, framework definitions, detection logic, world state computation
+- [x] 01-02-PLAN.md — Scenario library, framework definitions, detection logic, world state computation
 
 ### Phase 2: Session Flow
 **Goal**: Host can create a session and players can join on their phones — lobby is live before a round starts

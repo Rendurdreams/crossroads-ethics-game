@@ -33,11 +33,11 @@
 
 ### Scenarios & Framework Logic
 
-- [ ] **DATA-01**: Full scenario library loaded from scenarios.js (all 6 rounds, 3 choices each, framework tags, world impacts, consequence text)
-- [ ] **DATA-02**: Framework detection computes dominant framework per player after all rounds
-- [ ] **DATA-03**: Conflict detection identifies cross-round framework tensions with named description
-- [ ] **DATA-04**: World state update function applies aggregate weighted choice impacts after each round
-- [ ] **DATA-05**: Pass / abstain behavior defined: abstaining player contributes no weight to world state and no framework count; stored as no-row (not submitted)
+- [x] **DATA-01**: Full scenario library loaded from scenarios.js (all 6 rounds, 3 choices each, framework tags, world impacts, consequence text)
+- [x] **DATA-02**: Framework detection computes dominant framework per player after all rounds
+- [x] **DATA-03**: Conflict detection identifies cross-round framework tensions with named description
+- [x] **DATA-04**: World state update function applies aggregate weighted choice impacts after each round
+- [x] **DATA-05**: Pass / abstain behavior defined: abstaining player contributes no weight to world state and no framework count; stored as no-row (not submitted)
 
 ### End State
 
@@ -103,11 +103,11 @@
 | INFRA-02 | Phase 1 | Complete |
 | INFRA-03 | Phase 1 | Complete |
 | INFRA-04 | Phase 1 | Complete |
-| DATA-01 | Phase 1 | Pending |
-| DATA-02 | Phase 1 | Pending |
-| DATA-03 | Phase 1 | Pending |
-| DATA-04 | Phase 1 | Pending |
-| DATA-05 | Phase 1 | Pending |
+| DATA-01 | Phase 1 | Complete |
+| DATA-02 | Phase 1 | Complete |
+| DATA-03 | Phase 1 | Complete |
+| DATA-04 | Phase 1 | Complete |
+| DATA-05 | Phase 1 | Complete |
 | HOST-01 | Phase 2 | Pending |
 | HOST-02 | Phase 2 | Pending |
 | HOST-03 | Phase 2 | Pending |
