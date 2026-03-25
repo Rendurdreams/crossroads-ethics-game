@@ -11,10 +11,10 @@
 - [x] **HOST-02**: Host can select round count (3, 4, 5, or 6) before starting
 - [x] **HOST-03**: Host can start the game when 2 or more players have joined
 - [x] **HOST-04**: Host sees a live roster of joined players (name + emoji) in the lobby
-- [ ] **HOST-05**: Host can close the current round to lock all choices
-- [ ] **HOST-06**: Host can advance to the next round after closing
-- [ ] **HOST-07**: Host sees live anonymous vote tally (% per choice) updating in real time during each round
-- [ ] **HOST-08**: Host sees "X of Y submitted" counter during each round
+- [x] **HOST-05**: Host can close the current round to lock all choices
+- [x] **HOST-06**: Host can advance to the next round after closing
+- [x] **HOST-07**: Host sees live anonymous vote tally (% per choice) updating in real time during each round
+- [x] **HOST-08**: Host sees "X of Y submitted" counter during each round
 - [x] **HOST-09**: Host sees current world state (4 meters) after each round closes
 - [x] **HOST-10**: Room code is displayed large enough to read from the back of a classroom
 
@@ -116,10 +116,10 @@
 | PLAY-01 | Phase 2 | Complete |
 | PLAY-02 | Phase 2 | Complete |
 | PLAY-03 | Phase 2 | Complete |
-| HOST-05 | Phase 3 | Pending |
-| HOST-06 | Phase 3 | Pending |
-| HOST-07 | Phase 3 | Pending |
-| HOST-08 | Phase 3 | Pending |
+| HOST-05 | Phase 3 | Complete |
+| HOST-06 | Phase 3 | Complete |
+| HOST-07 | Phase 3 | Complete |
+| HOST-08 | Phase 3 | Complete |
 | HOST-09 | Phase 3 | Complete |
 | PLAY-04 | Phase 3 | Pending |
 | PLAY-05 | Phase 3 | Pending |

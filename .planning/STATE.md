@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 03-game-loop Plan 01 (leaf components + HostSetup)
-last_updated: "2026-03-25T19:59:08.536Z"
+status: Phase complete — ready for verification
+stopped_at: "Completed 03-game-loop Plan 03 (host game loop: VoteTally, WorldStatePanel, Host.jsx rewrite)"
+last_updated: "2026-03-25T20:03:19.745Z"
 progress:
   total_phases: 5
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 7
-  completed_plans: 5
+  completed_plans: 7
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 03 (game-loop) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 
 ## Performance Metrics
 
@@ -51,6 +51,8 @@ Plan: 2 of 3
 | Phase 02-session-flow P01 | 8 | 2 tasks | 7 files |
 | Phase 02-session-flow P02 | 3 | 2 tasks | 6 files |
 | Phase 03-game-loop P01 | 132s | 2 tasks | 12 files |
+| Phase 03-game-loop P03 | 107 | 2 tasks | 6 files |
+| Phase 03-game-loop P02 | 145s | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -74,6 +76,8 @@ Recent decisions affecting current work:
 - [Phase 03-game-loop]: MeterBar uses conditional CSS class for danger color — keeps smooth transitions without JS state toggling
 - [Phase 03-game-loop]: FrameworkLabel animates on mount via CSS keyframe with no state toggle — parent controls delay if needed
 - [Phase 03-game-loop]: HostSetup page added between Landing and Host lobby — host preparation moment before projecting (D-08)
+- [Phase 03-game-loop]: useRef for persistent timer broadcast channel — avoids Supabase channel churn on each tick
+- [Phase 03-game-loop]: closeRound idempotent guard prevents double-close race between timer auto-close and manual close button
 
 ### Pending Todos
 
@@ -86,6 +90,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T19:59:08.531Z
-Stopped at: Completed 03-game-loop Plan 01 (leaf components + HostSetup)
+Last session: 2026-03-25T20:03:11.536Z
+Stopped at: Completed 03-game-loop Plan 03 (host game loop: VoteTally, WorldStatePanel, Host.jsx rewrite)
 Resume file: None

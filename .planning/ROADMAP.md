@@ -8,7 +8,7 @@ Five phases deliver a working real-time multiplayer ethics game for a classroom 
 
 - [ ] **Phase 1: Foundation** - Supabase schema, RLS, real-time validation, and all /lib logic
 - [x] **Phase 2: Session Flow** - Host creates session, players join with room code, lobby live roster (completed 2026-03-25)
-- [ ] **Phase 3: Game Loop** - Rounds run end-to-end: scenario, choice, consequence, world state update
+- [x] **Phase 3: Game Loop** - Rounds run end-to-end: scenario, choice, consequence, world state update (completed 2026-03-25)
 - [ ] **Phase 4: End State** - Framework profiles, conflict maps, reflections, host end view
 - [ ] **Phase 5: Deploy + Polish** - Ship to Netlify/Vercel, mobile audit, load test
 
@@ -56,11 +56,11 @@ Plans:
   4. When host closes the round, all players simultaneously see their private consequence text
   5. World state (4 CSS meters) updates on both host and player screens after each round closes, reflecting the aggregate weighted choice impacts
   6. Heavy rounds (3 and 4) show a content note with a visible pass option before displaying the scenario
-**Plans:** 1/3 plans executed
+**Plans:** 3/3 plans complete
 Plans:
 - [x] 03-01-PLAN.md — Shared leaf components (MeterBar, TimerDisplay, FrameworkLabel, CityPlaceholder) + HostSetup page + routing
-- [ ] 03-02-PLAN.md — Player game loop (ScenarioCard, ContentNote, ConsequenceReveal + Play.jsx rewrite)
-- [ ] 03-03-PLAN.md — Host game loop (VoteTally, WorldStatePanel + Host.jsx round state machine, timer, world state)
+- [x] 03-02-PLAN.md — Player game loop (ScenarioCard, ContentNote, ConsequenceReveal + Play.jsx rewrite)
+- [x] 03-03-PLAN.md — Host game loop (VoteTally, WorldStatePanel + Host.jsx round state machine, timer, world state)
 **UI hint**: yes
 
 ### Phase 4: End State
@@ -95,6 +95,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. Foundation | 0/2 | Planning complete | - |
 | 2. Session Flow | 2/2 | Complete   | 2026-03-25 |
-| 3. Game Loop | 1/3 | In Progress|  |
+| 3. Game Loop | 3/3 | Complete   | 2026-03-25 |
 | 4. End State | 0/? | Not started | - |
 | 5. Deploy + Polish | 0/? | Not started | - |
