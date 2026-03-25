@@ -7,29 +7,29 @@
 
 ### Host Session
 
-- [ ] **HOST-01**: Host can create a new session and receive a 4-digit room code
-- [ ] **HOST-02**: Host can select round count (3, 4, 5, or 6) before starting
-- [ ] **HOST-03**: Host can start the game when 2 or more players have joined
-- [ ] **HOST-04**: Host sees a live roster of joined players (name + emoji) in the lobby
+- [x] **HOST-01**: Host can create a new session and receive a 4-digit room code
+- [x] **HOST-02**: Host can select round count (3, 4, 5, or 6) before starting
+- [x] **HOST-03**: Host can start the game when 2 or more players have joined
+- [x] **HOST-04**: Host sees a live roster of joined players (name + emoji) in the lobby
 - [ ] **HOST-05**: Host can close the current round to lock all choices
 - [ ] **HOST-06**: Host can advance to the next round after closing
 - [ ] **HOST-07**: Host sees live anonymous vote tally (% per choice) updating in real time during each round
 - [ ] **HOST-08**: Host sees "X of Y submitted" counter during each round
-- [ ] **HOST-09**: Host sees current world state (4 meters) after each round closes
-- [ ] **HOST-10**: Room code is displayed large enough to read from the back of a classroom
+- [x] **HOST-09**: Host sees current world state (4 meters) after each round closes
+- [x] **HOST-10**: Room code is displayed large enough to read from the back of a classroom
 
 ### Player Session
 
-- [ ] **PLAY-01**: Player joins by entering name + 4-digit room code (no login required)
-- [ ] **PLAY-02**: Player is assigned an emoji avatar on join
-- [ ] **PLAY-03**: Player identity (player_id, session_id) persists across phone page refresh via localStorage
+- [x] **PLAY-01**: Player joins by entering name + 4-digit room code (no login required)
+- [x] **PLAY-02**: Player is assigned an emoji avatar on join
+- [x] **PLAY-03**: Player identity (player_id, session_id) persists across phone page refresh via localStorage
 - [ ] **PLAY-04**: Player sees scenario text and 3 choice buttons each round
 - [ ] **PLAY-05**: Player's choice locks on tap with optimistic UI (no second submission possible)
 - [ ] **PLAY-06**: Player sees framework label for their choice after locking (not before)
 - [ ] **PLAY-07**: Player sees private consequence text after host closes the round
 - [ ] **PLAY-08**: Player sees "X of Y submitted" counter while waiting for others
 - [ ] **PLAY-09**: Player sees a content note with pass option on heavy rounds (Rounds 3 and 4)
-- [ ] **PLAY-10**: Player sees current world state (4 CSS meters) after each round closes
+- [x] **PLAY-10**: Player sees current world state (4 CSS meters) after each round closes
 
 ### Scenarios & Framework Logic
 
@@ -108,26 +108,26 @@
 | DATA-03 | Phase 1 | Complete |
 | DATA-04 | Phase 1 | Complete |
 | DATA-05 | Phase 1 | Complete |
-| HOST-01 | Phase 2 | Pending |
-| HOST-02 | Phase 2 | Pending |
-| HOST-03 | Phase 2 | Pending |
-| HOST-04 | Phase 2 | Pending |
-| HOST-10 | Phase 2 | Pending |
-| PLAY-01 | Phase 2 | Pending |
-| PLAY-02 | Phase 2 | Pending |
-| PLAY-03 | Phase 2 | Pending |
+| HOST-01 | Phase 2 | Complete |
+| HOST-02 | Phase 2 | Complete |
+| HOST-03 | Phase 2 | Complete |
+| HOST-04 | Phase 2 | Complete |
+| HOST-10 | Phase 2 | Complete |
+| PLAY-01 | Phase 2 | Complete |
+| PLAY-02 | Phase 2 | Complete |
+| PLAY-03 | Phase 2 | Complete |
 | HOST-05 | Phase 3 | Pending |
 | HOST-06 | Phase 3 | Pending |
 | HOST-07 | Phase 3 | Pending |
 | HOST-08 | Phase 3 | Pending |
-| HOST-09 | Phase 3 | Pending |
+| HOST-09 | Phase 3 | Complete |
 | PLAY-04 | Phase 3 | Pending |
 | PLAY-05 | Phase 3 | Pending |
 | PLAY-06 | Phase 3 | Pending |
 | PLAY-07 | Phase 3 | Pending |
 | PLAY-08 | Phase 3 | Pending |
 | PLAY-09 | Phase 3 | Pending |
-| PLAY-10 | Phase 3 | Pending |
+| PLAY-10 | Phase 3 | Complete |
 | END-01 | Phase 4 | Pending |
 | END-02 | Phase 4 | Pending |
 | END-03 | Phase 4 | Pending |
