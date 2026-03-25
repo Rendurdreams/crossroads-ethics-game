@@ -15,7 +15,11 @@ Players finish the game understanding that ethics and morals are not the same th
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] Vite + React project scaffold with Supabase client and routing dependencies — Validated in Phase 01: Foundation
+- [x] Complete Supabase schema: sessions, players, choices, reflections tables with RLS + real-time — Validated in Phase 01: Foundation
+- [x] Scenario library: all 6 rounds with framework tags and world impacts — Validated in Phase 01: Foundation
+- [x] Framework detection: computeProfile(), findConflicts(), all 4 frameworks + conflict pairs — Validated in Phase 01: Foundation
+- [x] World state engine: applyChoicesToWorld() with weighted aggregate and threshold checking — Validated in Phase 01: Foundation
 
 ### Active
 
@@ -90,4 +94,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-25 after initialization*
+*Last updated: 2026-03-25 after Phase 01 (Foundation) complete*
