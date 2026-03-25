@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 02-session-flow-01-PLAN.md
-last_updated: "2026-03-25T18:28:03.234Z"
+status: Phase complete — ready for verification
+stopped_at: "Completed 02-session-flow-02-PLAN.md (checkpoint: awaiting human-verify)"
+last_updated: "2026-03-25T18:32:47.368Z"
 progress:
   total_phases: 5
-  completed_phases: 1
+  completed_phases: 2
   total_plans: 4
-  completed_plans: 3
+  completed_plans: 4
 ---
 
 # Project State
@@ -49,6 +49,7 @@ Plan: 2 of 2
 | Phase 01-foundation P01 | 8 | 3 tasks | 10 files |
 | Phase 01-foundation P02 | 3 | 3 tasks | 6 files |
 | Phase 02-session-flow P01 | 8 | 2 tasks | 7 files |
+| Phase 02-session-flow P02 | 3 | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -67,6 +68,8 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: Abstaining players excluded from choices array before worldState computation — function never receives abstain markers
 - [Phase 02-session-flow]: BrowserRouter declarative mode selected (not createBrowserRouter data mode) — same v6 API, zero overhead for 3-page SPA
 - [Phase 02-session-flow]: maybeSingle() used for room code lookup — returns null on miss instead of throwing, enables user-friendly error messages
+- [Phase 02-session-flow]: fetch-then-subscribe pattern in Host.jsx with dedup by player id to handle race condition
+- [Phase 02-session-flow]: Three separate useEffects in Play.jsx for mount restore, players subscription, session subscription
 
 ### Pending Todos
 
@@ -79,6 +82,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T18:28:03.230Z
-Stopped at: Completed 02-session-flow-01-PLAN.md
+Last session: 2026-03-25T18:32:47.363Z
+Stopped at: Completed 02-session-flow-02-PLAN.md (checkpoint: awaiting human-verify)
 Resume file: None

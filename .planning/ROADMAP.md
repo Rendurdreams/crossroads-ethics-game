@@ -7,7 +7,7 @@ Five phases deliver a working real-time multiplayer ethics game for a classroom 
 ## Phases
 
 - [ ] **Phase 1: Foundation** - Supabase schema, RLS, real-time validation, and all /lib logic
-- [ ] **Phase 2: Session Flow** - Host creates session, players join with room code, lobby live roster
+- [x] **Phase 2: Session Flow** - Host creates session, players join with room code, lobby live roster (completed 2026-03-25)
 - [ ] **Phase 3: Game Loop** - Rounds run end-to-end: scenario, choice, consequence, world state update
 - [ ] **Phase 4: End State** - Framework profiles, conflict maps, reflections, host end view
 - [ ] **Phase 5: Deploy + Polish** - Ship to Netlify/Vercel, mobile audit, load test
@@ -39,10 +39,10 @@ Plans:
   3. Host can select round count (3, 4, 5, or 6) before starting the game
   4. If a player closes their phone browser and reopens it, they return to the correct session without re-entering their name
   5. Start button becomes active when 2 or more players have joined
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [x] 02-01-PLAN.md — Routing, Landing page (create/join session), CSS foundation
-- [ ] 02-02-PLAN.md — Host lobby (room code, roster, round selector, start) + Player lobby (restore, waiting)
+- [x] 02-02-PLAN.md — Host lobby (room code, roster, round selector, start) + Player lobby (restore, waiting)
 **UI hint**: yes
 
 ### Phase 3: Game Loop
@@ -90,7 +90,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 0/2 | Planning complete | - |
-| 2. Session Flow | 1/2 | In Progress|  |
+| 2. Session Flow | 2/2 | Complete   | 2026-03-25 |
 | 3. Game Loop | 0/? | Not started | - |
 | 4. End State | 0/? | Not started | - |
 | 5. Deploy + Polish | 0/? | Not started | - |
