@@ -1,0 +1,35 @@
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.badge {
+  background: var(--accent-bg);
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  padding: 8px 12px;
+  animation: fadeSlideIn 300ms ease forwards;
+}
+
+.name {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--accent);
+  font-family: var(--sans);
+}
+
+.explanation {
+  margin: 4px 0 0 0;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-muted);
+  font-family: var(--sans);
+  line-height: 1.4;
+}
