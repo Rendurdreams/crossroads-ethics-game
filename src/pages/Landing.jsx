@@ -45,13 +45,14 @@ export default function Landing() {
       const secondCode = generateRoomCode()
       result = await tryInsert(secondCode)
       if (result.error) {
+        console.error('createSession failed:', result.error)
         setHostError('Failed to create session. Try again.')
         setHostLoading(false)
         return
       }
     }
 
-    navigate(`/host/${result.data.id}`)
+    navigate(`/host-setup/${result.data.id}`)
   }
 
   async function joinSession() {
