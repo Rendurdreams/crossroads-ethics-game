@@ -44,7 +44,7 @@ Declared values (multiples of 4):
 Exceptions:
 - Choice buttons: minimum touch target 44px height (phone accessibility, slightly outside 8pt grid — intentional)
 - Content note dismiss button: 44px minimum height (same touch target rule)
-- Timer bar height: 6px (visual accent, not interactive)
+- Timer bar height: 8px (matches MeterBar track/fill height for visual consistency)
 
 ---
 
@@ -55,12 +55,15 @@ Exceptions:
 | Body | var(--sans) | 16px | 400 | 1.5 | General UI text, labels, meta copy |
 | Label | var(--sans) | 14px | 600 | 1.4 | Framework label badge, meter names, tally % labels, content note header |
 | Scenario | var(--serif) | 18px | 400 | 1.65 | Scenario body text — full-width on phone, large serif for reading |
-| Heading | var(--sans) | 20px | 600 | 1.2 | Scenario title on host right panel, section headings |
-| Display | var(--sans) | 28px | 700 | 1.1 | Timer countdown number, consequence text headline |
+| Display | var(--sans) | 28px | 600 | 1.1 | Timer countdown number, consequence text headline |
 
 Font declarations:
 - `var(--serif)`: Georgia, 'Times New Roman', serif (already in index.css)
 - `var(--sans)`: 'Inter', system-ui, -apple-system, sans-serif (already in index.css)
+
+Notes:
+- Scenario title on host right panel and section headings use 16px at weight 600 (Body role, weighted) — no separate Heading size.
+- All weighted elements (section headings, percentage numbers, meter values, display numbers) use weight 600. Weight 700 is not used.
 
 Source: Established in src/index.css — `font: 16px/1.5 var(--sans)` on `:root`. Scenario serif confirmed in CLAUDE.md: "Scenario text: Georgia, serif."
 
@@ -111,11 +114,12 @@ New components required for Phase 3:
 - Dimmed choices (after lock): opacity 0.4, cursor default
 - Scenario text: var(--serif), 18px, line-height 1.65, color var(--text-h)
 - Choice button text: var(--sans), 16px, weight 400
+- Scenario title: var(--sans), 16px, weight 600 (Body role, weighted)
 
 ### ContentNote (src/components/ContentNote.jsx + ContentNote.module.css)
 - Used on Rounds 3 and 4 before ScenarioCard displays
 - Full-screen overlay on player phone
-- Elements: warning label (14px, var(--text-muted), uppercase, tracked), note text (16px body), "Continue" button (primary), "Pass this round" link (text, no background)
+- Elements: warning label (14px, var(--text-muted), uppercase, tracked), note text (16px body), "Continue to round" button (primary), "Pass this round" link (text, no background)
 - "Pass this round" is a plain text link styled with var(--text-muted), underline on hover — never accented, to avoid drawing attention
 
 ### FrameworkLabel (src/components/FrameworkLabel.jsx + FrameworkLabel.module.css)
@@ -152,8 +156,8 @@ New components required for Phase 3:
 
 ### TimerDisplay (src/components/TimerDisplay.jsx + TimerDisplay.module.css)
 - Host and player: shows remaining seconds
-- Large number: 28px, weight 700, var(--accent) when >= 10s, var(--danger) when < 10s
-- Thin progress bar below number: 6px height, same color logic, `transition: width linear` synced to 1s interval
+- Large number: 28px, weight 600, var(--accent) when >= 10s, var(--danger) when < 10s
+- Thin progress bar below number: 8px height, same color logic, `transition: width linear` synced to 1s interval
 - Bar shrinks left-to-right: `width: ${(remaining / total) * 100}%`
 - Label: "Time remaining" 14px var(--text-muted) above the number
 
@@ -203,7 +207,7 @@ No second submission possible once locked. CSS `pointer-events: none` on all but
 ```
 round_active (heavy round) → ContentNote overlay
          |
-    [Continue] → ScenarioCard displays
+    [Continue to round] → ScenarioCard displays
     [Pass this round] → neutral waiting screen ("You sat this one out")
                               → still receives consequence + meters on round close
 ```
@@ -212,7 +216,7 @@ round_active (heavy round) → ContentNote overlay
 
 ```
 host right panel during round:
-  [Close Round] button (always visible, amber)
+  [Close Round] button (always visible, amber) — single click, no confirmation dialog
   OR timer hits 0 (auto-close)
          |
          v
@@ -240,6 +244,7 @@ host right panel during round:
 | Pass state | "You sat this one out." |
 | Pass state sub | "You'll see the outcome when the round closes." |
 | Content note header | "A note before this round" |
+| Content note CTA | "Continue to round" |
 | Content note pass link | "Pass this round" |
 | Consequence header | none — consequence text speaks for itself |
 | Framework label prefix | none — framework name is the label (e.g., "Care Ethics") |
@@ -249,6 +254,8 @@ host right panel during round:
 | 0-seconds timer | "Time's up" — replaces countdown number, 1 second before auto-close fires |
 | Host setup page heading | "You're the host." |
 | Host setup instructions | "Share the room code. When your class is ready, open the lobby." |
+| Error — choice submission failure | "Couldn't submit — tap to try again" |
+| Error — connection loss | "Something went wrong — refresh and rejoin" |
 
 ---
 
@@ -318,9 +325,9 @@ Full-screen vertical scroll permitted only if scenario text is long.
 [CONTENT NOTE if heavy round]
   "A note before this round"
   [one sentence]
-  [Continue]  [Pass this round]
+  [Continue to round]  [Pass this round]
 ─────────────────────────────
-[Scenario title — 20px sans 600]
+[Scenario title — 16px sans 600]
 
 [Scenario body — 18px serif, line-height 1.65]
 
