@@ -3,8 +3,8 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Phase complete — ready for verification
-stopped_at: "Completed 03-game-loop Plan 03 (host game loop: VoteTally, WorldStatePanel, Host.jsx rewrite)"
-last_updated: "2026-03-25T20:03:19.745Z"
+stopped_at: Completed 03-game-loop Plan 02 (player game loop)
+last_updated: "2026-03-25T20:03:28.125Z"
 progress:
   total_phases: 5
   completed_phases: 3
@@ -78,6 +78,8 @@ Recent decisions affecting current work:
 - [Phase 03-game-loop]: HostSetup page added between Landing and Host lobby — host preparation moment before projecting (D-08)
 - [Phase 03-game-loop]: useRef for persistent timer broadcast channel — avoids Supabase channel churn on each tick
 - [Phase 03-game-loop]: closeRound idempotent guard prevents double-close race between timer auto-close and manual close button
+- [Phase 03-game-loop]: Broadcast channel (not postgres_changes) used for player-side timer sync — avoids adding timer columns to sessions schema
+- [Phase 03-game-loop]: Pass flow: passer receives world state meters on round_complete but no framework label
 
 ### Pending Todos
 
@@ -90,6 +92,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T20:03:11.536Z
-Stopped at: Completed 03-game-loop Plan 03 (host game loop: VoteTally, WorldStatePanel, Host.jsx rewrite)
+Last session: 2026-03-25T20:03:28.121Z
+Stopped at: Completed 03-game-loop Plan 02 (player game loop)
 Resume file: None
