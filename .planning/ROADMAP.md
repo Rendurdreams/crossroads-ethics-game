@@ -24,7 +24,10 @@ Five phases deliver a working real-time multiplayer ethics game for a classroom 
   3. All 6 rounds of scenario data are loaded and queryable from scenarios.js with correct framework tags and world impact values
   4. computeProfile() returns the correct dominant framework given a known choice history; findConflicts() correctly names cross-round tensions
   5. applyChoicesToWorld() produces the correct weighted world state delta given a known tally of choices
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 01-01-PLAN.md — Scaffold Vite + React project, Supabase client, schema SQL with RLS
+- [ ] 01-02-PLAN.md — Scenario library, framework definitions, detection logic, world state computation
 
 ### Phase 2: Session Flow
 **Goal**: Host can create a session and players can join on their phones — lobby is live before a round starts
@@ -83,7 +86,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/? | Not started | - |
+| 1. Foundation | 0/2 | Planning complete | - |
 | 2. Session Flow | 0/? | Not started | - |
 | 3. Game Loop | 0/? | Not started | - |
 | 4. End State | 0/? | Not started | - |
