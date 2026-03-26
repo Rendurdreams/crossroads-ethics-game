@@ -5,6 +5,8 @@
   align-items: center;
   padding: 40px 24px;
   background: var(--bg);
+  position: relative;
+  z-index: 1;
 }
 
 .loading {
@@ -14,9 +16,9 @@
 
 .heading {
   font-size: 28px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-h);
-  font-family: var(--sans);
+  font-family: var(--serif);
   margin: 0 0 32px 0;
   text-align: center;
 }
@@ -40,6 +42,7 @@
   text-align: center;
   line-height: 1;
   margin-bottom: 24px;
+  text-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
 }
 
 .qrCode {
@@ -83,7 +86,7 @@
   border: none;
   cursor: pointer;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   transition: background 0.15s;
 }
 
@@ -95,7 +98,7 @@
 .roundBtnInactive {
   background: var(--bg-surface);
   color: var(--text);
-  border: 1px solid #2e303a;
+  border: 1px solid var(--glass-border-subtle);
 }
 
 .roundBtnInactive:hover {
@@ -113,7 +116,7 @@
   border: none;
   border-radius: 8px;
   font-size: 1.1rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   font-family: var(--sans);
   transition: background 0.15s;

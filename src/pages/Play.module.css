@@ -6,6 +6,8 @@
   justify-content: center;
   padding: 24px;
   background: var(--bg);
+  position: relative;
+  z-index: 1;
 }
 
 .avatar {
@@ -17,7 +19,7 @@
 .name {
   color: var(--text-h);
   font-size: 1.2rem;
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 24px;
   font-family: var(--sans);
 }
@@ -47,14 +49,14 @@
 .starting {
   color: var(--accent);
   font-size: 1.3rem;
-  font-weight: 600;
+  font-weight: 700;
   text-align: center;
 }
 
 .finishedText {
   color: var(--accent);
   font-size: 1.3rem;
-  font-weight: 600;
+  font-weight: 700;
   text-align: center;
   margin-bottom: 8px;
 }
@@ -66,6 +68,8 @@
   margin: 0 auto;
   padding: 32px 24px 48px;
   overscroll-behavior: contain;
+  position: relative;
+  z-index: 1;
 }
 
 /* Round header */
@@ -110,7 +114,7 @@
 
 .submittedNumber {
   color: var(--accent);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 /* Timer section */
@@ -191,9 +195,7 @@
 
 .reflectionSection {
   padding: 24px 24px 48px;
-  opacity: 0;
-  animation: fadeUp 400ms ease forwards;
-  animation-delay: 800ms;
+  opacity: 1;
 }
 
 .reflectionLabel {
@@ -207,16 +209,16 @@
 
 .reflectionQuestion {
   font-family: var(--serif);
-  font-size: 16px;
-  line-height: 1.6;
+  font-size: 21px;
+  line-height: 1.75;
   color: var(--text-h);
   margin: 0 0 16px 0;
 }
 
 .reflectionRoundQuestion {
   font-family: var(--serif);
-  font-size: 18px;
-  line-height: 1.65;
+  font-size: 21px;
+  line-height: 1.75;
   color: var(--text-h);
   margin: 0 0 24px 0;
 }
@@ -225,7 +227,7 @@
   width: 100%;
   min-height: 120px;
   background: var(--bg-surface);
-  border: 1px solid #2e303a;
+  border: 1px solid var(--glass-border-subtle);
   border-radius: 6px;
   padding: 12px;
   font-family: var(--sans);
@@ -252,7 +254,7 @@
   border-radius: 8px;
   font-family: var(--sans);
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   min-height: 44px;
   transition: background 0.15s;
@@ -291,11 +293,4 @@
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .reflectionSection {
-    animation: none;
-    opacity: 1;
-  }
 }
