@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { QRCodeSVG } from 'qrcode.react'
 import { supabase } from '../lib/supabase.js'
 import styles from './HostSetup.module.css'
 
@@ -57,6 +58,16 @@ export default function HostSetup() {
 
       <p className={styles.roomLabel}>ROOM CODE</p>
       <div className={styles.roomCode}>{session?.room_code}</div>
+
+      <div className={styles.qrCode}>
+        <QRCodeSVG
+          value={`${window.location.origin}/?code=${session.room_code}`}
+          size={180}
+          bgColor="#12121e"
+          fgColor="#f5f0e8"
+        />
+      </div>
+      <p className={styles.qrInstruction}>Scan to join on your phone</p>
 
       <p className={styles.instructions}>
         Share the room code. When your class is ready, open the lobby.
