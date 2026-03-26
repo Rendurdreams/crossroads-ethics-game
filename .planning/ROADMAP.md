@@ -111,9 +111,9 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 **Goal:** Transform the functional-but-flat UI into a premium cinematic glass-morphism experience with ambient gradients, Framer Motion transitions, and atmosphere tint driven by world state
 **Requirements**: D-01, D-02, D-03, D-04, D-05, D-06, D-07, D-08, D-09, D-10, D-11, D-12
 **Depends on:** Phase 5
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
-- [ ] 05.1-01-PLAN.md — Install framer-motion, Google Fonts, CSS atmospheric tokens, ambient layer, App.jsx AnimatePresence
+- [x] 05.1-01-PLAN.md — Install framer-motion, Google Fonts, CSS atmospheric tokens, ambient layer, App.jsx AnimatePresence
 - [ ] 05.1-02-PLAN.md — Glass-morphism + typography + meter gradients + button glow across all component and page CSS modules
 - [ ] 05.1-03-PLAN.md — Framer Motion page transitions, round fade-through, FrameworkProfile stagger, atmosphere tint, glass card wrappers

@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Phase 05.1 context gathered
-last_updated: "2026-03-26T02:18:08.162Z"
+stopped_at: Completed 05.1-visual-experience-overhaul-01-PLAN.md
+last_updated: "2026-03-26T02:58:32.349Z"
 progress:
   total_phases: 6
   completed_phases: 5
-  total_plans: 12
-  completed_plans: 12
+  total_plans: 15
+  completed_plans: 13
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Players finish understanding their own ethical reasoning — named, visible, connected to a philosophical tradition.
-**Current focus:** Phase 05 — deploy-polish
+**Current focus:** Phase 05.1 — visual-experience-overhaul
 
 ## Current Position
 
-Phase: 05 (deploy-polish) — EXECUTING
-Plan: 3 of 3
+Phase: 05.1 (visual-experience-overhaul) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -58,6 +58,7 @@ Plan: 3 of 3
 | Phase 05-deploy-polish P01 | 103s | 1 tasks | 6 files |
 | Phase 05-deploy-polish P02 | 71s | 2 tasks | 4 files |
 | Phase 05-deploy-polish P03 | 4m | 1 tasks | 1 files |
+| Phase 05.1-visual-experience-overhaul P01 | 70s | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -93,6 +94,9 @@ Recent decisions affecting current work:
 - [Phase 05-deploy-polish]: QR code color contract: bgColor=#12121e (app dark bg), fgColor=#f5f0e8 (app warm text) — matches app palette exactly
 - [Phase 05-deploy-polish]: EVENT_COUNT=6 in load test matches max game rounds, avoids UNIQUE(player_id, round_number) constraint issues with single test player
 - [Phase 05-deploy-polish]: Global reduced-motion guard at index.css level covers all components — component-level rules still apply but global catches future additions
+- [Phase 05.1-visual-experience-overhaul]: framer-motion ^11.13.5 selected for React 19 peer dep compatibility
+- [Phase 05.1-visual-experience-overhaul]: App split into App + AppRoutes — useLocation must be inside BrowserRouter
+- [Phase 05.1-visual-experience-overhaul]: AnimatePresence mode=wait for cinematic fade-through per D-11
 
 ### Roadmap Evolution
 
@@ -109,6 +113,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T02:18:08.155Z
-Stopped at: Phase 05.1 context gathered
-Resume file: .planning/phases/05.1-visual-experience-overhaul/05.1-CONTEXT.md
+Last session: 2026-03-26T02:58:32.345Z
+Stopped at: Completed 05.1-visual-experience-overhaul-01-PLAN.md
+Resume file: None
