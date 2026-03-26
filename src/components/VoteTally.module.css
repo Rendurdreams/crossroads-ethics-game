@@ -1,5 +1,12 @@
 .container {
   width: 100%;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .empty {
@@ -36,7 +43,7 @@
 
 .countPct {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-h);
   white-space: nowrap;
   margin-left: 8px;
@@ -52,7 +59,8 @@
 
 .fill {
   height: 8px;
-  background: var(--accent);
+  background: linear-gradient(90deg, #b45309 0%, #f59e0b 100%);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
   border-radius: 4px;
   transition: width 0.4s ease;
 }
@@ -66,5 +74,5 @@
 
 .submittedCount {
   color: var(--accent);
-  font-weight: 600;
+  font-weight: 700;
 }

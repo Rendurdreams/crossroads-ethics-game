@@ -1,19 +1,25 @@
 .card {
   width: 100%;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .title {
   font-family: var(--sans);
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-h);
   margin: 0 0 16px 0;
 }
 
 .body {
   font-family: var(--serif);
-  font-size: 18px;
-  line-height: 1.65;
+  font-size: 21px;
+  line-height: 1.75;
   color: var(--text-h);
   margin: 0 0 24px 0;
 }
@@ -31,30 +37,36 @@
 .choiceBtn {
   min-height: 44px;
   width: 100%;
-  background: var(--bg-surface);
+  background: var(--glass-bg);
   color: var(--text);
-  border: 1px solid #2e303a;
-  border-radius: 6px;
+  border: 1px solid var(--glass-border-subtle);
+  border-radius: 8px;
   padding: 12px 16px;
   font-size: 16px;
   font-family: var(--sans);
   text-align: left;
   cursor: pointer;
-  transition: border-color 150ms ease, background 150ms ease, opacity 150ms ease;
+  transition: border-color 200ms ease, box-shadow 200ms ease, transform 100ms ease;
 }
 
 .choiceBtn:hover:not(:disabled) {
-  border-color: var(--text-muted);
+  border-color: var(--glass-border);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.2);
+  transform: translateY(-1px);
 }
 
 .choiceLocked {
   border-color: var(--accent) !important;
-  background: var(--accent-bg) !important;
+  box-shadow: 0 0 0 2px var(--accent), 0 0 20px var(--glow-amber-strong) !important;
+  background: rgba(245, 158, 11, 0.12) !important;
+  transform: none;
   cursor: default;
 }
 
 .choiceDimmed {
-  opacity: 0.4;
+  opacity: 0.3;
+  filter: grayscale(30%);
+  transform: none;
   cursor: default;
 }
 

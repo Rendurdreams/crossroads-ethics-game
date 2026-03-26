@@ -12,14 +12,14 @@
 
 .label {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-muted);
   font-family: var(--sans);
 }
 
 .value {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-h);
   font-family: var(--sans);
 }
@@ -34,11 +34,13 @@
 
 .fill {
   height: 100%;
-  background: var(--accent);
+  background: linear-gradient(90deg, #b45309 0%, #f59e0b 100%);
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
   border-radius: 4px;
-  transition: width 0.8s ease, background-color 0.6s ease;
+  transition: width 0.8s ease, opacity 0.6s ease;
 }
 
 .fillDanger {
-  background: var(--danger);
+  background: linear-gradient(90deg, #7f1d1d 0%, #ef4444 100%);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
 }

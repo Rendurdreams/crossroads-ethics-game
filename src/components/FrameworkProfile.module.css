@@ -19,13 +19,13 @@
 
 /* Section 1 — Dominant Framework Card */
 .sectionCard {
-  background: var(--bg-surface);
-  border: 1px solid #2e303a;
-  border-radius: 8px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
   padding: 24px;
-  opacity: 0;
-  animation: fadeUp 400ms ease forwards;
-  animation-delay: 0ms;
 }
 
 .eyebrow {
@@ -38,31 +38,31 @@
 }
 
 .frameworkName {
-  font-family: var(--sans);
-  font-size: 20px;
-  font-weight: 600;
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 700;
   color: var(--accent);
   margin: 4px 0 12px 0;
 }
 
 .explanation {
   font-family: var(--serif);
-  font-size: 18px;
-  line-height: 1.65;
+  font-size: 21px;
+  line-height: 1.75;
   color: var(--text-h);
   margin: 0;
 }
 
 /* Section 2 — Conflict Map */
 .conflictSection {
-  background: var(--bg-surface);
-  border: 1px solid #2e303a;
-  border-radius: 8px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
   padding: 24px;
   margin-top: 16px;
-  opacity: 0;
-  animation: fadeUp 400ms ease forwards;
-  animation-delay: 200ms;
 }
 
 .conflictBlock {
@@ -96,16 +96,13 @@
 /* Section 3 — Least Used Framework */
 .leastUsedSection {
   padding: 24px 0;
-  border-top: 1px solid #2e303a;
-  opacity: 0;
-  animation: fadeUp 400ms ease forwards;
-  animation-delay: 400ms;
+  border-top: 1px solid var(--glass-border-subtle);
 }
 
 .leastFrameworkName {
   font-family: var(--sans);
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-h);
   margin: 4px 0 8px 0;
 }
@@ -121,15 +118,12 @@
 /* Section 4 — Choice Log */
 .choiceLog {
   padding: 24px 0;
-  border-top: 1px solid #2e303a;
-  opacity: 0;
-  animation: fadeUp 400ms ease forwards;
-  animation-delay: 600ms;
+  border-top: 1px solid var(--glass-border-subtle);
 }
 
 .choiceRow {
   padding: 12px 0;
-  border-bottom: 1px solid #2e303a;
+  border-bottom: 1px solid var(--glass-border-subtle);
 }
 
 .choiceRowLast {
@@ -139,7 +133,7 @@
 .roundName {
   font-family: var(--sans);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--text-h);
   margin: 0;
 }
@@ -181,15 +175,4 @@
   color: var(--text-muted);
   opacity: 0.7;
   margin: 0;
-}
-
-/* Accessibility — reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .sectionCard,
-  .conflictSection,
-  .leastUsedSection,
-  .choiceLog {
-    animation: none;
-    opacity: 1;
-  }
 }

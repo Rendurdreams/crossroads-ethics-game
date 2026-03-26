@@ -18,7 +18,10 @@
   align-items: center;
   gap: 8px;
   padding: 8px 12px;
-  background: var(--bg-surface);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  border: 1px solid var(--glass-border-subtle);
   border-radius: 8px;
   margin-bottom: 8px;
 }
