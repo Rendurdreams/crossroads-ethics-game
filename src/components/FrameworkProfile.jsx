@@ -1,6 +1,17 @@
+import { motion, useReducedMotion } from 'framer-motion'
 import { FRAMEWORKS } from '../lib/frameworks.js'
 import { getScenarioByRound } from '../lib/scenarios.js'
 import styles from './FrameworkProfile.module.css'
+
+const containerVariants = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.25 } }
+}
+
+const sectionVariants = {
+  hidden:  { opacity: 0, y: 12 },
+  show:    { opacity: 1, y: 0, transition: { duration: 0.5, ease: 'easeOut' } }
+}
 
 /**
  * FrameworkProfile — Player end screen
@@ -14,13 +25,22 @@ import styles from './FrameworkProfile.module.css'
  * }}} props
  */
 export default function FrameworkProfile({ player }) {
+  const shouldReduce = useReducedMotion()
+  const containerV = shouldReduce ? {} : containerVariants
+  const sectionV = shouldReduce ? { hidden: {}, show: {} } : sectionVariants
+
   if (!player) {
     return (
-      <div className={styles.wrapper}>
+      <motion.div
+        className={styles.wrapper}
+        variants={containerV}
+        initial="hidden"
+        animate="show"
+      >
         <p className={styles.emptyTitle} style={{ textAlign: 'center', color: 'var(--text-muted)', paddingTop: '32px' }}>
           Loading your profile...
         </p>
-      </div>
+      </motion.div>
     )
   }
 
@@ -39,7 +59,12 @@ export default function FrameworkProfile({ player }) {
   const hasChoices = choiceHistory && choiceHistory.length > 0
 
   return (
-    <div className={styles.wrapper}>
+    <motion.div
+      className={styles.wrapper}
+      variants={containerV}
+      initial="hidden"
+      animate="show"
+    >
 
       {/* Empty state — player passed all rounds */}
       {dominant === null && (
@@ -51,16 +76,16 @@ export default function FrameworkProfile({ player }) {
 
       {/* Section 1 — Dominant Framework Card */}
       {dominant !== null && FRAMEWORKS[dominant] && (
-        <div className={styles.sectionCard}>
+        <motion.div className={styles.sectionCard} variants={sectionV}>
           <p className={styles.eyebrow}>Your Framework</p>
           <h2 className={styles.frameworkName}>{FRAMEWORKS[dominant].name}</h2>
           <p className={styles.explanation}>{FRAMEWORKS[dominant].description}</p>
-        </div>
+        </motion.div>
       )}
 
       {/* Section 2 — Conflict Map (conditional) */}
       {dominant !== null && conflicts.length > 0 && (
-        <div className={styles.conflictSection}>
+        <motion.div className={styles.conflictSection} variants={sectionV}>
           <p className={styles.eyebrow}>Where the Conflict Lived</p>
           {conflicts.map((conflict, idx) => {
             const f0 = conflict.frameworks[0]
@@ -125,23 +150,23 @@ export default function FrameworkProfile({ player }) {
               </div>
             )
           })}
-        </div>
+        </motion.div>
       )}
 
       {/* Section 3 — Framework You Used Least */}
       {dominant !== null && leastUsedKey && FRAMEWORKS[leastUsedKey] && (
-        <div className={styles.leastUsedSection}>
+        <motion.div className={styles.leastUsedSection} variants={sectionV}>
           <p className={styles.eyebrow}>The Framework You Used Least</p>
           <h3 className={styles.leastFrameworkName}>{FRAMEWORKS[leastUsedKey].name}</h3>
           <p className={styles.leastPrompt}>{FRAMEWORKS[leastUsedKey].question}</p>
           <p className={styles.leastPrompt} style={{ marginTop: '8px' }}>
             {FRAMEWORKS[leastUsedKey].description}
           </p>
-        </div>
+        </motion.div>
       )}
 
       {/* Section 4 — Choice Log */}
-      <div className={styles.choiceLog}>
+      <motion.div className={styles.choiceLog} variants={sectionV}>
         <p className={styles.eyebrow}>Your Choices</p>
         {!hasChoices && (
           <p style={{ fontSize: '14px', color: 'var(--text-muted)' }}>No choices recorded.</p>
@@ -168,8 +193,8 @@ export default function FrameworkProfile({ player }) {
             </div>
           )
         })}
-      </div>
+      </motion.div>
 
-    </div>
+    </motion.div>
   )
 }
