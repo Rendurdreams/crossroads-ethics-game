@@ -23,12 +23,12 @@
 - [x] **PLAY-01**: Player joins by entering name + 4-digit room code (no login required)
 - [x] **PLAY-02**: Player is assigned an emoji avatar on join
 - [x] **PLAY-03**: Player identity (player_id, session_id) persists across phone page refresh via localStorage
-- [ ] **PLAY-04**: Player sees scenario text and 3 choice buttons each round
-- [ ] **PLAY-05**: Player's choice locks on tap with optimistic UI (no second submission possible)
-- [ ] **PLAY-06**: Player sees framework label for their choice after locking (not before)
-- [ ] **PLAY-07**: Player sees private consequence text after host closes the round
-- [ ] **PLAY-08**: Player sees "X of Y submitted" counter while waiting for others
-- [ ] **PLAY-09**: Player sees a content note with pass option on heavy rounds (Rounds 3 and 4)
+- [x] **PLAY-04**: Player sees scenario text and 3 choice buttons each round
+- [x] **PLAY-05**: Player's choice locks on tap with optimistic UI (no second submission possible)
+- [x] **PLAY-06**: Player sees framework label for their choice after locking (not before)
+- [x] **PLAY-07**: Player sees private consequence text after host closes the round
+- [x] **PLAY-08**: Player sees "X of Y submitted" counter while waiting for others
+- [x] **PLAY-09**: Player sees a content note with pass option on heavy rounds (Rounds 3 and 4)
 - [x] **PLAY-10**: Player sees current world state (4 CSS meters) after each round closes
 
 ### Scenarios & Framework Logic
@@ -41,10 +41,10 @@
 
 ### End State
 
-- [ ] **END-01**: Each player sees their dominant framework with a full explanation paragraph
-- [ ] **END-02**: Each player sees a conflict map if cross-round framework tension detected, named with the philosophical concept
-- [ ] **END-03**: Each player sees a "framework you used least" prompt
-- [ ] **END-04**: Each player sees their full choice log (round, choice, framework)
+- [x] **END-01**: Each player sees their dominant framework with a full explanation paragraph
+- [x] **END-02**: Each player sees a conflict map if cross-round framework tension detected, named with the philosophical concept
+- [x] **END-03**: Each player sees a "framework you used least" prompt
+- [x] **END-04**: Each player sees their full choice log (round, choice, framework)
 - [ ] **END-05**: Round 6 shows a free-text reflection input; responses stored anonymously
 - [ ] **END-06**: Host end view shows group framework breakdown (% per framework overall)
 - [ ] **END-07**: Host end view shows anonymous reflection responses as they're submitted
@@ -121,17 +121,17 @@
 | HOST-07 | Phase 3 | Complete |
 | HOST-08 | Phase 3 | Complete |
 | HOST-09 | Phase 3 | Complete |
-| PLAY-04 | Phase 3 | Pending |
-| PLAY-05 | Phase 3 | Pending |
-| PLAY-06 | Phase 3 | Pending |
-| PLAY-07 | Phase 3 | Pending |
-| PLAY-08 | Phase 3 | Pending |
-| PLAY-09 | Phase 3 | Pending |
+| PLAY-04 | Phase 3 | Complete |
+| PLAY-05 | Phase 3 | Complete |
+| PLAY-06 | Phase 3 | Complete |
+| PLAY-07 | Phase 3 | Complete |
+| PLAY-08 | Phase 3 | Complete |
+| PLAY-09 | Phase 3 | Complete |
 | PLAY-10 | Phase 3 | Complete |
-| END-01 | Phase 4 | Pending |
-| END-02 | Phase 4 | Pending |
-| END-03 | Phase 4 | Pending |
-| END-04 | Phase 4 | Pending |
+| END-01 | Phase 4 | Complete |
+| END-02 | Phase 4 | Complete |
+| END-03 | Phase 4 | Complete |
+| END-04 | Phase 4 | Complete |
 | END-05 | Phase 4 | Pending |
 | END-06 | Phase 4 | Pending |
 | END-07 | Phase 4 | Pending |

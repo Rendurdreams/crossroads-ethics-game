@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to plan
-stopped_at: Completed 03-game-loop Plan 02 (player game loop)
-last_updated: "2026-03-25T20:06:13.389Z"
+status: Ready to execute
+stopped_at: Completed 04-end-state-01-PLAN.md
+last_updated: "2026-03-26T00:17:49.115Z"
 progress:
   total_phases: 5
   completed_phases: 3
-  total_plans: 7
-  completed_plans: 7
+  total_plans: 9
+  completed_plans: 8
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Players finish understanding their own ethical reasoning — named, visible, connected to a philosophical tradition.
-**Current focus:** Phase 03 — game-loop
+**Current focus:** Phase 04 — end-state
 
 ## Current Position
 
-Phase: 4
-Plan: Not started
+Phase: 04 (end-state) — EXECUTING
+Plan: 2 of 2
 
 ## Performance Metrics
 
@@ -53,6 +53,7 @@ Plan: Not started
 | Phase 03-game-loop P01 | 132s | 2 tasks | 12 files |
 | Phase 03-game-loop P03 | 107 | 2 tasks | 6 files |
 | Phase 03-game-loop P02 | 145s | 2 tasks | 8 files |
+| Phase 04-end-state P01 | 133s | 2 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -80,6 +81,8 @@ Recent decisions affecting current work:
 - [Phase 03-game-loop]: closeRound idempotent guard prevents double-close race between timer auto-close and manual close button
 - [Phase 03-game-loop]: Broadcast channel (not postgres_changes) used for player-side timer sync — avoids adding timer columns to sessions schema
 - [Phase 03-game-loop]: Pass flow: passer receives world state meters on round_complete but no framework label
+- [Phase 04-end-state]: leastUsed computed locally in FrameworkProfile from framework_counts — avoids re-importing detection.js
+- [Phase 04-end-state]: computeNarrative checks interesting combinations before individual meters — prevents contradictory sentence assembly
 
 ### Pending Todos
 
@@ -92,6 +95,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25T20:03:28.121Z
-Stopped at: Completed 03-game-loop Plan 02 (player game loop)
+Last session: 2026-03-26T00:17:49.111Z
+Stopped at: Completed 04-end-state-01-PLAN.md
 Resume file: None
