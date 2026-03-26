@@ -1,5 +1,6 @@
 import { useState, useEffect, useReducer, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { motion, useReducedMotion } from 'framer-motion'
 import { supabase } from '../lib/supabase.js'
 import { scenarios } from '../lib/scenarios.js'
 import { applyChoicesToWorld, computeNarrative } from '../lib/worldState.js'
@@ -42,11 +43,19 @@ function roundReducer(state, action) {
   }
 }
 
+const pageVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' } },
+  exit:    { opacity: 0, transition: { duration: 0.25, ease: 'easeIn' } }
+}
+
 // ─── Host component ────────────────────────────────────────────────────────
 
 export default function Host() {
   const { sessionId } = useParams()
   const navigate = useNavigate()
+  const shouldReduce = useReducedMotion()
+  const variants = shouldReduce ? { initial: {}, animate: {}, exit: {} } : pageVariants
 
   const [session, setSession] = useState(null)
   const [players, setPlayers] = useState([])
@@ -336,13 +345,26 @@ export default function Host() {
     }
   }
 
+  // ── Atmosphere warmth computation ─────────────────────────────────────────
+
+  function computeWarmth(worldState) {
+    if (!worldState) return 0.5
+    return (worldState.trust + worldState.courage + worldState.solidarity + worldState.awareness) / 400
+  }
+
   // ── Render ───────────────────────────────────────────────────────────────
 
   if (loading) {
     return (
-      <div className={styles.page}>
+      <motion.div
+        className={styles.page}
+        variants={variants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+      >
         <p className={styles.loading}>Loading...</p>
-      </div>
+      </motion.div>
     )
   }
 
@@ -362,9 +384,17 @@ export default function Host() {
 
     // Compute world narrative
     const narrative = computeNarrative(session.world_state)
+    const warmth = computeWarmth(session.world_state)
 
     return (
-      <div className={styles.roundView}>
+      <motion.div
+        className={styles.roundView}
+        variants={variants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        style={{ '--atmosphere-warmth': warmth }}
+      >
         <div className={styles.cityPanel}>
           <CityPlaceholder />
         </div>
@@ -423,16 +453,24 @@ export default function Host() {
           {/* Session complete label */}
           <p className={styles.sessionComplete}>Session complete.</p>
         </div>
-      </div>
+      </motion.div>
     )
   }
 
   // Round view (active or round_complete)
   if (session?.status === 'active' || session?.status === 'round_complete') {
     const currentScenario = scenarios[(session.current_round ?? 1) - 1]
+    const warmth = computeWarmth(session.world_state)
 
     return (
-      <div className={styles.roundView}>
+      <motion.div
+        className={styles.roundView}
+        variants={variants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        style={{ '--atmosphere-warmth': warmth }}
+      >
         <div className={styles.cityPanel}>
           <CityPlaceholder />
         </div>
@@ -452,13 +490,19 @@ export default function Host() {
             isLastRound={session.current_round >= session.total_rounds}
           />
         </div>
-      </div>
+      </motion.div>
     )
   }
 
   // Lobby view
   return (
-    <div className={styles.page}>
+    <motion.div
+      className={styles.page}
+      variants={variants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+    >
       <p className={styles.roomLabel}>ROOM CODE</p>
       <div className={styles.roomCode}>{session?.room_code}</div>
 
@@ -495,6 +539,6 @@ export default function Host() {
           </button>
         )}
       </div>
-    </div>
+    </motion.div>
   )
 }

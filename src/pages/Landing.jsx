@@ -1,8 +1,15 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { motion, useReducedMotion } from 'framer-motion'
 import { supabase } from '../lib/supabase.js'
 import { generateRoomCode } from '../lib/roomCode.js'
 import styles from './Landing.module.css'
+
+const pageVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' } },
+  exit:    { opacity: 0, transition: { duration: 0.25, ease: 'easeIn' } }
+}
 
 const AVATARS = [
   '\u{1F98A}', '\u{1F43B}', '\u{1F43C}', '\u{1F981}',
@@ -13,6 +20,8 @@ const AVATARS = [
 
 export default function Landing() {
   const navigate = useNavigate()
+  const shouldReduce = useReducedMotion()
+  const variants = shouldReduce ? { initial: {}, animate: {}, exit: {} } : pageVariants
 
   // Host state
   const [hostLoading, setHostLoading] = useState(false)
@@ -103,7 +112,13 @@ export default function Landing() {
   const joinEnabled = code.length === 4 && name.trim().length > 0 && !joinLoading
 
   return (
-    <div className={styles.page}>
+    <motion.div
+      className={styles.page}
+      variants={variants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+    >
       <h1 className={styles.title}>The Crossroads</h1>
       <p className={styles.subtitle}>A Multiplayer Ethics Game</p>
 
@@ -152,6 +167,6 @@ export default function Landing() {
         </button>
         {joinError && <p className={styles.error}>{joinError}</p>}
       </div>
-    </div>
+    </motion.div>
   )
 }

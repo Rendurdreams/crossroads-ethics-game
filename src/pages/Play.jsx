@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { supabase } from '../lib/supabase.js'
 import { scenarios } from '../lib/scenarios.js'
 import { FRAMEWORKS } from '../lib/frameworks.js'
@@ -11,9 +12,24 @@ import MeterBar from '../components/MeterBar.jsx'
 import FrameworkProfile from '../components/FrameworkProfile.jsx'
 import styles from './Play.module.css'
 
+const pageVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' } },
+  exit:    { opacity: 0, transition: { duration: 0.25, ease: 'easeIn' } }
+}
+
+const roundTransition = {
+  exit:    { opacity: 0, transition: { duration: 0.3 } },
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.4, delay: 0.35 } }
+}
+
 export default function Play() {
   const { sessionId } = useParams()
   const navigate = useNavigate()
+  const shouldReduce = useReducedMotion()
+  const variants = shouldReduce ? { initial: {}, animate: {}, exit: {} } : pageVariants
+  const roundVariants = shouldReduce ? { initial: {}, animate: {}, exit: {} } : roundTransition
 
   // Existing state
   const [player, setPlayer] = useState(null)
@@ -275,20 +291,39 @@ export default function Play() {
     }
   }
 
+  // Atmosphere warmth computation
+  function computeWarmth(worldState) {
+    if (!worldState) return 0.5
+    return (worldState.trust + worldState.courage + worldState.solidarity + worldState.awareness) / 400
+  }
+
   // --- Render ---
 
   if (loading) {
     return (
-      <div className={styles.page}>
+      <motion.div
+        className={styles.page}
+        variants={variants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+      >
         <p className={styles.waiting}>Loading...</p>
-      </div>
+      </motion.div>
     )
   }
 
   // Lobby waiting view
   if (!gameStarted) {
     return (
-      <div className={styles.page}>
+      <motion.div
+        className={styles.page}
+        variants={variants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        style={{ '--atmosphere-warmth': 0.5 }}
+      >
         <div className={styles.avatar}>{player?.avatar}</div>
         <div className={styles.name}>{player?.name}</div>
         <p className={styles.waiting}>Waiting for host to start...</p>
@@ -296,7 +331,7 @@ export default function Play() {
         {session?.room_code && (
           <p className={styles.roomReminder}>Room: {session.room_code}</p>
         )}
-      </div>
+      </motion.div>
     )
   }
 
@@ -304,14 +339,27 @@ export default function Play() {
   if (gameFinished || session?.status === 'finished') {
     const showReflection = session?.total_rounds === 6
     const reflectionQuestion = scenarios[5]?.text ?? ''
+    const warmth = computeWarmth(session?.world_state)
 
     return (
-      <div className={styles.page}>
+      <motion.div
+        className={styles.page}
+        variants={variants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        style={{ '--atmosphere-warmth': warmth }}
+      >
         <div className={styles.profileWrapper}>
           <FrameworkProfile player={player} />
 
           {showReflection && (
-            <div className={styles.reflectionSection}>
+            <motion.div
+              className={styles.reflectionSection}
+              initial={shouldReduce ? {} : { opacity: 0, y: 12 }}
+              animate={shouldReduce ? {} : { opacity: 1, y: 0 }}
+              transition={shouldReduce ? { duration: 0 } : { duration: 0.5, delay: 0.8 }}
+            >
               <p className={styles.reflectionLabel}>ONE LAST QUESTION</p>
               <p className={styles.reflectionQuestion}>{reflectionQuestion}</p>
 
@@ -340,34 +388,55 @@ export default function Play() {
                   </button>
                 </>
               )}
-            </div>
+            </motion.div>
           )}
         </div>
-      </div>
+      </motion.div>
     )
   }
 
   const currentScenario = session?.current_round ? scenarios[session.current_round - 1] : null
+  const warmth = computeWarmth(session?.world_state)
+  const roundKey = `round-${session?.current_round}-${session?.status}`
 
   // Round complete — show consequence reveal
   if (session?.status === 'round_complete' && currentScenario) {
     if (passedRound) {
       // Passer still sees world state update, no framework label
       return (
-        <div className={styles.gameContent}>
-          <div className={styles.passConsequence}>
-            <p className={styles.passConsequenceText}>You sat this one out. Here&apos;s what happened:</p>
-            <div className={styles.metersSection}>
-              <p className={styles.metersLabel}>WORLD STATE</p>
-              <div className={styles.meters}>
-                <MeterBar label="Trust" value={session.world_state?.trust ?? 50} />
-                <MeterBar label="Courage" value={session.world_state?.courage ?? 50} />
-                <MeterBar label="Solidarity" value={session.world_state?.solidarity ?? 50} />
-                <MeterBar label="Awareness" value={session.world_state?.awareness ?? 50} />
-              </div>
-            </div>
+        <motion.div
+          className={styles.page}
+          variants={variants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          style={{ '--atmosphere-warmth': warmth }}
+        >
+          <div className={styles.gameContent}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={roundKey}
+                variants={roundVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
+                <div className={styles.passConsequence}>
+                  <p className={styles.passConsequenceText}>You sat this one out. Here&apos;s what happened:</p>
+                  <div className={styles.metersSection}>
+                    <p className={styles.metersLabel}>WORLD STATE</p>
+                    <div className={styles.meters}>
+                      <MeterBar label="Trust" value={session.world_state?.trust ?? 50} />
+                      <MeterBar label="Courage" value={session.world_state?.courage ?? 50} />
+                      <MeterBar label="Solidarity" value={session.world_state?.solidarity ?? 50} />
+                      <MeterBar label="Awareness" value={session.world_state?.awareness ?? 50} />
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </AnimatePresence>
           </div>
-        </div>
+        </motion.div>
       )
     }
 
@@ -377,33 +446,71 @@ export default function Play() {
       const frameworkExplanation = FRAMEWORKS[frameworkKey]?.question ?? ''
 
       return (
-        <div className={styles.gameContent}>
-          <ConsequenceReveal
-            consequence={chosenOption.consequence}
-            framework={frameworkKey}
-            explanation={frameworkExplanation}
-            worldState={session.world_state ?? { trust: 50, courage: 50, solidarity: 50, awareness: 50 }}
-          />
-        </div>
+        <motion.div
+          className={styles.page}
+          variants={variants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          style={{ '--atmosphere-warmth': warmth }}
+        >
+          <div className={styles.gameContent}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={roundKey}
+                variants={roundVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
+                <ConsequenceReveal
+                  consequence={chosenOption.consequence}
+                  framework={frameworkKey}
+                  explanation={frameworkExplanation}
+                  worldState={session.world_state ?? { trust: 50, courage: 50, solidarity: 50, awareness: 50 }}
+                />
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </motion.div>
       )
     }
 
     // Player didn't submit before round closed
     return (
-      <div className={styles.gameContent}>
-        <div className={styles.passConsequence}>
-          <p className={styles.passConsequenceText}>The round ended before you submitted.</p>
-          <div className={styles.metersSection}>
-            <p className={styles.metersLabel}>WORLD STATE</p>
-            <div className={styles.meters}>
-              <MeterBar label="Trust" value={session.world_state?.trust ?? 50} />
-              <MeterBar label="Courage" value={session.world_state?.courage ?? 50} />
-              <MeterBar label="Solidarity" value={session.world_state?.solidarity ?? 50} />
-              <MeterBar label="Awareness" value={session.world_state?.awareness ?? 50} />
-            </div>
-          </div>
+      <motion.div
+        className={styles.page}
+        variants={variants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        style={{ '--atmosphere-warmth': warmth }}
+      >
+        <div className={styles.gameContent}>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={roundKey}
+              variants={roundVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <div className={styles.passConsequence}>
+                <p className={styles.passConsequenceText}>The round ended before you submitted.</p>
+                <div className={styles.metersSection}>
+                  <p className={styles.metersLabel}>WORLD STATE</p>
+                  <div className={styles.meters}>
+                    <MeterBar label="Trust" value={session.world_state?.trust ?? 50} />
+                    <MeterBar label="Courage" value={session.world_state?.courage ?? 50} />
+                    <MeterBar label="Solidarity" value={session.world_state?.solidarity ?? 50} />
+                    <MeterBar label="Awareness" value={session.world_state?.awareness ?? 50} />
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </AnimatePresence>
         </div>
-      </div>
+      </motion.div>
     )
   }
 
@@ -414,43 +521,60 @@ export default function Play() {
 
     if (isReflectionRound) {
       return (
-        <div className={styles.page}>
+        <motion.div
+          className={styles.page}
+          variants={variants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          style={{ '--atmosphere-warmth': warmth }}
+        >
           <div className={styles.gameContent}>
-            <div className={styles.roundHeader}>
-              {player?.avatar && <span className={styles.headerAvatar}>{player.avatar}</span>}
-              <span className={styles.roundLabel}>Round {session.current_round}</span>
-            </div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={roundKey}
+                variants={roundVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
+                <div className={styles.roundHeader}>
+                  {player?.avatar && <span className={styles.headerAvatar}>{player.avatar}</span>}
+                  <span className={styles.roundLabel}>Round {session.current_round}</span>
+                </div>
 
-            <p className={styles.reflectionRoundQuestion}>{currentScenario.text}</p>
+                <p className={styles.reflectionRoundQuestion}>{currentScenario.text}</p>
 
-            {reflectionSubmitted ? (
-              <p className={styles.reflectionDone}>Submitted. Thank you.</p>
-            ) : (
-              <>
-                <textarea
-                  className={styles.reflectionTextarea}
-                  value={reflectionText}
-                  onChange={(e) => setReflectionText(e.target.value)}
-                  placeholder="Take your time..."
-                  rows={5}
-                />
-                <button
-                  className={styles.reflectionSubmitBtn}
-                  disabled={reflectionSubmitting || reflectionText.trim().length === 0}
-                  onClick={handleReflectionSubmit}
-                >
-                  {reflectionSubmitting ? 'Submitting...' : 'Submit Reflection'}
-                </button>
-              </>
-            )}
+                {reflectionSubmitted ? (
+                  <p className={styles.reflectionDone}>Submitted. Thank you.</p>
+                ) : (
+                  <>
+                    <textarea
+                      className={styles.reflectionTextarea}
+                      value={reflectionText}
+                      onChange={(e) => setReflectionText(e.target.value)}
+                      placeholder="Take your time..."
+                      rows={5}
+                    />
+                    <button
+                      className={styles.reflectionSubmitBtn}
+                      disabled={reflectionSubmitting || reflectionText.trim().length === 0}
+                      onClick={handleReflectionSubmit}
+                    >
+                      {reflectionSubmitting ? 'Submitting...' : 'Submit Reflection'}
+                    </button>
+                  </>
+                )}
 
-            {timerRemaining !== null && (
-              <div className={styles.timerSection}>
-                <TimerDisplay remaining={timerRemaining} total={timerTotal} />
-              </div>
-            )}
+                {timerRemaining !== null && (
+                  <div className={styles.timerSection}>
+                    <TimerDisplay remaining={timerRemaining} total={timerTotal} />
+                  </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
           </div>
-        </div>
+        </motion.div>
       )
     }
 
@@ -468,7 +592,14 @@ export default function Play() {
     // Pass view
     if (passedRound) {
       return (
-        <div className={styles.page}>
+        <motion.div
+          className={styles.page}
+          variants={variants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          style={{ '--atmosphere-warmth': warmth }}
+        >
           <div className={styles.gameContent}>
             <div className={styles.passView}>
               <p className={styles.passText}>You sat this one out.</p>
@@ -482,51 +613,74 @@ export default function Play() {
               <TimerDisplay remaining={timerRemaining} total={timerTotal} />
             )}
           </div>
-        </div>
+        </motion.div>
       )
     }
 
     // Scenario + choice view
     return (
-      <div className={styles.page}>
+      <motion.div
+        className={styles.page}
+        variants={variants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+        style={{ '--atmosphere-warmth': warmth }}
+      >
         <div className={styles.gameContent}>
-          <div className={styles.roundHeader}>
-            {player?.avatar && <span className={styles.headerAvatar}>{player.avatar}</span>}
-            <span className={styles.roundLabel}>Round {session.current_round}</span>
-          </div>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={roundKey}
+              variants={roundVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <div className={styles.roundHeader}>
+                {player?.avatar && <span className={styles.headerAvatar}>{player.avatar}</span>}
+                <span className={styles.roundLabel}>Round {session.current_round}</span>
+              </div>
 
-          <ScenarioCard
-            scenario={currentScenario}
-            lockedIndex={lockedChoiceIndex}
-            onChoice={handleChoice}
-            submitting={submitting}
-            submitError={submitError}
-          />
+              <ScenarioCard
+                scenario={currentScenario}
+                lockedIndex={lockedChoiceIndex}
+                onChoice={handleChoice}
+                submitting={submitting}
+                submitError={submitError}
+              />
 
-          {lockedChoiceIndex !== null && (
-            <div className={styles.waitingSection}>
-              <p className={styles.waitingText}>Waiting for others...</p>
-              <p className={styles.submittedCounter}>
-                <span className={styles.submittedNumber}>{submittedCount}</span>
-                {' '}of {totalPlayerCount} submitted
-              </p>
-            </div>
-          )}
+              {lockedChoiceIndex !== null && (
+                <div className={styles.waitingSection}>
+                  <p className={styles.waitingText}>Waiting for others...</p>
+                  <p className={styles.submittedCounter}>
+                    <span className={styles.submittedNumber}>{submittedCount}</span>
+                    {' '}of {totalPlayerCount} submitted
+                  </p>
+                </div>
+              )}
 
-          {timerRemaining !== null && (
-            <div className={styles.timerSection}>
-              <TimerDisplay remaining={timerRemaining} total={timerTotal} />
-            </div>
-          )}
+              {timerRemaining !== null && (
+                <div className={styles.timerSection}>
+                  <TimerDisplay remaining={timerRemaining} total={timerTotal} />
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
-      </div>
+      </motion.div>
     )
   }
 
   // Fallback / transitional state
   return (
-    <div className={styles.page}>
+    <motion.div
+      className={styles.page}
+      variants={variants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+    >
       <p className={styles.waiting}>Waiting...</p>
-    </div>
+    </motion.div>
   )
 }

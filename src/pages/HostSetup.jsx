@@ -1,12 +1,21 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { QRCodeSVG } from 'qrcode.react'
+import { motion, useReducedMotion } from 'framer-motion'
 import { supabase } from '../lib/supabase.js'
 import styles from './HostSetup.module.css'
+
+const pageVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' } },
+  exit:    { opacity: 0, transition: { duration: 0.25, ease: 'easeIn' } }
+}
 
 export default function HostSetup() {
   const { sessionId } = useParams()
   const navigate = useNavigate()
+  const shouldReduce = useReducedMotion()
+  const variants = shouldReduce ? { initial: {}, animate: {}, exit: {} } : pageVariants
 
   const [session, setSession] = useState(null)
   const [totalRounds, setTotalRounds] = useState(4)
@@ -46,14 +55,26 @@ export default function HostSetup() {
 
   if (loading) {
     return (
-      <div className={styles.page}>
+      <motion.div
+        className={styles.page}
+        variants={variants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+      >
         <p className={styles.loading}>Loading...</p>
-      </div>
+      </motion.div>
     )
   }
 
   return (
-    <div className={styles.page}>
+    <motion.div
+      className={styles.page}
+      variants={variants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+    >
       <h1 className={styles.heading}>You're the host.</h1>
 
       <p className={styles.roomLabel}>ROOM CODE</p>
@@ -97,6 +118,6 @@ export default function HostSetup() {
       >
         {opening ? 'Opening...' : 'Open Lobby'}
       </button>
-    </div>
+    </motion.div>
   )
 }
