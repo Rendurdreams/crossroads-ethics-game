@@ -8,6 +8,7 @@ import ContentNote from '../components/ContentNote.jsx'
 import ConsequenceReveal from '../components/ConsequenceReveal.jsx'
 import TimerDisplay from '../components/TimerDisplay.jsx'
 import MeterBar from '../components/MeterBar.jsx'
+import FrameworkProfile from '../components/FrameworkProfile.jsx'
 import styles from './Play.module.css'
 
 export default function Play() {
@@ -32,6 +33,11 @@ export default function Play() {
   const [timerRemaining, setTimerRemaining] = useState(null)
   const [timerTotal, setTimerTotal] = useState(60)
   const [gameFinished, setGameFinished] = useState(false)
+
+  const [reflectionText, setReflectionText] = useState('')
+  const [reflectionSubmitted, setReflectionSubmitted] = useState(false)
+  const [reflectionSubmitting, setReflectionSubmitting] = useState(false)
+  const [reflectionError, setReflectionError] = useState(false)
 
   // Session restore on mount
   useEffect(() => {
@@ -65,6 +71,15 @@ export default function Play() {
                   }
                   if (sessionData.status === 'finished') {
                     setGameFinished(true)
+                    // Re-fetch player row for host-computed profile data (refresh case)
+                    supabase
+                      .from('players')
+                      .select('*')
+                      .eq('id', storedPlayerId)
+                      .single()
+                      .then(({ data: freshPlayer }) => {
+                        if (freshPlayer) setPlayer(freshPlayer)
+                      })
                   }
                 }
 
@@ -135,6 +150,15 @@ export default function Play() {
           }
           if (payload.new.status === 'finished') {
             setGameFinished(true)
+            // Re-fetch player row with host-computed profile data
+            supabase
+              .from('players')
+              .select('*')
+              .eq('id', player?.id)
+              .single()
+              .then(({ data }) => {
+                if (data) setPlayer(data)
+              })
           }
         }
       )
@@ -230,6 +254,27 @@ export default function Play() {
     }
   }
 
+  // Reflection submit handler
+  async function handleReflectionSubmit() {
+    if (reflectionSubmitting || reflectionText.trim().length === 0) return
+    setReflectionSubmitting(true)
+    setReflectionError(false)
+
+    const { error } = await supabase.from('reflections').insert({
+      session_id: sessionId,
+      player_id: player.id,
+      round_number: 6,
+      text: reflectionText.trim()
+    })
+
+    setReflectionSubmitting(false)
+    if (error) {
+      setReflectionError(true)
+    } else {
+      setReflectionSubmitted(true)
+    }
+  }
+
   // --- Render ---
 
   if (loading) {
@@ -255,12 +300,49 @@ export default function Play() {
     )
   }
 
-  // Game finished view
+  // Game finished view — FrameworkProfile + optional reflection input
   if (gameFinished || session?.status === 'finished') {
+    const showReflection = session?.total_rounds === 6
+    const reflectionQuestion = scenarios[5]?.text ?? ''
+
     return (
       <div className={styles.page}>
-        <p className={styles.finishedText}>Game complete.</p>
-        <p className={styles.waiting}>Check your framework profile above.</p>
+        <div className={styles.profileWrapper}>
+          <FrameworkProfile player={player} />
+
+          {showReflection && (
+            <div className={styles.reflectionSection}>
+              <p className={styles.reflectionLabel}>ONE LAST QUESTION</p>
+              <p className={styles.reflectionQuestion}>{reflectionQuestion}</p>
+
+              {reflectionSubmitted ? (
+                <p className={styles.reflectionDone}>Submitted. Thank you.</p>
+              ) : (
+                <>
+                  <textarea
+                    className={styles.reflectionTextarea}
+                    value={reflectionText}
+                    onChange={(e) => setReflectionText(e.target.value)}
+                    placeholder="Take your time..."
+                    rows={5}
+                  />
+                  {reflectionError && (
+                    <p className={styles.reflectionError}>
+                      Couldn&apos;t save your reflection. Tap to try again.
+                    </p>
+                  )}
+                  <button
+                    className={styles.reflectionSubmitBtn}
+                    disabled={reflectionSubmitting || reflectionText.trim().length === 0}
+                    onClick={handleReflectionSubmit}
+                  >
+                    {reflectionSubmitting ? 'Submitting...' : 'Submit Reflection'}
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     )
   }
@@ -327,6 +409,51 @@ export default function Play() {
 
   // Active round view
   if (session?.status === 'active' && currentScenario) {
+    // Round 6 detection — show reflection textarea instead of ScenarioCard
+    const isReflectionRound = currentScenario?.choices?.length === 0
+
+    if (isReflectionRound) {
+      return (
+        <div className={styles.page}>
+          <div className={styles.gameContent}>
+            <div className={styles.roundHeader}>
+              {player?.avatar && <span className={styles.headerAvatar}>{player.avatar}</span>}
+              <span className={styles.roundLabel}>Round {session.current_round}</span>
+            </div>
+
+            <p className={styles.reflectionRoundQuestion}>{currentScenario.text}</p>
+
+            {reflectionSubmitted ? (
+              <p className={styles.reflectionDone}>Submitted. Thank you.</p>
+            ) : (
+              <>
+                <textarea
+                  className={styles.reflectionTextarea}
+                  value={reflectionText}
+                  onChange={(e) => setReflectionText(e.target.value)}
+                  placeholder="Take your time..."
+                  rows={5}
+                />
+                <button
+                  className={styles.reflectionSubmitBtn}
+                  disabled={reflectionSubmitting || reflectionText.trim().length === 0}
+                  onClick={handleReflectionSubmit}
+                >
+                  {reflectionSubmitting ? 'Submitting...' : 'Submit Reflection'}
+                </button>
+              </>
+            )}
+
+            {timerRemaining !== null && (
+              <div className={styles.timerSection}>
+                <TimerDisplay remaining={timerRemaining} total={timerTotal} />
+              </div>
+            )}
+          </div>
+        </div>
+      )
+    }
+
     // Content note gate for heavy rounds
     if (currentScenario.contentNote && !contentNoteAcknowledged && !passedRound) {
       return (
