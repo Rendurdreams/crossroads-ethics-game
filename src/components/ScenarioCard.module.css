@@ -58,6 +58,11 @@
   cursor: default;
 }
 
+.choiceBtn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
 .choiceError {
   pointer-events: auto !important;
   cursor: pointer !important;

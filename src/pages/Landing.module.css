@@ -53,6 +53,7 @@
   font-size: 1rem;
   cursor: pointer;
   width: 100%;
+  min-height: 44px;
   transition: background 0.2s;
   font-family: var(--sans);
 }
@@ -64,6 +65,11 @@
 .btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .input {
