@@ -8,7 +8,14 @@
   --accent-hover: #d97706;
   --accent-bg: rgba(245, 158, 11, 0.1);
   --danger: #ef4444;
-  --serif: Georgia, 'Times New Roman', serif;
+  --glow-amber: rgba(245, 158, 11, 0.15);
+  --glow-amber-strong: rgba(245, 158, 11, 0.35);
+  --glow-cool: rgba(59, 130, 246, 0.08);
+  --glass-bg: rgba(18, 18, 30, 0.65);
+  --glass-border: rgba(245, 158, 11, 0.18);
+  --glass-border-subtle: rgba(255, 255, 255, 0.06);
+  --blur-glass: 16px;
+  --serif: 'Playfair Display', Georgia, serif;
   --sans: 'Inter', system-ui, -apple-system, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
@@ -35,6 +42,26 @@ body {
 
 #root {
   min-height: 100vh;
+}
+
+@keyframes ambientDrift {
+  0%   { background-position: 20% 40%; }
+  33%  { background-position: 60% 20%; }
+  66%  { background-position: 40% 70%; }
+  100% { background-position: 20% 40%; }
+}
+
+.ambientLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 80% 60% at 30% 40%,
+    var(--glow-amber) 0%,
+    transparent 60%
+  );
+  animation: ambientDrift 14s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
