@@ -2,10 +2,13 @@ import { useState, useEffect, useReducer, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import { scenarios } from '../lib/scenarios.js'
-import { applyChoicesToWorld } from '../lib/worldState.js'
+import { applyChoicesToWorld, computeNarrative } from '../lib/worldState.js'
+import { computeProfile, findConflicts } from '../lib/detection.js'
+import { FRAMEWORKS } from '../lib/frameworks.js'
 import PlayerRoster from '../components/PlayerRoster.jsx'
 import CityPlaceholder from '../components/CityPlaceholder.jsx'
 import WorldStatePanel from '../components/WorldStatePanel.jsx'
+import MeterBar from '../components/MeterBar.jsx'
 import styles from './Host.module.css'
 
 // ─── Round state machine ───────────────────────────────────────────────────
@@ -53,6 +56,10 @@ export default function Host() {
   const [timerDuration, setTimerDuration] = useState(60)
 
   const [roundState, dispatch] = useReducer(roundReducer, initialRoundState)
+
+  const [endingSession, setEndingSession] = useState(false)
+  const [endSessionError, setEndSessionError] = useState(false)
+  const [reflections, setReflections] = useState([])
 
   // Persistent broadcast channel ref for timer
   const timerChannelRef = useRef(null)
@@ -202,6 +209,32 @@ export default function Host() {
     return () => supabase.removeChannel(channel)
   }, [sessionId, session?.current_round, session?.status])
 
+  // ── Reflection feed subscription (active on session finished) ───────────
+
+  useEffect(() => {
+    if (session?.status !== 'finished') return
+
+    // Fetch existing reflections
+    supabase.from('reflections').select('text, submitted_at')
+      .eq('session_id', sessionId)
+      .order('submitted_at', { ascending: true })
+      .then(({ data }) => setReflections(data ?? []))
+
+    // Subscribe to new reflection inserts
+    const channel = supabase.channel(`reflections:${sessionId}`)
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'reflections',
+        filter: `session_id=eq.${sessionId}`
+      }, (payload) => {
+        setReflections(prev => [...prev, payload.new])
+      })
+      .subscribe()
+
+    return () => supabase.removeChannel(channel)
+  }, [sessionId, session?.status])
+
   // ── Vote tally computation ───────────────────────────────────────────────
 
   function computeTally() {
@@ -251,10 +284,56 @@ export default function Host() {
       .eq('id', sessionId)
   }
 
-  async function endGame() {
-    await supabase.from('sessions')
-      .update({ status: 'finished' })
-      .eq('id', sessionId)
+  async function endSession() {
+    if (endingSession) return
+    setEndingSession(true)
+    setEndSessionError(false)
+
+    try {
+      // 1. Fetch all players' choice_history
+      const { data: allPlayers, error: fetchErr } = await supabase
+        .from('players')
+        .select('id, choice_history, framework_counts')
+        .eq('session_id', sessionId)
+
+      if (fetchErr) throw fetchErr
+
+      // 2. Compute profiles for each player
+      const updates = allPlayers.map(p => {
+        const history = p.choice_history ?? []
+        const { dominant, counts } = computeProfile(history)
+        const conflicts = findConflicts(history)
+        return {
+          id: p.id,
+          dominant_framework: dominant,
+          conflicts: conflicts,
+          framework_counts: counts
+        }
+      })
+
+      // 3. Batch update player rows — all must complete before status change
+      await Promise.all(
+        updates.map(u =>
+          supabase.from('players')
+            .update({
+              dominant_framework: u.dominant_framework,
+              conflicts: u.conflicts,
+              framework_counts: u.framework_counts
+            })
+            .eq('id', u.id)
+        )
+      )
+
+      // 4. Set session to finished AFTER all player writes complete (avoids race)
+      await supabase.from('sessions')
+        .update({ status: 'finished' })
+        .eq('id', sessionId)
+
+    } catch (err) {
+      console.error('End session failed:', err)
+      setEndSessionError(true)
+      setEndingSession(false)
+    }
   }
 
   // ── Render ───────────────────────────────────────────────────────────────
@@ -269,11 +348,81 @@ export default function Host() {
 
   // End state
   if (session?.status === 'finished') {
+    // Compute group framework breakdown from players array
+    const frameworkCounts = { consequentialism: 0, deontology: 0, care: 0, virtue: 0 }
+    players.forEach(p => {
+      if (p.dominant_framework && frameworkCounts.hasOwnProperty(p.dominant_framework)) {
+        frameworkCounts[p.dominant_framework]++
+      }
+    })
+    const totalWithFramework = Object.values(frameworkCounts).reduce((a, b) => a + b, 0)
+    const sortedFrameworks = Object.entries(frameworkCounts)
+      .sort((a, b) => b[1] - a[1])
+    const leadingFramework = sortedFrameworks[0]?.[0]
+
+    // Compute world narrative
+    const narrative = computeNarrative(session.world_state)
+
     return (
-      <div className={styles.endView}>
-        <p className={styles.endText}>Game Over</p>
-        <CityPlaceholder />
-        <p className={styles.loading}>Session ended.</p>
+      <div className={styles.roundView}>
+        <div className={styles.cityPanel}>
+          <CityPlaceholder />
+        </div>
+        <div className={`${styles.statePanel} ${styles.endPanel}`}>
+
+          {/* Group Framework Breakdown */}
+          <div className={styles.endSection}>
+            <p className={styles.endSectionLabel}>YOUR GROUP</p>
+            <div className={styles.frameworkList}>
+              {sortedFrameworks.map(([key, count]) => (
+                <div key={key} className={styles.frameworkRow}>
+                  <span className={key === leadingFramework ? styles.frameworkNameLead : styles.frameworkNameNormal}>
+                    {FRAMEWORKS[key]?.name ?? key}
+                  </span>
+                  <span className={styles.frameworkStat}>
+                    {count} player{count !== 1 ? 's' : ''} ({totalWithFramework > 0 ? Math.round((count / totalWithFramework) * 100) : 0}%)
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* World State Narrative */}
+          <div className={styles.endSection}>
+            <p className={styles.endSectionLabel}>WHAT HAPPENED</p>
+            <p className={styles.narrativeText}>{narrative}</p>
+          </div>
+
+          {/* Final World State Meters */}
+          <div className={styles.endSection}>
+            <p className={styles.endSectionLabel}>FINAL STATE</p>
+            <div className={styles.endMeters}>
+              <MeterBar label="Trust" value={session.world_state?.trust ?? 50} />
+              <MeterBar label="Courage" value={session.world_state?.courage ?? 50} />
+              <MeterBar label="Solidarity" value={session.world_state?.solidarity ?? 50} />
+              <MeterBar label="Awareness" value={session.world_state?.awareness ?? 50} />
+            </div>
+          </div>
+
+          {/* Anonymous Reflection Feed */}
+          <div className={styles.endSection}>
+            <p className={styles.endSectionLabel}>FROM YOUR GROUP</p>
+            {reflections.length === 0 ? (
+              <p className={styles.reflectionEmpty}>Reflections will appear here as players submit them.</p>
+            ) : (
+              <div className={styles.reflectionFeed}>
+                {reflections.map((r, i) => (
+                  <div key={i} className={styles.reflectionCard}>
+                    <p className={styles.reflectionText}>{r.text}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Session complete label */}
+          <p className={styles.sessionComplete}>Session complete.</p>
+        </div>
       </div>
     )
   }
@@ -299,7 +448,7 @@ export default function Host() {
             roundClosed={roundState.roundClosed}
             onCloseRound={closeRound}
             onNextRound={nextRound}
-            onEndGame={endGame}
+            onEndGame={endSession}
             isLastRound={session.current_round >= session.total_rounds}
           />
         </div>
