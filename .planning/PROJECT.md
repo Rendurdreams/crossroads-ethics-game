@@ -30,9 +30,9 @@ Players finish the game understanding that ethics and morals are not the same th
 - [ ] Players receive a private consequence after each round closes
 - [ ] Framework label revealed to player after they choose (not before)
 - [ ] World state (4 meters) updates after each round based on aggregate choices
-- [ ] End screen shows each player their dominant framework, conflict map, and choice log
-- [ ] Host end view shows group framework breakdown and anonymous reflection feed
-- [ ] Round 6 is a free-text reflection (no choice buttons)
+- [x] End screen shows each player their dominant framework, conflict map, and choice log — Validated in Phase 04: end-state
+- [x] Host end view shows group framework breakdown and anonymous reflection feed — Validated in Phase 04: end-state
+- [x] Round 6 is a free-text reflection (no choice buttons) — Validated in Phase 04: end-state
 
 ### Out of Scope (v1)
 
