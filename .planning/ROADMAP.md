@@ -115,5 +115,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 Plans:
 - [x] 05.1-01-PLAN.md — Install framer-motion, Google Fonts, CSS atmospheric tokens, ambient layer, App.jsx AnimatePresence
-- [ ] 05.1-02-PLAN.md — Glass-morphism + typography + meter gradients + button glow across all component and page CSS modules
+- [x] 05.1-02-PLAN.md — Glass-morphism + typography + meter gradients + button glow across all component and page CSS modules
 - [ ] 05.1-03-PLAN.md — Framer Motion page transitions, round fade-through, FrameworkProfile stagger, atmosphere tint, glass card wrappers
