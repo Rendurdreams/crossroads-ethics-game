@@ -60,7 +60,7 @@
 ### Polish (Required Before Presentation)
 
 - [ ] **POLISH-01**: Player view is fully usable on a phone (no horizontal scroll, buttons reachable with thumbs)
-- [ ] **POLISH-02**: Load test passes — 20+ simultaneous Supabase real-time subscriptions without dropped events or lag
+- [x] **POLISH-02**: Load test passes — 20+ simultaneous Supabase real-time subscriptions without dropped events or lag
 
 ## v2 Requirements
 
@@ -137,7 +137,7 @@
 | END-07 | Phase 4 | Complete |
 | INFRA-05 | Phase 5 | Pending |
 | POLISH-01 | Phase 5 | Pending |
-| POLISH-02 | Phase 5 | Pending |
+| POLISH-02 | Phase 5 | Complete |
 
 **Coverage:**
 - v1 requirements: 32 total
