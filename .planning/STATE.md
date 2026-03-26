@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to plan
-stopped_at: Completed 04-end-state-02-PLAN.md
-last_updated: "2026-03-26T00:24:33.876Z"
+stopped_at: "05-01 Task 1 complete — paused at checkpoint:human-verify (Netlify deploy)"
+last_updated: "2026-03-26T01:33:58.314Z"
 progress:
   total_phases: 5
   completed_phases: 4
-  total_plans: 9
-  completed_plans: 9
+  total_plans: 12
+  completed_plans: 10
 ---
 
 # Project State
@@ -55,6 +55,7 @@ Plan: Not started
 | Phase 03-game-loop P02 | 145s | 2 tasks | 8 files |
 | Phase 04-end-state P01 | 133s | 2 tasks | 3 files |
 | Phase 04-end-state P02 | 228s | 2 tasks | 4 files |
+| Phase 05-deploy-polish P01 | 103s | 1 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -86,6 +87,8 @@ Recent decisions affecting current work:
 - [Phase 04-end-state]: computeNarrative checks interesting combinations before individual meters — prevents contradictory sentence assembly
 - [Phase 04-end-state]: endSession uses Promise.all batch writes before setting finished — prevents race where players see finished before profile data is available
 - [Phase 04-end-state]: Player re-fetch on finished in both subscription and mount restore paths — handles live and page-refresh cases
+- [Phase 05-deploy-polish]: qrcode.react@4.2.0 used instead of planned v3 — React 19 peer dep requires v4.2.0 minimum; API surface unchanged
+- [Phase 05-deploy-polish]: QR code color contract: bgColor=#12121e (app dark bg), fgColor=#f5f0e8 (app warm text) — matches app palette exactly
 
 ### Pending Todos
 
@@ -98,6 +101,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T00:23:44.627Z
-Stopped at: Completed 04-end-state-02-PLAN.md
+Last session: 2026-03-26T01:33:47.759Z
+Stopped at: 05-01 Task 1 complete — paused at checkpoint:human-verify (Netlify deploy)
 Resume file: None

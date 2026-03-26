@@ -87,9 +87,9 @@ Plans:
   1. A `vite build` produces a dist/ folder that deploys successfully to Netlify or Vercel and loads at a public URL
   2. The player view is fully usable on a phone — no horizontal scroll, all buttons reachable with thumbs, scenario text readable without zooming
   3. A simulated load test with 20+ simultaneous Supabase real-time subscriptions completes without dropped events or visible lag in vote tallies or world state updates
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 Plans:
-- [ ] 05-01-PLAN.md — QR code, query param pre-fill, page metadata, build + Netlify deploy checkpoint
+- [x] 05-01-PLAN.md — QR code, query param pre-fill, page metadata, build + Netlify deploy checkpoint
 - [ ] 05-02-PLAN.md — Mobile CSS audit and fixes (color-scheme, reduced-motion, focus rings, touch targets)
 - [ ] 05-03-PLAN.md — Load test script (25 concurrent Supabase subscriptions)
 
@@ -104,4 +104,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Session Flow | 2/2 | Complete   | 2026-03-25 |
 | 3. Game Loop | 3/3 | Complete   | 2026-03-25 |
 | 4. End State | 2/2 | Complete   | 2026-03-26 |
-| 5. Deploy + Polish | 0/3 | Planning complete | - |
+| 5. Deploy + Polish | 1/3 | In Progress|  |
