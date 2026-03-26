@@ -45,9 +45,9 @@
 - [x] **END-02**: Each player sees a conflict map if cross-round framework tension detected, named with the philosophical concept
 - [x] **END-03**: Each player sees a "framework you used least" prompt
 - [x] **END-04**: Each player sees their full choice log (round, choice, framework)
-- [ ] **END-05**: Round 6 shows a free-text reflection input; responses stored anonymously
-- [ ] **END-06**: Host end view shows group framework breakdown (% per framework overall)
-- [ ] **END-07**: Host end view shows anonymous reflection responses as they're submitted
+- [x] **END-05**: Round 6 shows a free-text reflection input; responses stored anonymously
+- [x] **END-06**: Host end view shows group framework breakdown (% per framework overall)
+- [x] **END-07**: Host end view shows anonymous reflection responses as they're submitted
 
 ### Infrastructure
 
@@ -132,9 +132,9 @@
 | END-02 | Phase 4 | Complete |
 | END-03 | Phase 4 | Complete |
 | END-04 | Phase 4 | Complete |
-| END-05 | Phase 4 | Pending |
-| END-06 | Phase 4 | Pending |
-| END-07 | Phase 4 | Pending |
+| END-05 | Phase 4 | Complete |
+| END-06 | Phase 4 | Complete |
+| END-07 | Phase 4 | Complete |
 | INFRA-05 | Phase 5 | Pending |
 | POLISH-01 | Phase 5 | Pending |
 | POLISH-02 | Phase 5 | Pending |

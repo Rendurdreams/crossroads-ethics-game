@@ -9,7 +9,7 @@ Five phases deliver a working real-time multiplayer ethics game for a classroom 
 - [ ] **Phase 1: Foundation** - Supabase schema, RLS, real-time validation, and all /lib logic
 - [x] **Phase 2: Session Flow** - Host creates session, players join with room code, lobby live roster (completed 2026-03-25)
 - [x] **Phase 3: Game Loop** - Rounds run end-to-end: scenario, choice, consequence, world state update (completed 2026-03-25)
-- [ ] **Phase 4: End State** - Framework profiles, conflict maps, reflections, host end view
+- [x] **Phase 4: End State** - Framework profiles, conflict maps, reflections, host end view (completed 2026-03-26)
 - [ ] **Phase 5: Deploy + Polish** - Ship to Netlify/Vercel, mobile audit, load test
 
 ## Phase Details
@@ -73,10 +73,10 @@ Plans:
   3. Each player sees a "framework you used least" prompt and their full round-by-round choice log
   4. Round 6 shows a free-text reflection input; submitted responses are stored and appear anonymously on the host end view
   5. Host end view shows group framework breakdown (% per framework) across all players
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 Plans:
 - [x] 04-01-PLAN.md — FrameworkProfile component (player end screen) + computeNarrative utility
-- [ ] 04-02-PLAN.md — Wire Host.jsx (endSession, end view, reflection feed) + Play.jsx (Round 6, profile reveal, reflection input)
+- [x] 04-02-PLAN.md — Wire Host.jsx (endSession, end view, reflection feed) + Play.jsx (Round 6, profile reveal, reflection input)
 **UI hint**: yes
 
 ### Phase 5: Deploy + Polish
@@ -99,5 +99,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. Foundation | 0/2 | Planning complete | - |
 | 2. Session Flow | 2/2 | Complete   | 2026-03-25 |
 | 3. Game Loop | 3/3 | Complete   | 2026-03-25 |
-| 4. End State | 1/2 | In Progress|  |
+| 4. End State | 2/2 | Complete   | 2026-03-26 |
 | 5. Deploy + Polish | 0/? | Not started | - |
