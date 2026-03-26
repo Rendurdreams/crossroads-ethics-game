@@ -56,11 +56,15 @@ Source: Measured from `Landing.module.css`, `Play.module.css`, `HostSetup.module
 |------|------|--------|-------------|------|-------|
 | Body | 16px | 400 | 1.5 | sans (Inter) | Default prose, waiting text, instructions, textarea input |
 | Label / Meta | 14px | 400 | 1.4 | sans | Uppercase tracking labels, round labels, choice log rows, error messages, muted counters |
-| UI Heading | 20–28px | 600 | 1.2 | sans | Page headings (HostSetup 28px, section headings 20px), framework name in profile card |
+| UI Heading | 20px | 600 | 1.2 | sans | Section headings, framework name in profile card |
 | Scenario / Serif Body | 18px | 400 | 1.65 | serif (Georgia) | Scenario card body text, FrameworkProfile explanation paragraph, reflection question |
 
 Two weights in use: 400 (regular) and 600 (semibold). No other weights.
 Two families in use: `var(--sans)` and `var(--serif)`. No other families.
+
+Typographic exceptions (not type-role additions):
+- HostSetup display heading (room code label / page title): 28px semibold sans — a one-off display size specific to this page. Not a reusable role; do not apply elsewhere.
+- Room code number itself: `clamp(72px, 12vw, 120px)` — see Spacing Scale exceptions.
 
 Source: `src/index.css` font declaration, `ScenarioCard.module.css`, `FrameworkProfile.module.css`, `HostSetup.module.css`, `Play.module.css`.
 
@@ -80,7 +84,7 @@ Source: `src/index.css` font declaration, `ScenarioCard.module.css`, `FrameworkP
 Accent (`#f59e0b`) reserved for:
 - Room code display (large number on HostSetup)
 - QR code foreground color (per D-08: `fgColor="#f5f0e8"` cream variant — see note below)
-- Primary CTA button background (Create Game, Join, Open Lobby, Submit Reflection)
+- Primary CTA button background (Create Game, Join Game, Open Lobby, Share Reflection)
 - Active round selector button background
 - Locked choice button border
 - Framework tag text and badge
@@ -162,9 +166,9 @@ Phase 5 introduces one new copy element (QR code instruction) and requires a met
 | Page title (`index.html`) | "The Crossroads" |
 | Meta description (`index.html`) | "A multiplayer ethics game for the classroom." |
 | Primary CTA — Landing, host | "Create Game" |
-| Primary CTA — Landing, player | "Join" |
+| Primary CTA — Landing, player | "Join Game" |
 | Primary CTA — HostSetup | "Open Lobby" |
-| Primary CTA — reflection | "Submit" |
+| Primary CTA — reflection (Round 6 textarea) | "Share Reflection" |
 | Empty state — no players in roster | "Waiting for players to join..." |
 | Error — room not found | "Room not found. Check the code and try again." |
 | Error — game already started | "This game has already started." |
