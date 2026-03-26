@@ -19,7 +19,10 @@ export default function Landing() {
   const [hostError, setHostError] = useState('')
 
   // Player state
-  const [code, setCode] = useState('')
+  const [code, setCode] = useState(() => {
+    const params = new URLSearchParams(window.location.search)
+    return params.get('code') ?? ''
+  })
   const [name, setName] = useState('')
   const [joinLoading, setJoinLoading] = useState(false)
   const [joinError, setJoinError] = useState('')
@@ -145,7 +148,7 @@ export default function Landing() {
           onClick={joinSession}
           disabled={!joinEnabled}
         >
-          {joinLoading ? 'Joining...' : 'Join'}
+          {joinLoading ? 'Joining...' : 'Join Game'}
         </button>
         {joinError && <p className={styles.error}>{joinError}</p>}
       </div>

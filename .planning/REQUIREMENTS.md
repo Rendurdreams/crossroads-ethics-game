@@ -55,7 +55,7 @@
 - [x] **INFRA-02**: RLS policies configured — anon role can read sessions, insert own player row, insert own choices; verified that real-time subscriptions are not silently blocked
 - [x] **INFRA-03**: Real-time enabled on sessions, players, and choices tables
 - [x] **INFRA-04**: Supabase client initialized as singleton with environment variable discipline (service role key never exposed via VITE_ prefix)
-- [ ] **INFRA-05**: App deploys to Netlify or Vercel from `vite build` output
+- [x] **INFRA-05**: App deploys to Netlify or Vercel from `vite build` output
 
 ### Polish (Required Before Presentation)
 
@@ -135,7 +135,7 @@
 | END-05 | Phase 4 | Complete |
 | END-06 | Phase 4 | Complete |
 | END-07 | Phase 4 | Complete |
-| INFRA-05 | Phase 5 | Pending |
+| INFRA-05 | Phase 5 | Complete |
 | POLISH-01 | Phase 5 | Pending |
 | POLISH-02 | Phase 5 | Complete |
 

@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 05-deploy-polish-02-PLAN.md
-last_updated: "2026-03-26T01:32:23.468Z"
+stopped_at: "05-01 paused at checkpoint:human-verify (Netlify deploy)"
+last_updated: "2026-03-26T01:35:00.000Z"
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 12
-  completed_plans: 11
+  completed_plans: 12
 ---
 
 # Project State
@@ -55,8 +55,9 @@ Plan: 3 of 3
 | Phase 03-game-loop P02 | 145s | 2 tasks | 8 files |
 | Phase 04-end-state P01 | 133s | 2 tasks | 3 files |
 | Phase 04-end-state P02 | 228s | 2 tasks | 4 files |
-| Phase 05-deploy-polish P03 | 4m | 1 tasks | 1 files |
+| Phase 05-deploy-polish P01 | 103s | 1 tasks | 6 files |
 | Phase 05-deploy-polish P02 | 71s | 2 tasks | 4 files |
+| Phase 05-deploy-polish P03 | 4m | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -88,6 +89,8 @@ Recent decisions affecting current work:
 - [Phase 04-end-state]: computeNarrative checks interesting combinations before individual meters — prevents contradictory sentence assembly
 - [Phase 04-end-state]: endSession uses Promise.all batch writes before setting finished — prevents race where players see finished before profile data is available
 - [Phase 04-end-state]: Player re-fetch on finished in both subscription and mount restore paths — handles live and page-refresh cases
+- [Phase 05-deploy-polish]: qrcode.react@4.2.0 used instead of planned v3 — React 19 peer dep requires v4.2.0 minimum; API surface unchanged
+- [Phase 05-deploy-polish]: QR code color contract: bgColor=#12121e (app dark bg), fgColor=#f5f0e8 (app warm text) — matches app palette exactly
 - [Phase 05-deploy-polish]: EVENT_COUNT=6 in load test matches max game rounds, avoids UNIQUE(player_id, round_number) constraint issues with single test player
 - [Phase 05-deploy-polish]: Global reduced-motion guard at index.css level covers all components — component-level rules still apply but global catches future additions
 
@@ -102,6 +105,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T01:32:23.464Z
-Stopped at: Completed 05-deploy-polish-02-PLAN.md
+Last session: 2026-03-26T01:35:00.000Z
+Stopped at: "05-01 paused at checkpoint:human-verify (Netlify deploy)"
 Resume file: None
