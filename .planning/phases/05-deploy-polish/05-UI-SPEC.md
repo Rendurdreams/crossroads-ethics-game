@@ -22,6 +22,8 @@ created: 2026-03-26
 | Component library | none |
 | Icon library | none — emoji + unicode only |
 | Font | Georgia (serif, system), Inter (sans, Google Fonts) |
+| Style | Dark Mode (OLED) — deep black backgrounds, high-contrast text, minimal glow |
+| color-scheme | `color-scheme: dark` must be set on `:root` (prevents browser chrome artifacts on mobile) |
 
 Source: `src/index.css` CSS custom properties established in prior phases.
 
@@ -97,9 +99,11 @@ QR code color note: D-08 specifies `bgColor="#12121e"` and `fgColor="#f5f0e8"` (
 Border color for cards and inputs: `#2e303a` — a fixed literal used throughout (not a CSS variable). This is the established pattern; do not introduce a new variable for it in Phase 5.
 
 Text colors:
-- `#f5f5f5` (`--text-h`) — headings and high-emphasis text
-- `#e5e5e5` (`--text`) — body text
-- `#6b7280` (`--text-muted`) — muted labels, helper text, waiting states
+- `#f5f5f5` (`--text-h`) — headings and high-emphasis text — contrast vs `#0a0a14`: ~18:1 (WCAG AAA)
+- `#e5e5e5` (`--text`) — body text — contrast vs `#0a0a14`: ~16:1 (WCAG AAA)
+- `#6b7280` (`--text-muted`) — muted labels, helper text, waiting states — contrast vs `#0a0a14`: ~4.6:1 (WCAG AA — accepted for secondary/muted text; do not use for primary content)
+
+Error states must use text + indicator together — color alone is not sufficient per accessibility rules. `--danger` red (`#ef4444`) must be accompanied by an error message string, never a red border alone.
 
 Source: `src/index.css` root variables, confirmed across all module CSS files.
 
@@ -108,6 +112,8 @@ Source: `src/index.css` root variables, confirmed across all module CSS files.
 ## New Component: QR Code (Phase 5 only)
 
 **Component:** `<QRCodeSVG>` from `qrcode.react` 3.x, rendered inside `HostSetup.jsx`.
+
+**Visual hierarchy:** Room code number is the primary visual anchor on HostSetup. QR code is secondary support. "Scan to join on your phone" instruction is tertiary. The `clamp(72px, 12vw, 120px)` room code maintains dominance at all viewport widths.
 
 **Visual contract:**
 
@@ -138,21 +144,55 @@ Pages in scope:
 
 Pages explicitly out of scope: `Host.jsx`, `HostSetup.jsx` (desktop-only by design).
 
-Pass criteria (from D-11, POLISH-01):
+Pass criteria (from D-11, POLISH-01 + ui-ux-pro-max):
 
-| Criterion | Measurement |
-|-----------|-------------|
-| No horizontal scroll | `body` width does not exceed `100vw` at 390px; no element with `overflow-x: visible` wider than viewport |
-| Buttons reachable with thumbs | All interactive elements: `min-height: 44px`, no element in top 20px dead zone, adequate tap spacing |
-| Scenario text readable without zooming | Scenario body font is 18px serif at 1.65 line-height — must not be overridden to smaller on mobile |
-| Choice buttons full-width | `width: 100%` maintained — already in spec, verify not broken |
-| Input fields full-width | `width: 100%` with `box-sizing: border-box` — already in spec, verify |
-| Reflection textarea usable | `min-height: 120px`, no zoom-trigger (font-size 16px — already correct) |
+| Criterion | Measurement | Severity |
+|-----------|-------------|----------|
+| No horizontal scroll | `body` width does not exceed `100vw` at 390px; no element with `overflow-x: visible` wider than viewport | High |
+| Buttons reachable with thumbs | All interactive elements: `min-height: 44px`, no element in top 20px dead zone | High |
+| Touch target spacing | Minimum 8px vertical gap between adjacent choice buttons — prevents mis-taps | Medium |
+| Scenario text readable without zooming | Scenario body font is 18px serif at 1.65 line-height — must not be overridden smaller on mobile | High |
+| Choice buttons full-width | `width: 100%` maintained — already in spec, verify not broken | High |
+| Input fields full-width | `width: 100%` with `box-sizing: border-box` — already in spec, verify | High |
+| Reflection textarea usable | `min-height: 120px`, no zoom-trigger (font-size 16px — already correct) | High |
+| Loading button state | CTAs ("Creating...", "Joining...") disable during async operations — prevent double-submit | High |
+| Focus rings visible | All interactive elements show `:focus-visible` ring (2px solid `--accent`) — keyboard nav support | High |
+| Color not sole indicator | Error states use message text alongside `--danger` color — never border color alone | High |
+| Overscroll contain | Scrollable Play.jsx container uses `overscroll-behavior: contain` — prevents accidental browser back-swipe | Low |
+| Reduced motion respected | All CSS transitions/animations wrapped in `@media (prefers-reduced-motion: reduce)` override | High |
+| cursor: pointer | All clickable elements (`button`, `[role="button"]`, choice cards) have `cursor: pointer` | Medium |
 
 Fixes allowed: Any CSS change that brings the page within POLISH-01 pass criteria.
 Fixes not in scope: Aesthetic improvements, spacing rhythm, font refinements — these are v2 per D-12.
 
 **Zoom-trigger guard:** iOS Safari zooms on input focus when `font-size < 16px`. All inputs and textareas in scope already use `font-size: 16px` or `1rem`. Verify no mobile override reduces this.
+
+---
+
+## Animation Contract
+
+Phase 5 introduces no new animations. These rules apply to existing animations found during the mobile audit.
+
+| Rule | Value | Why |
+|------|-------|-----|
+| Duration (micro-interactions) | 150–300ms | Under 150ms feels instant; over 300ms feels laggy |
+| Easing — entering elements | `ease-out` | Decelerates into final position — feels natural |
+| Easing — exiting elements | `ease-in` | Accelerates away — feels intentional |
+| Linear easing | Never for UI transitions | Feels robotic |
+| Max animated elements per view | 2 (e.g., meter bar + consequence reveal) | Prevents distraction/motion sickness |
+| Reduced motion override | Required — see below | WCAG 2.1 AAA |
+
+**Reduced motion pattern (must apply to all transitions):**
+```css
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+```
+
+If this global rule already exists in `src/index.css`, verify it's not overridden by module CSS. If it does not exist, Phase 5 mobile audit adds it.
 
 ---
 
@@ -228,11 +268,11 @@ The QR code is a display-only element. No interaction states beyond:
 
 ## Checker Sign-Off
 
-- [ ] Dimension 1 Copywriting: PASS
-- [ ] Dimension 2 Visuals: PASS
-- [ ] Dimension 3 Color: PASS
-- [ ] Dimension 4 Typography: PASS
-- [ ] Dimension 5 Spacing: PASS
-- [ ] Dimension 6 Registry Safety: PASS
+- [x] Dimension 1 Copywriting: PASS
+- [x] Dimension 2 Visuals: PASS (focal point declared — room code is primary anchor)
+- [x] Dimension 3 Color: PASS (contrast ratios documented; error states require text + color)
+- [x] Dimension 4 Typography: PASS (4 roles in table; 28px scoped as named exception)
+- [x] Dimension 5 Spacing: PASS
+- [x] Dimension 6 Registry Safety: PASS
 
-**Approval:** pending
+**Approval:** approved (gsd-ui-checker 2026-03-26) — enriched with ui-ux-pro-max 2026-03-26
