@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Milestone complete
-stopped_at: Completed 05.1-03-PLAN.md
-last_updated: "2026-03-26T03:11:55.544Z"
+status: Ready to execute
+stopped_at: Completed 06-02-PLAN.md
+last_updated: "2026-03-27T21:10:30.547Z"
 progress:
-  total_phases: 6
+  total_phases: 7
   completed_phases: 6
-  total_plans: 15
-  completed_plans: 15
+  total_plans: 18
+  completed_plans: 16
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Players finish understanding their own ethical reasoning — named, visible, connected to a philosophical tradition.
-**Current focus:** Phase 05.1 — visual-experience-overhaul
+**Current focus:** Phase 06 — kingdom-ui-overhaul
 
 ## Current Position
 
-Phase: 05.1
-Plan: Not started
+Phase: 06 (kingdom-ui-overhaul) — EXECUTING
+Plan: 2 of 3
 
 ## Performance Metrics
 
@@ -60,6 +60,7 @@ Plan: Not started
 | Phase 05-deploy-polish P03 | 4m | 1 tasks | 1 files |
 | Phase 05.1-visual-experience-overhaul P01 | 70s | 2 tasks | 4 files |
 | Phase 05.1-visual-experience-overhaul P03 | 360s | 2 tasks | 10 files |
+| Phase 06-kingdom-ui-overhaul P02 | 3min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -101,6 +102,8 @@ Recent decisions affecting current work:
 - [Phase 05.1-visual-experience-overhaul]: roundKey includes both current_round and status to fire transition at round close, not only round advance
 - [Phase 05.1-visual-experience-overhaul]: computeWarmth helper inline in Host.jsx and Play.jsx — worldState not available at App.jsx level
 - [Phase 05.1-visual-experience-overhaul]: glass .card CSS added in Plan 03 to unblock parallel execution with Plan 02
+- [Phase 06-kingdom-ui-overhaul]: ROMAN[choice.choiceIndex] used for Roman numeral span — stays correct even if choices array order shifts
+- [Phase 06-kingdom-ui-overhaul]: All Play.jsx atmospheric copy uses war council register: council, decree, realm, counsel throughout waiting/pass/round states
 
 ### Roadmap Evolution
 
@@ -117,6 +120,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T03:09:35.711Z
-Stopped at: Completed 05.1-03-PLAN.md
+Last session: 2026-03-27T21:10:30.543Z
+Stopped at: Completed 06-02-PLAN.md
 Resume file: None
