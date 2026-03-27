@@ -11,6 +11,7 @@ Five phases deliver a working real-time multiplayer ethics game for a classroom 
 - [x] **Phase 3: Game Loop** - Rounds run end-to-end: scenario, choice, consequence, world state update (completed 2026-03-25)
 - [x] **Phase 4: End State** - Framework profiles, conflict maps, reflections, host end view (completed 2026-03-26)
 - [ ] **Phase 5: Deploy + Polish** - Ship to Netlify/Vercel, mobile audit, load test
+- [ ] **Phase 6: Kingdom UI Overhaul** - Replace Three.js city with CSS kingdom map, remove round selector (pack drives count), full visual redesign of all 4 screens to fantasy kingdom aesthetic
 
 ## Phase Details
 
@@ -105,6 +106,19 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 3. Game Loop | 3/3 | Complete   | 2026-03-25 |
 | 4. End State | 2/2 | Complete   | 2026-03-26 |
 | 5. Deploy + Polish | 3/3 | In Progress|  |
+| 6. Kingdom UI Overhaul | 0/0 | Planning | - |
+
+### Phase 6: Kingdom UI Overhaul
+**Goal**: All 4 screens express the fantasy kingdom aesthetic — CSS kingdom map replaces placeholder city, pack drives round count (no selector), Landing/HostSetup/Host/Play redesigned with parchment/stone palette, landmark-driven world state indicators, and war council framing
+**Depends on**: Phase 5 (or 05.1)
+**Requirements**: UI-01, UI-02, UI-03, UI-04, UI-05, UI-06, UI-07, UI-08
+**Success Criteria** (what must be TRUE):
+  1. HostSetup page has no round count selector; total_rounds in new session equals the pack's scenario count (kingdom-arc = 7)
+  2. Host screen shows a CSS kingdom map with 4 named landmarks (Bridge of Accord, Citadel Beacon, Village Quarter, Fog of the Vale) instead of Three.js city / CityPlaceholder
+  3. Landmark visual states update after each round based on world state values (flourishing / neutral / declining CSS classes)
+  4. Landing page has kingdom-appropriate heading, palette, and copy ("Enter the Crossroads" or equivalent)
+  5. Player (Play) view scenario text is framed as a scroll/parchment card; choice buttons are styled as decree tiles
+  6. `vite build` completes without errors after all changes
 
 ### Phase 05.1: Visual Experience Overhaul (INSERTED)
 
