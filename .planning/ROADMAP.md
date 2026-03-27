@@ -106,7 +106,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 3. Game Loop | 3/3 | Complete   | 2026-03-25 |
 | 4. End State | 2/2 | Complete   | 2026-03-26 |
 | 5. Deploy + Polish | 3/3 | In Progress|  |
-| 6. Kingdom UI Overhaul | 1/3 | In Progress|  |
+| 6. Kingdom UI Overhaul | 2/3 | In Progress|  |
 
 ### Phase 6: Kingdom UI Overhaul
 **Goal**: All 4 screens express the fantasy kingdom aesthetic — CSS kingdom map replaces placeholder city, pack drives round count (no selector), Landing/HostSetup/Host/Play redesigned with parchment/stone palette, landmark-driven world state indicators, and war council framing
@@ -119,9 +119,9 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
   4. Landing page has kingdom-appropriate heading, palette, and copy ("Enter the Crossroads" or equivalent)
   5. Player (Play) view scenario text is framed as a scroll/parchment card; choice buttons are styled as decree tiles
   6. `vite build` completes without errors after all changes
-**Plans:** 1/3 plans executed
+**Plans:** 2/3 plans executed
 Plans:
-- [ ] 06-01-PLAN.md — KingdomMap component + CSS tokens + Landing redesign + HostSetup pack card
+- [x] 06-01-PLAN.md — KingdomMap component + CSS tokens + Landing redesign + HostSetup pack card
 - [x] 06-02-PLAN.md — Play view decree tiles, amber flourish, atmospheric copy, decree headers
 - [ ] 06-03-PLAN.md — Host.jsx KingdomMap integration + MeterBar landmark labels everywhere
 

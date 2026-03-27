@@ -66,14 +66,14 @@
 
 ### Kingdom Map & Visual Identity
 
-- [ ] **UI-01**: CSS kingdom map replaces the Three.js city / CityPlaceholder on host screen — rendered as a stylized fantasy map with named landmarks that react to world state
-- [ ] **UI-02**: HostSetup removes the round count selector — total_rounds is driven by the loaded pack (kingdom-arc has 7 playable dilemmas); session is created with pack-derived count
-- [ ] **UI-03**: Landing page redesigned to match fantasy kingdom aesthetic — royal crest, serif headline, kingdom-tone copy ("Enter the Crossroads"), dark parchment or stone palette
-- [ ] **UI-04**: HostSetup page redesigned — war council framing, pack metadata visible (title, dilemma count), no round count selector
+- [x] **UI-01**: CSS kingdom map replaces the Three.js city / CityPlaceholder on host screen — rendered as a stylized fantasy map with named landmarks that react to world state
+- [x] **UI-02**: HostSetup removes the round count selector — total_rounds is driven by the loaded pack (kingdom-arc has 7 playable dilemmas); session is created with pack-derived count
+- [x] **UI-03**: Landing page redesigned to match fantasy kingdom aesthetic — royal crest, serif headline, kingdom-tone copy ("Enter the Crossroads"), dark parchment or stone palette
+- [x] **UI-04**: HostSetup page redesigned — war council framing, pack metadata visible (title, dilemma count), no round count selector
 - [ ] **UI-05**: Host game view redesigned — map panel left, round/tally panel right, kingdom-appropriate typography and color
-- [ ] **UI-06**: Play (player) view redesigned — scenario text in scroll/parchment frame, choice buttons styled as decree/action tiles, world state meters in kingdom framing
-- [ ] **UI-07**: Kingdom map landmarks correspond to the 4 world state dimensions: the Bridge of Accord (trust), the Citadel Beacon (courage), the Village Quarter (solidarity), the Fog of the Vale (awareness)
-- [ ] **UI-08**: Map landmark states update visually after each round based on world state values — at minimum CSS class-based state changes (flourishing / neutral / declining)
+- [x] **UI-06**: Play (player) view redesigned — scenario text in scroll/parchment frame, choice buttons styled as decree/action tiles, world state meters in kingdom framing
+- [x] **UI-07**: Kingdom map landmarks correspond to the 4 world state dimensions: the Bridge of Accord (trust), the Citadel Beacon (courage), the Village Quarter (solidarity), the Fog of the Vale (awareness)
+- [x] **UI-08**: Map landmark states update visually after each round based on world state values — at minimum CSS class-based state changes (flourishing / neutral / declining)
 
 ## v2 Requirements
 
