@@ -1,5 +1,7 @@
 import styles from './ScenarioCard.module.css'
 
+const ROMAN = ['I', 'II', 'III']
+
 export default function ScenarioCard({ scenario, lockedIndex, onChoice, submitting, submitError }) {
   if (!scenario) return null
 
@@ -33,6 +35,7 @@ export default function ScenarioCard({ scenario, lockedIndex, onChoice, submitti
               disabled={isLocked && !isLockedChoice && !submitError}
               style={isLocked && isLockedChoice && submitError ? { pointerEvents: 'auto' } : undefined}
             >
+              <span className={styles.choiceNumeral}>{ROMAN[choice.choiceIndex]}.</span>
               {choice.text}
             </button>
           )
