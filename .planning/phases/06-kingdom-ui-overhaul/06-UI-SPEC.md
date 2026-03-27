@@ -54,7 +54,7 @@ Exceptions:
 | Role | Size | Weight | Line Height | Font | Usage |
 |------|------|--------|-------------|------|-------|
 | Body | 16px | 400 | 1.5 | --sans (Inter) | General UI text, input fields, button labels |
-| Label | 13–14px | 400 | 1.4 | --sans (Inter) | Uppercase tracker labels, muted status text, scenario title eyebrow, meter labels |
+| Label | 13px | 400 | 1.4 | --sans (Inter) | Uppercase tracker labels, muted status text, scenario title eyebrow, meter labels |
 | Heading | 21px | 700 | 1.7 | --serif (Playfair Display) | Scenario body text, pack name, pack description heading, narrative text |
 | Display | clamp(2.5rem, 8vw, 3.5rem) | 700 | 1.2 | --serif (Playfair Display) | Landing page hero headline "The Crossroads" |
 
@@ -143,7 +143,7 @@ function getTier(value) {
 }
 ```
 
-**Landmark name labels:** Each landmark has an SVG `<text>` label below its icon. Font: Playfair Display (loaded as web font), size 11px, fill `rgba(245,158,11,0.6)`, letter-spacing 0.1em. Exact label text = landmark names from D-03.
+**Landmark name labels:** Each landmark has an SVG `<text>` label below its icon. Font: Playfair Display (loaded as web font), size 13px, fill `rgba(245,158,11,0.6)`, letter-spacing 0.1em. Exact label text = landmark names from D-03.
 
 **Map panel placement in Host.jsx:**
 - Container takes `flex: 3` (≈60% width) in the `bottomPanels` layout
@@ -243,7 +243,7 @@ No visual changes to MeterBar itself. Labels are passed as props, not hardcoded 
 
 All waiting copy: 16px --sans, color var(--text-muted), text-align center. No weight change.
 
-**Round header eyebrow:** `"Dilemma {N}"` → `"The {N}. Decree"` (e.g., "The 1. Decree"). Uses 14px uppercase --sans, letter-spacing 0.1em, color var(--text-muted).
+**Round header eyebrow:** `"Dilemma {N}"` → `"The {N}. Decree"` (e.g., "The 1. Decree"). Uses 13px uppercase --sans, letter-spacing 0.1em, color var(--text-muted).
 
 **ScenarioCard receives amber flourish** as described in component section above.
 
