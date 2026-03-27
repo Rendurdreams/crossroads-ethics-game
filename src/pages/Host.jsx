@@ -1,15 +1,15 @@
 import { useState, useEffect, useReducer, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { motion, useReducedMotion } from 'framer-motion'
 import { supabase } from '../lib/supabase.js'
-import { scenarios } from '../lib/scenarios.js'
+import { getDefaultPack, getScenarioByRound } from '../lib/scenarios.js'
+
+const pack = getDefaultPack()
 import { applyChoicesToWorld, computeNarrative } from '../lib/worldState.js'
 import { computeProfile, findConflicts } from '../lib/detection.js'
 import { FRAMEWORKS } from '../lib/frameworks.js'
 import PlayerRoster from '../components/PlayerRoster.jsx'
-import CityPlaceholder from '../components/CityPlaceholder.jsx'
-import WorldStatePanel from '../components/WorldStatePanel.jsx'
 import MeterBar from '../components/MeterBar.jsx'
+import KingdomMap from '../components/KingdomMap.jsx'
 import styles from './Host.module.css'
 
 // ─── Round state machine ───────────────────────────────────────────────────
@@ -43,23 +43,14 @@ function roundReducer(state, action) {
   }
 }
 
-const pageVariants = {
-  initial: { opacity: 0 },
-  animate: { opacity: 1, transition: { duration: 0.4, ease: 'easeOut' } },
-  exit:    { opacity: 0, transition: { duration: 0.25, ease: 'easeIn' } }
-}
-
 // ─── Host component ────────────────────────────────────────────────────────
 
 export default function Host() {
   const { sessionId } = useParams()
   const navigate = useNavigate()
-  const shouldReduce = useReducedMotion()
-  const variants = shouldReduce ? { initial: {}, animate: {}, exit: {} } : pageVariants
 
   const [session, setSession] = useState(null)
   const [players, setPlayers] = useState([])
-  const [totalRounds, setTotalRounds] = useState(4)
   const [loading, setLoading] = useState(true)
   const [started, setStarted] = useState(false)
   const [timerDuration, setTimerDuration] = useState(60)
@@ -70,7 +61,6 @@ export default function Host() {
   const [endSessionError, setEndSessionError] = useState(false)
   const [reflections, setReflections] = useState([])
 
-  // Persistent broadcast channel ref for timer
   const timerChannelRef = useRef(null)
 
   // ── Initial data load + subscriptions ───────────────────────────────────
@@ -78,7 +68,6 @@ export default function Host() {
   useEffect(() => {
     if (!sessionId) return
 
-    // 1. Fetch session row
     supabase
       .from('sessions')
       .select('*')
@@ -90,11 +79,9 @@ export default function Host() {
           return
         }
         setSession(data)
-        setTotalRounds(data.total_rounds || 4)
         setLoading(false)
       })
 
-    // 2. Fetch existing players (BEFORE subscription to avoid race)
     supabase
       .from('players')
       .select('*')
@@ -103,7 +90,6 @@ export default function Host() {
         setPlayers(data ?? [])
       })
 
-    // 3. Subscribe to new player joins
     const playersChannel = supabase.channel(`players:${sessionId}`)
       .on(
         'postgres_changes',
@@ -114,7 +100,6 @@ export default function Host() {
           filter: `session_id=eq.${sessionId}`
         },
         (payload) => {
-          // Dedup: prevent race condition where fetch + subscription both deliver the same player
           setPlayers(prev =>
             prev.some(p => p.id === payload.new.id)
               ? prev
@@ -124,7 +109,6 @@ export default function Host() {
       )
       .subscribe()
 
-    // 4. Subscribe to session updates (world_state, status, current_round changes)
     const sessionChannel = supabase.channel(`host-session:${sessionId}`)
       .on(
         'postgres_changes',
@@ -195,7 +179,6 @@ export default function Host() {
   useEffect(() => {
     if (!sessionId || !session?.current_round || session?.status !== 'active') return
 
-    // Fetch existing choices for this round
     supabase.from('choices').select('*')
       .eq('session_id', sessionId)
       .eq('round_number', session.current_round)
@@ -203,7 +186,6 @@ export default function Host() {
         ;(data ?? []).forEach(c => dispatch({ type: 'CHOICE_RECEIVED', choice: c }))
       })
 
-    // Subscribe to new choices
     const channel = supabase.channel(`host-choices:${sessionId}:r${session.current_round}`)
       .on('postgres_changes', {
         event: 'INSERT', schema: 'public', table: 'choices',
@@ -218,18 +200,16 @@ export default function Host() {
     return () => supabase.removeChannel(channel)
   }, [sessionId, session?.current_round, session?.status])
 
-  // ── Reflection feed subscription (active on session finished) ───────────
+  // ── Reflection feed subscription ───────────────────────────────────────
 
   useEffect(() => {
     if (session?.status !== 'finished') return
 
-    // Fetch existing reflections
     supabase.from('reflections').select('text, submitted_at')
       .eq('session_id', sessionId)
       .order('submitted_at', { ascending: true })
       .then(({ data }) => setReflections(data ?? []))
 
-    // Subscribe to new reflection inserts
     const channel = supabase.channel(`reflections:${sessionId}`)
       .on('postgres_changes', {
         event: 'INSERT',
@@ -244,10 +224,10 @@ export default function Host() {
     return () => supabase.removeChannel(channel)
   }, [sessionId, session?.status])
 
-  // ── Vote tally computation ───────────────────────────────────────────────
+  // ── Vote tally computation ─────────────────────────────────────────────
 
   function computeTally() {
-    const currentScenario = scenarios[(session?.current_round ?? 1) - 1]
+    const currentScenario = getScenarioByRound(pack, session?.current_round ?? 1)
     if (!currentScenario) return []
     const counts = [0, 0, 0]
     roundState.choices.forEach(c => {
@@ -261,24 +241,24 @@ export default function Host() {
     }))
   }
 
-  // ── Round control functions ──────────────────────────────────────────────
+  // ── Round control functions ────────────────────────────────────────────
 
   async function startGame() {
     dispatch({ type: 'ROUND_START', duration: timerDuration })
     await supabase
       .from('sessions')
-      .update({ status: 'active', total_rounds: totalRounds, current_round: 1 })
+      .update({ status: 'active', total_rounds: session.total_rounds, current_round: 1 })
       .eq('id', sessionId)
     setStarted(true)
   }
 
   async function closeRound() {
-    if (roundState.roundClosed) return // idempotent guard
+    if (roundState.roundClosed) return
     dispatch({ type: 'ROUND_CLOSE' })
 
     const roundIndex = session.current_round - 1
     const newWorldState = applyChoicesToWorld(
-      roundState.choices, scenarios, roundIndex, session.world_state
+      roundState.choices, pack.scenarios, roundIndex, session.world_state
     )
 
     await supabase.from('sessions')
@@ -299,41 +279,48 @@ export default function Host() {
     setEndSessionError(false)
 
     try {
-      // 1. Fetch all players' choice_history
-      const { data: allPlayers, error: fetchErr } = await supabase
-        .from('players')
-        .select('id, choice_history, framework_counts')
-        .eq('session_id', sessionId)
+      const [{ data: allPlayers, error: fetchErr }, { data: allChoices, error: choicesErr }] = await Promise.all([
+        supabase.from('players').select('id').eq('session_id', sessionId),
+        supabase.from('choices').select('player_id, round_number, frameworks').eq('session_id', sessionId)
+      ])
 
       if (fetchErr) throw fetchErr
+      if (choicesErr) throw choicesErr
 
-      // 2. Compute profiles for each player
+      // Build choice_history per player from the choices table
+      // (players.choice_history is never written — source of truth is the choices table)
+      const historyByPlayer = {}
+      ;(allChoices ?? []).forEach(c => {
+        if (!historyByPlayer[c.player_id]) historyByPlayer[c.player_id] = []
+        historyByPlayer[c.player_id].push({ round: c.round_number, frameworks: c.frameworks })
+      })
+
       const updates = allPlayers.map(p => {
-        const history = p.choice_history ?? []
+        const history = historyByPlayer[p.id] ?? []
         const { dominant, counts } = computeProfile(history)
         const conflicts = findConflicts(history)
         return {
           id: p.id,
           dominant_framework: dominant,
           conflicts: conflicts,
-          framework_counts: counts
+          framework_counts: counts,
+          choice_history: history
         }
       })
 
-      // 3. Batch update player rows — all must complete before status change
       await Promise.all(
         updates.map(u =>
           supabase.from('players')
             .update({
               dominant_framework: u.dominant_framework,
               conflicts: u.conflicts,
-              framework_counts: u.framework_counts
+              framework_counts: u.framework_counts,
+              choice_history: u.choice_history
             })
             .eq('id', u.id)
         )
       )
 
-      // 4. Set session to finished AFTER all player writes complete (avoids race)
       await supabase.from('sessions')
         .update({ status: 'finished' })
         .eq('id', sessionId)
@@ -345,32 +332,21 @@ export default function Host() {
     }
   }
 
-  // ── Atmosphere warmth computation ─────────────────────────────────────────
-
-  function computeWarmth(worldState) {
-    if (!worldState) return 0.5
-    return (worldState.trust + worldState.courage + worldState.solidarity + worldState.awareness) / 400
-  }
-
-  // ── Render ───────────────────────────────────────────────────────────────
+  // ── Render ─────────────────────────────────────────────────────────────
 
   if (loading) {
     return (
-      <motion.div
-        className={styles.page}
-        variants={variants}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-      >
-        <p className={styles.loading}>Loading...</p>
-      </motion.div>
+      <div className={styles.loadingOverlay}>
+        <p className={styles.loadingText}>Loading...</p>
+      </div>
     )
   }
 
-  // End state
+  const worldState = session?.world_state ?? { trust: 50, courage: 50, solidarity: 50, awareness: 50 }
+
+  // ── End state ──────────────────────────────────────────────────────────
+
   if (session?.status === 'finished') {
-    // Compute group framework breakdown from players array
     const frameworkCounts = { consequentialism: 0, deontology: 0, care: 0, virtue: 0 }
     players.forEach(p => {
       if (p.dominant_framework && frameworkCounts.hasOwnProperty(p.dominant_framework)) {
@@ -378,167 +354,189 @@ export default function Host() {
       }
     })
     const totalWithFramework = Object.values(frameworkCounts).reduce((a, b) => a + b, 0)
-    const sortedFrameworks = Object.entries(frameworkCounts)
-      .sort((a, b) => b[1] - a[1])
+    const sortedFrameworks = Object.entries(frameworkCounts).sort((a, b) => b[1] - a[1])
     const leadingFramework = sortedFrameworks[0]?.[0]
-
-    // Compute world narrative
-    const narrative = computeNarrative(session.world_state)
-    const warmth = computeWarmth(session.world_state)
+    const narrative = computeNarrative(worldState)
 
     return (
-      <motion.div
-        className={styles.roundView}
-        variants={variants}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-        style={{ '--atmosphere-warmth': warmth }}
-      >
-        <div className={styles.cityPanel}>
-          <CityPlaceholder />
+      <>
+        <div className={styles.canvas}>
+          <KingdomMap worldState={worldState} />
         </div>
-        <div className={`${styles.statePanel} ${styles.endPanel}`}>
 
-          {/* Group Framework Breakdown */}
-          <div className={styles.endSection}>
-            <p className={styles.endSectionLabel}>YOUR GROUP</p>
-            <div className={styles.frameworkList}>
+        <div className={styles.topBar}>
+          <span className={styles.topRoomCode}>{session.room_code}</span>
+          <span className={styles.topStatus}>Session Complete</span>
+        </div>
+
+        <div className={styles.hud}>
+          <div className={styles.endBottomPanels}>
+            <div className={`${styles.glassPanel} ${styles.endPanelWide}`}>
+              <p className={styles.endSectionLabel}>WHAT HAPPENED</p>
+              <p className={styles.narrativeText}>{narrative}</p>
+
+              <p className={styles.endSectionLabel} style={{ marginTop: 20 }}>FROM THE COUNCIL</p>
+              {reflections.length === 0 ? (
+                <p className={styles.reflectionEmpty}>Reflections will appear as players submit them.</p>
+              ) : (
+                <div className={styles.reflectionFeed}>
+                  {reflections.map((r, i) => (
+                    <div key={i} className={styles.reflectionCard}>
+                      <p className={styles.reflectionText}>{r.text}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className={`${styles.glassPanel} ${styles.endPanelNarrow}`}>
+              <p className={styles.endSectionLabel}>YOUR GROUP</p>
               {sortedFrameworks.map(([key, count]) => (
                 <div key={key} className={styles.frameworkRow}>
                   <span className={key === leadingFramework ? styles.frameworkNameLead : styles.frameworkNameNormal}>
                     {FRAMEWORKS[key]?.name ?? key}
                   </span>
                   <span className={styles.frameworkStat}>
-                    {count} player{count !== 1 ? 's' : ''} ({totalWithFramework > 0 ? Math.round((count / totalWithFramework) * 100) : 0}%)
+                    {count} ({totalWithFramework > 0 ? Math.round((count / totalWithFramework) * 100) : 0}%)
                   </span>
                 </div>
               ))}
-            </div>
-          </div>
 
-          {/* World State Narrative */}
-          <div className={styles.endSection}>
-            <p className={styles.endSectionLabel}>WHAT HAPPENED</p>
-            <p className={styles.narrativeText}>{narrative}</p>
-          </div>
-
-          {/* Final World State Meters */}
-          <div className={styles.endSection}>
-            <p className={styles.endSectionLabel}>FINAL STATE</p>
-            <div className={styles.endMeters}>
-              <MeterBar label="Trust" value={session.world_state?.trust ?? 50} />
-              <MeterBar label="Courage" value={session.world_state?.courage ?? 50} />
-              <MeterBar label="Solidarity" value={session.world_state?.solidarity ?? 50} />
-              <MeterBar label="Awareness" value={session.world_state?.awareness ?? 50} />
-            </div>
-          </div>
-
-          {/* Anonymous Reflection Feed */}
-          <div className={styles.endSection}>
-            <p className={styles.endSectionLabel}>FROM YOUR GROUP</p>
-            {reflections.length === 0 ? (
-              <p className={styles.reflectionEmpty}>Reflections will appear here as players submit them.</p>
-            ) : (
-              <div className={styles.reflectionFeed}>
-                {reflections.map((r, i) => (
-                  <div key={i} className={styles.reflectionCard}>
-                    <p className={styles.reflectionText}>{r.text}</p>
-                  </div>
-                ))}
+              <p className={styles.endSectionLabel} style={{ marginTop: 20 }}>FINAL STATE</p>
+              <div className={styles.endMeters}>
+                <MeterBar label="Bridge of Accord" value={worldState.trust} />
+                <MeterBar label="Citadel Beacon" value={worldState.courage} />
+                <MeterBar label="Village Quarter" value={worldState.solidarity} />
+                <MeterBar label="Fog of the Vale" value={worldState.awareness} />
               </div>
-            )}
+            </div>
           </div>
-
-          {/* Session complete label */}
-          <p className={styles.sessionComplete}>Session complete.</p>
         </div>
-      </motion.div>
+      </>
     )
   }
 
-  // Round view (active or round_complete)
+  // ── Round view (active or round_complete) ──────────────────────────────
+
   if (session?.status === 'active' || session?.status === 'round_complete') {
-    const currentScenario = scenarios[(session.current_round ?? 1) - 1]
-    const warmth = computeWarmth(session.world_state)
+    const currentScenario = getScenarioByRound(pack, session.current_round ?? 1)
+    const tally = computeTally()
+    const isLastRound = session.current_round >= session.total_rounds
 
     return (
-      <motion.div
-        className={styles.roundView}
-        variants={variants}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-        style={{ '--atmosphere-warmth': warmth }}
-      >
-        <div className={styles.cityPanel}>
-          <CityPlaceholder />
+      <>
+        <div className={styles.canvas}>
+          <KingdomMap worldState={worldState} />
         </div>
-        <div className={styles.statePanel}>
-          <WorldStatePanel
-            scenario={currentScenario}
-            tally={computeTally()}
-            submitted={roundState.choices.length}
-            totalPlayers={players.length}
-            worldState={session.world_state}
-            timerRemaining={roundState.timerSeconds}
-            timerTotal={timerDuration}
-            roundClosed={roundState.roundClosed}
-            onCloseRound={closeRound}
-            onNextRound={nextRound}
-            onEndGame={endSession}
-            isLastRound={session.current_round >= session.total_rounds}
-          />
+
+        <div className={styles.topBar}>
+          <span className={styles.topRoomCode}>{session.room_code}</span>
+          <span className={styles.topRound}>Dilemma {session.current_round} of {session.total_rounds}</span>
+          <span className={styles.topStatus}>
+            {roundState.roundClosed ? 'The Realm Has Spoken' : 'The Council Deliberates'}
+          </span>
         </div>
-      </motion.div>
+
+        <div className={styles.hud}>
+          <div className={styles.bottomPanels}>
+            {/* Scenario + votes */}
+            <div className={`${styles.glassPanel} ${styles.scenarioPanel}`}>
+              <p className={styles.scenarioTitle}>
+                {currentScenario?.title ?? `Dilemma ${session.current_round}`}
+                {currentScenario?.weight && ` — ${currentScenario.weight}`}
+              </p>
+
+              {tally.length > 0 && (
+                <div className={styles.tallySection}>
+                  {tally.map((t, i) => (
+                    <div key={i} className={styles.tallyRow}>
+                      <span className={styles.tallyLabel}>{t.text}</span>
+                      <div className={styles.tallyBarTrack}>
+                        <div className={styles.tallyBarFill} style={{ width: `${t.pct}%` }} />
+                      </div>
+                      <span className={styles.tallyPct}>{t.pct}%</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              <p className={styles.submittedCount}>
+                {roundState.choices.length} / {players.length} submitted
+              </p>
+            </div>
+
+            {/* World state meters */}
+            <div className={`${styles.glassPanel} ${styles.metersPanel}`}>
+              <p className={styles.metersTitle}>The Kingdom</p>
+              <div className={styles.metersGrid}>
+                <MeterBar label="Bridge of Accord" value={worldState.trust} />
+                <MeterBar label="Citadel Beacon" value={worldState.courage} />
+                <MeterBar label="Village Quarter" value={worldState.solidarity} />
+                <MeterBar label="Fog of the Vale" value={worldState.awareness} />
+              </div>
+            </div>
+
+            {/* Timer + controls */}
+            <div className={`${styles.glassPanel} ${styles.controlPanel}`}>
+              <p className={`${styles.timer} ${roundState.timerSeconds <= 10 ? styles.timerDanger : ''}`}>
+                {roundState.timerSeconds}
+              </p>
+
+              {!roundState.roundClosed ? (
+                <button className={styles.actionBtn} onClick={closeRound}>
+                  Close Round
+                </button>
+              ) : isLastRound ? (
+                <button
+                  className={`${styles.actionBtn} ${styles.actionBtnDanger}`}
+                  onClick={endSession}
+                  disabled={endingSession}
+                >
+                  {endingSession ? 'Ending...' : 'End Game'}
+                </button>
+              ) : (
+                <button className={styles.actionBtn} onClick={nextRound}>
+                  Next Round
+                </button>
+              )}
+            </div>
+          </div>
+        </div>
+      </>
     )
   }
 
-  // Lobby view
+  // ── Lobby view ─────────────────────────────────────────────────────────
+
   return (
-    <motion.div
-      className={styles.page}
-      variants={variants}
-      initial="initial"
-      animate="animate"
-      exit="exit"
-    >
-      <p className={styles.roomLabel}>ROOM CODE</p>
-      <div className={styles.roomCode}>{session?.room_code}</div>
-
-      <div className={styles.content}>
-        <PlayerRoster players={players} />
-        <p className={styles.playerCount}>{players.length} player(s) joined</p>
-
-        <div className={styles.roundSelector}>
-          <span className={styles.roundLabel}>Rounds</span>
-          {[3, 4, 5, 6].map(n => (
-            <button
-              key={n}
-              className={
-                n === totalRounds
-                  ? `${styles.roundBtn} ${styles.roundBtnActive}`
-                  : `${styles.roundBtn} ${styles.roundBtnInactive}`
-              }
-              onClick={() => setTotalRounds(n)}
-            >
-              {n}
-            </button>
-          ))}
-        </div>
-
-        {started ? (
-          <p className={styles.started}>Game started — players are in!</p>
-        ) : (
-          <button
-            className={styles.startBtn}
-            disabled={players.length < 2}
-            onClick={startGame}
-          >
-            Start Game ({players.length} player{players.length !== 1 ? 's' : ''})
-          </button>
-        )}
+    <>
+      <div className={styles.canvas}>
+        <KingdomMap worldState={worldState} />
       </div>
-    </motion.div>
+
+      <div className={styles.lobbyOverlay}>
+        <p className={styles.lobbyRoomLabel}>CHAMBER CODE</p>
+        <div className={styles.lobbyRoomCode}>{session?.room_code}</div>
+
+        <div className={styles.lobbyCard}>
+          <PlayerRoster players={players} />
+          <p className={styles.lobbyPlayerCount}>
+            {players.length} player{players.length !== 1 ? 's' : ''} joined
+          </p>
+
+          {started ? (
+            <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>Game started</p>
+          ) : (
+            <button
+              className={styles.actionBtn}
+              disabled={players.length < 1}
+              onClick={startGame}
+            >
+              Start Game ({players.length} player{players.length !== 1 ? 's' : ''})
+            </button>
+          )}
+        </div>
+      </div>
+    </>
   )
 }
