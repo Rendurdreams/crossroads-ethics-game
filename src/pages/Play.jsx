@@ -2,7 +2,9 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { supabase } from '../lib/supabase.js'
-import { scenarios } from '../lib/scenarios.js'
+import { getDefaultPack, getScenarioByRound, getReflectionScenario } from '../lib/scenarios.js'
+
+const pack = getDefaultPack()
 import { FRAMEWORKS } from '../lib/frameworks.js'
 import ScenarioCard from '../components/ScenarioCard.jsx'
 import ContentNote from '../components/ContentNote.jsx'
@@ -250,7 +252,7 @@ export default function Play() {
     setSubmitting(true)
     setSubmitError(false)
 
-    const currentScenario = scenarios[session.current_round - 1]
+    const currentScenario = getScenarioByRound(pack, session.current_round)
     const { error } = await supabase.from('choices').insert({
       session_id: sessionId,
       player_id: player.id,
@@ -326,10 +328,10 @@ export default function Play() {
       >
         <div className={styles.avatar}>{player?.avatar}</div>
         <div className={styles.name}>{player?.name}</div>
-        <p className={styles.waiting}>Waiting for host to start...</p>
-        <p className={styles.count}>{playerCount} player(s) in room</p>
+        <p className={styles.waiting}>The council assembles.</p>
+        <p className={styles.count}>{playerCount} councillor{playerCount !== 1 ? 's' : ''} present</p>
         {session?.room_code && (
-          <p className={styles.roomReminder}>Room: {session.room_code}</p>
+          <p className={styles.roomReminder}>Chamber: {session.room_code}</p>
         )}
       </motion.div>
     )
@@ -338,7 +340,7 @@ export default function Play() {
   // Game finished view — FrameworkProfile + optional reflection input
   if (gameFinished || session?.status === 'finished') {
     const showReflection = session?.total_rounds === 6
-    const reflectionQuestion = scenarios[5]?.text ?? ''
+    const reflectionQuestion = getReflectionScenario(pack)?.text ?? ''
     const warmth = computeWarmth(session?.world_state)
 
     return (
@@ -395,7 +397,7 @@ export default function Play() {
     )
   }
 
-  const currentScenario = session?.current_round ? scenarios[session.current_round - 1] : null
+  const currentScenario = session?.current_round ? getScenarioByRound(pack, session.current_round) : null
   const warmth = computeWarmth(session?.world_state)
   const roundKey = `round-${session?.current_round}-${session?.status}`
 
@@ -422,9 +424,9 @@ export default function Play() {
                 exit="exit"
               >
                 <div className={styles.passConsequence}>
-                  <p className={styles.passConsequenceText}>You sat this one out. Here&apos;s what happened:</p>
+                  <p className={styles.passConsequenceText}>You have abstained from this decree.</p>
                   <div className={styles.metersSection}>
-                    <p className={styles.metersLabel}>WORLD STATE</p>
+                    <p className={styles.metersLabel}>THE REALM</p>
                     <div className={styles.meters}>
                       <MeterBar label="Trust" value={session.world_state?.trust ?? 50} />
                       <MeterBar label="Courage" value={session.world_state?.courage ?? 50} />
@@ -496,9 +498,9 @@ export default function Play() {
               exit="exit"
             >
               <div className={styles.passConsequence}>
-                <p className={styles.passConsequenceText}>The round ended before you submitted.</p>
+                <p className={styles.passConsequenceText}>The decree was sealed before your counsel arrived.</p>
                 <div className={styles.metersSection}>
-                  <p className={styles.metersLabel}>WORLD STATE</p>
+                  <p className={styles.metersLabel}>THE REALM</p>
                   <div className={styles.meters}>
                     <MeterBar label="Trust" value={session.world_state?.trust ?? 50} />
                     <MeterBar label="Courage" value={session.world_state?.courage ?? 50} />
@@ -540,7 +542,7 @@ export default function Play() {
               >
                 <div className={styles.roundHeader}>
                   {player?.avatar && <span className={styles.headerAvatar}>{player.avatar}</span>}
-                  <span className={styles.roundLabel}>Round {session.current_round}</span>
+                  <span className={styles.roundLabel}>{`The ${session.current_round}. Decree`}</span>
                 </div>
 
                 <p className={styles.reflectionRoundQuestion}>{currentScenario.text}</p>
@@ -602,8 +604,8 @@ export default function Play() {
         >
           <div className={styles.gameContent}>
             <div className={styles.passView}>
-              <p className={styles.passText}>You sat this one out.</p>
-              <p className={styles.passSubtext}>You&apos;ll see the outcome when the round closes.</p>
+              <p className={styles.passText}>You have abstained from this decree.</p>
+              <p className={styles.passSubtext}>The realm weighs your counsel.</p>
             </div>
             <p className={styles.submittedCounter}>
               <span className={styles.submittedNumber}>{submittedCount}</span>
@@ -638,7 +640,7 @@ export default function Play() {
             >
               <div className={styles.roundHeader}>
                 {player?.avatar && <span className={styles.headerAvatar}>{player.avatar}</span>}
-                <span className={styles.roundLabel}>Round {session.current_round}</span>
+                <span className={styles.roundLabel}>The Council Deliberates — Dilemma {session.current_round}</span>
               </div>
 
               <ScenarioCard
@@ -651,7 +653,7 @@ export default function Play() {
 
               {lockedChoiceIndex !== null && (
                 <div className={styles.waitingSection}>
-                  <p className={styles.waitingText}>Waiting for others...</p>
+                  <p className={styles.waitingText}>Awaiting the council&apos;s judgment.</p>
                   <p className={styles.submittedCounter}>
                     <span className={styles.submittedNumber}>{submittedCount}</span>
                     {' '}of {totalPlayerCount} submitted
