@@ -55,12 +55,12 @@ Exceptions:
 |------|------|--------|-------------|------|-------|
 | Body | 16px | 400 | 1.5 | --sans (Inter) | General UI text, input fields, button labels |
 | Label | 13–14px | 400 | 1.4 | --sans (Inter) | Uppercase tracker labels, muted status text, scenario title eyebrow, meter labels |
-| Heading | 18–21px | 700 | 1.7 | --serif (Playfair Display) | Scenario body text, pack description, narrative text |
+| Heading | 21px | 700 | 1.7 | --serif (Playfair Display) | Scenario body text, pack name, pack description heading, narrative text |
 | Display | clamp(2.5rem, 8vw, 3.5rem) | 700 | 1.2 | --serif (Playfair Display) | Landing page hero headline "The Crossroads" |
 
 **Landmark label sizing:** Landmark names on MeterBar use 13px at weight 400 (--sans), consistent with existing `metersTitle` pattern. Labels replace "Trust" / "Courage" / "Solidarity" / "Awareness" — font and weight unchanged.
 
-**Pack identity card (HostSetup):** Pack name ("Kingdom of Ash") at 28px weight 700 --serif (matches existing `.heading`). Dilemma count label at 13px uppercase --sans. Pack description at 16px weight 400 --sans, line-height 1.5.
+**Pack identity card (HostSetup):** Pack name ("Kingdom of Ash") at 21px weight 700 --serif (Heading role). Dilemma count label at 13px uppercase --sans. Pack description at 16px weight 400 --sans, line-height 1.5.
 
 **Roman numeral prefix (decree tiles):** 13px weight 700 --sans, color: var(--accent), displayed inline before choice text. Choice text itself remains 16px weight 400 --sans.
 
@@ -206,7 +206,7 @@ No visual changes to MeterBar itself. Labels are passed as props, not hardcoded 
 **Removed:** `.roundSelector` / round count buttons (D-08). No replacement selector.
 
 **Replaced with: Pack identity card** (new `.packCard` glass panel, max-width 400px):
-- Pack name: "Kingdom of Ash" — 28px weight 700 Playfair Display, color var(--text-h), margin-bottom 8px
+- Pack name: "Kingdom of Ash" — 21px weight 700 Playfair Display (Heading role), color var(--text-h), margin-bottom 8px
 - Dilemma count: `"7 dilemmas"` — 13px uppercase --sans, color var(--accent), letter-spacing 0.15em
 - Divider: amber gradient line (existing divider pattern)
 - Pack description: from `kingdomArcPack.description` — 16px weight 400 --sans, line-height 1.5, color var(--text-muted)
