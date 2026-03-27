@@ -1,0 +1,42 @@
+.mapContainer {
+  width: 100%;
+  height: auto;
+}
+
+.flourishing {
+  fill: var(--landmark-flourishing);
+  filter: drop-shadow(0 0 12px var(--landmark-flourishing-glow));
+  transition: fill 1.2s ease, filter 1.2s ease, opacity 1.2s ease;
+}
+
+.neutral {
+  fill: var(--landmark-neutral);
+  filter: drop-shadow(0 0 6px var(--landmark-neutral-glow));
+  transition: fill 1.2s ease, filter 1.2s ease, opacity 1.2s ease;
+}
+
+.declining {
+  fill: var(--landmark-declining);
+  filter: none;
+  opacity: 0.5;
+  transition: fill 1.2s ease, filter 1.2s ease, opacity 1.2s ease;
+}
+
+/* Fog landmark: opacity is inverted — higher awareness = less fog */
+.fogFlourishing {
+  fill: rgba(100, 116, 139, 0.3);
+  opacity: 0.15;
+  transition: fill 1.2s ease, opacity 1.2s ease;
+}
+
+.fogNeutral {
+  fill: rgba(100, 116, 139, 0.4);
+  opacity: 0.35;
+  transition: fill 1.2s ease, opacity 1.2s ease;
+}
+
+.fogDeclining {
+  fill: rgba(100, 116, 139, 0.5);
+  opacity: 0.6;
+  transition: fill 1.2s ease, opacity 1.2s ease;
+}
