@@ -41,12 +41,12 @@ export default function WorldStatePanel({
 
       {/* Section 3 — World State */}
       <div className={styles.section}>
-        <p className={styles.sectionLabel}>World State</p>
+        <p className={styles.sectionLabel}>The Realm</p>
         <div className={styles.meters}>
-          <MeterBar label="Trust" value={worldState?.trust ?? 50} />
-          <MeterBar label="Courage" value={worldState?.courage ?? 50} />
-          <MeterBar label="Solidarity" value={worldState?.solidarity ?? 50} />
-          <MeterBar label="Awareness" value={worldState?.awareness ?? 50} />
+          <MeterBar label="Bridge of Accord" value={worldState?.trust ?? 50} />
+          <MeterBar label="Citadel Beacon" value={worldState?.courage ?? 50} />
+          <MeterBar label="Village Quarter" value={worldState?.solidarity ?? 50} />
+          <MeterBar label="Fog of the Vale" value={worldState?.awareness ?? 50} />
         </div>
       </div>
 
@@ -59,12 +59,12 @@ export default function WorldStatePanel({
       <div className={styles.section}>
         {!roundClosed && (
           <button className={styles.actionBtn} onClick={onCloseRound}>
-            Close Round
+            Close Dilemma
           </button>
         )}
         {roundClosed && !isLastRound && (
           <button className={styles.actionBtn} onClick={onNextRound}>
-            Next Round
+            Next Dilemma
           </button>
         )}
         {roundClosed && isLastRound && (

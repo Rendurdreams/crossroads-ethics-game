@@ -13,12 +13,12 @@ export default function ConsequenceReveal({ consequence, framework, explanation,
         </div>
 
         <div className={styles.metersWrapper}>
-          <p className={styles.metersLabel}>WORLD STATE</p>
+          <p className={styles.metersLabel}>THE REALM</p>
           <div className={styles.meters}>
-            <MeterBar label="Trust" value={worldState.trust} />
-            <MeterBar label="Courage" value={worldState.courage} />
-            <MeterBar label="Solidarity" value={worldState.solidarity} />
-            <MeterBar label="Awareness" value={worldState.awareness} />
+            <MeterBar label="Bridge of Accord" value={worldState.trust} />
+            <MeterBar label="Citadel Beacon" value={worldState.courage} />
+            <MeterBar label="Village Quarter" value={worldState.solidarity} />
+            <MeterBar label="Fog of the Vale" value={worldState.awareness} />
           </div>
         </div>
       </div>
