@@ -3,7 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { QRCodeSVG } from 'qrcode.react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { supabase } from '../lib/supabase.js'
+import { getDefaultPack, getPlayableScenarios } from '../lib/scenarios.js'
 import styles from './HostSetup.module.css'
+
+const pack = getDefaultPack()
+const dilemmaCount = getPlayableScenarios(pack).length
 
 const pageVariants = {
   initial: { opacity: 0 },
@@ -18,7 +22,6 @@ export default function HostSetup() {
   const variants = shouldReduce ? { initial: {}, animate: {}, exit: {} } : pageVariants
 
   const [session, setSession] = useState(null)
-  const [totalRounds, setTotalRounds] = useState(4)
   const [loading, setLoading] = useState(true)
   const [opening, setOpening] = useState(false)
 
@@ -39,17 +42,12 @@ export default function HostSetup() {
           return
         }
         setSession(data)
-        setTotalRounds(data.total_rounds || 4)
         setLoading(false)
       })
   }, [sessionId, navigate])
 
   async function openLobby() {
     setOpening(true)
-    await supabase
-      .from('sessions')
-      .update({ total_rounds: totalRounds })
-      .eq('id', sessionId)
     navigate(`/host/${sessionId}`)
   }
 
@@ -75,9 +73,9 @@ export default function HostSetup() {
       animate="animate"
       exit="exit"
     >
-      <h1 className={styles.heading}>You're the host.</h1>
+      <h1 className={styles.heading}>The council awaits.</h1>
 
-      <p className={styles.roomLabel}>ROOM CODE</p>
+      <p className={styles.roomLabel}>CHAMBER CODE</p>
       <div className={styles.roomCode}>{session?.room_code}</div>
 
       <div className={styles.qrCode}>
@@ -91,24 +89,14 @@ export default function HostSetup() {
       <p className={styles.qrInstruction}>Scan to join on your phone</p>
 
       <p className={styles.instructions}>
-        Share the room code. When your class is ready, open the lobby.
+        Share the code. When your council is assembled, open the chamber.
       </p>
 
-      <div className={styles.roundSelector}>
-        <span className={styles.roundLabel}>Rounds</span>
-        {[3, 4, 5, 6].map(n => (
-          <button
-            key={n}
-            className={
-              n === totalRounds
-                ? `${styles.roundBtn} ${styles.roundBtnActive}`
-                : `${styles.roundBtn} ${styles.roundBtnInactive}`
-            }
-            onClick={() => setTotalRounds(n)}
-          >
-            {n}
-          </button>
-        ))}
+      <div className={styles.packCard}>
+        <h2 className={styles.packName}>{pack.name}</h2>
+        <p className={styles.packCount}>{dilemmaCount} dilemmas</p>
+        <div className={styles.packDivider} />
+        <p className={styles.packDescription}>{pack.description}</p>
       </div>
 
       <button
@@ -116,7 +104,7 @@ export default function HostSetup() {
         onClick={openLobby}
         disabled={opening}
       >
-        {opening ? 'Opening...' : 'Open Lobby'}
+        {opening ? 'Opening...' : 'Open the Gates'}
       </button>
     </motion.div>
   )
