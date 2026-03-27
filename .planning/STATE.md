@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: Ready to execute
-stopped_at: Completed 06-01-PLAN.md
-last_updated: "2026-03-27T21:12:01.650Z"
+status: Phase complete — ready for verification
+stopped_at: Completed 06-kingdom-ui-overhaul-03-PLAN.md
+last_updated: "2026-03-27T21:28:20.247Z"
 progress:
   total_phases: 7
-  completed_phases: 6
+  completed_phases: 7
   total_plans: 18
-  completed_plans: 17
+  completed_plans: 18
 ---
 
 # Project State
@@ -62,6 +62,7 @@ Plan: 3 of 3
 | Phase 05.1-visual-experience-overhaul P03 | 360s | 2 tasks | 10 files |
 | Phase 06-kingdom-ui-overhaul P02 | 3min | 2 tasks | 4 files |
 | Phase 06-kingdom-ui-overhaul P01 | 185s | 3 tasks | 7 files |
+| Phase 06-kingdom-ui-overhaul P03 | 261 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -107,6 +108,8 @@ Recent decisions affecting current work:
 - [Phase 06-kingdom-ui-overhaul]: All Play.jsx atmospheric copy uses war council register: council, decree, realm, counsel throughout waiting/pass/round states
 - [Phase 06-kingdom-ui-overhaul]: KingdomMap fog landmark uses inverted CSS classes — fogDeclining at high opacity when awareness is low
 - [Phase 06-kingdom-ui-overhaul]: Pack identity card replaces round selector entirely — total_rounds set at session creation from pack, not HostSetup
+- [Phase 06-kingdom-ui-overhaul]: KingdomMap imported directly (not lazy) — SVG component in same bundle; no code-splitting benefit
+- [Phase 06-kingdom-ui-overhaul]: Removed totalRounds local state from Host.jsx; session.total_rounds from DB is source of truth
 
 ### Roadmap Evolution
 
@@ -123,6 +126,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T21:12:01.646Z
-Stopped at: Completed 06-01-PLAN.md
+Last session: 2026-03-27T21:28:15.592Z
+Stopped at: Completed 06-kingdom-ui-overhaul-03-PLAN.md
 Resume file: None

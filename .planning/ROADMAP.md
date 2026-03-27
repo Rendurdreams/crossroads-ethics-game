@@ -123,7 +123,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 Plans:
 - [x] 06-01-PLAN.md — KingdomMap component + CSS tokens + Landing redesign + HostSetup pack card
 - [x] 06-02-PLAN.md — Play view decree tiles, amber flourish, atmospheric copy, decree headers
-- [ ] 06-03-PLAN.md — Host.jsx KingdomMap integration + MeterBar landmark labels everywhere
+- [x] 06-03-PLAN.md — Host.jsx KingdomMap integration + MeterBar landmark labels everywhere
 
 ### Phase 05.1: Visual Experience Overhaul (INSERTED)
 
