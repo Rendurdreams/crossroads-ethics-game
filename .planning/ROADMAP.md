@@ -56,7 +56,7 @@ Plans:
   5. The pack schema has an `ai_generated` flag and `generator_prompt` field — a new pack object conforming to the shape can be injected at session creation without touching game loop code
 **Plans:** 3 plans
 Plans:
-- [ ] 08-01-PLAN.md — New scenario packs (real-world-modern + futures), AI-ready schema fields, pack registry, SQL migration
+- [x] 08-01-PLAN.md — New scenario packs (real-world-modern + futures), AI-ready schema fields, pack registry, SQL migration
 - [ ] 08-02-PLAN.md — HostSetup multi-card pack selection UI + pack_id/total_rounds persistence
 - [ ] 08-03-PLAN.md — Host.jsx + Play.jsx pack resolution refactor + reflection guard fix
 **UI hint**: yes

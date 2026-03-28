@@ -19,11 +19,11 @@
 
 ### Scenario Packs
 
-- [ ] **PACK-01**: Real-world modern dilemmas pack — 5–7 scenarios set in contemporary contexts (social media, workplace, community, AI in daily life), same framework-tag + world-impact structure as kingdom-arc
-- [ ] **PACK-02**: Sci-fi / future dilemmas pack — 5–7 scenarios set in near-future contexts (AI rights, genetic decisions, surveillance, resource scarcity), same structure as kingdom-arc
+- [x] **PACK-01**: Real-world modern dilemmas pack — 5–7 scenarios set in contemporary contexts (social media, workplace, community, AI in daily life), same framework-tag + world-impact structure as kingdom-arc
+- [x] **PACK-02**: Sci-fi / future dilemmas pack — 5–7 scenarios set in near-future contexts (AI rights, genetic decisions, surveillance, resource scarcity), same structure as kingdom-arc
 - [ ] **PACK-03**: Host can select which pack to play on the HostSetup page after session creation — kingdom-arc, real-world, or sci-fi shown with title, description, and scenario count
 - [ ] **PACK-04**: Session `total_rounds` is set from the selected pack's scenario count (same as v1.0 pattern, now applied to 3 packs)
-- [ ] **PACK-05**: Pack system is structured so a future AI-generated pack can be injected with the same interface — pack shape documented, no hardcoded pack assumptions in game loop
+- [x] **PACK-05**: Pack system is structured so a future AI-generated pack can be injected with the same interface — pack shape documented, no hardcoded pack assumptions in game loop
 
 ### Three.js Host Scene
 
@@ -44,7 +44,7 @@
 
 - [ ] **AI-01**: Player end-screen data shape includes a `debrief_context` field — structured summary of choices, frameworks used, moral conflicts detected, suitable as an LLM prompt payload
 - [ ] **AI-02**: Session end data includes a `group_debrief_context` field — aggregate framework breakdown, world state final values, notable moral conflicts across the group, suitable as a discussion-prompt generation payload
-- [ ] **AI-03**: Pack schema includes optional `ai_generated: true` flag and `generator_prompt` field — future AI pack generation can use this shape to inject packs at session creation
+- [x] **AI-03**: Pack schema includes optional `ai_generated: true` flag and `generator_prompt` field — future AI pack generation can use this shape to inject packs at session creation
 - [ ] **AI-04**: A `src/lib/ai.js` stub exists with placeholder functions: `generateDebrief(playerContext)`, `generateDiscussionPrompts(sessionContext)`, `generatePack(prompt)` — returns null, ready for implementation
 
 ---
