@@ -49,9 +49,9 @@ Players finish the game understanding that ethics and morals are not the same th
 - ✓ Full glass-morphism cinematic UI: Framer Motion transitions, amber gradients, Playfair Display — v1.0
 - ✓ CSS KingdomMap replaces Three.js city; decree tile choice buttons; war council atmospheric copy — v1.0
 
-### Active
+### Active (v1.1 in progress)
 
-*(None — v1.0 is complete. Use /gsd:new-milestone to define v1.1 requirements.)*
+- ✓ Moral baseline at join time: value ranking (5 values) + 2 stance questions, stored in Supabase as `moral_values` + `moral_stances` on player row — validated in Phase 7
 
 ### Out of Scope (v2+)
 
