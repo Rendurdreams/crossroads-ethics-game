@@ -42,7 +42,7 @@
   3. A player who refreshes mid-join does not lose their baseline progress — localStorage preserves state until Supabase write confirms
 **Plans:** 1 plan
 Plans:
-- [ ] 07-01-PLAN.md — Baseline page component (value ranking + stance questions), CSS module, SQL migration, route wiring
+- [x] 07-01-PLAN.md — Baseline page component (value ranking + stance questions), CSS module, SQL migration, route wiring
 
 ### Phase 8: Multi-Pack System
 **Goal**: The host can choose between three distinct scenario packs before starting a session, and the pack system is architected to accept a future AI-generated pack without code changes

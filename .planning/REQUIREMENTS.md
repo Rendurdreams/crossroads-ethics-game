@@ -10,8 +10,8 @@
 
 ### Moral Profile Layer
 
-- [ ] **MORAL-01**: Player completes a hybrid moral baseline at join time — value priority ranking (loyalty, honesty, fairness, courage, compassion) + 2 stance questions (e.g. "Is it ever okay to lie to protect someone?" Yes / No / It depends) — completes in under 60 seconds on phone
-- [ ] **MORAL-02**: Moral baseline data stored on the player row in Supabase (values ranking as ordered array, stance answers as key/value pairs)
+- [x] **MORAL-01**: Player completes a hybrid moral baseline at join time — value priority ranking (loyalty, honesty, fairness, courage, compassion) + 2 stance questions (e.g. "Is it ever okay to lie to protect someone?" Yes / No / It depends) — completes in under 60 seconds on phone
+- [x] **MORAL-02**: Moral baseline data stored on the player row in Supabase (values ranking as ordered array, stance answers as key/value pairs)
 - [ ] **MORAL-03**: After a player locks a choice, a subtle inline indicator appears when that choice conflicts with their stated top values — e.g. "This conflicts with your value of honesty" — shown below the framework label, never before the choice is locked
 - [ ] **MORAL-04**: Conflict detection logic compares choice framework tags against player's stated value priorities to determine moral tension (e.g. consequentialist choice conflicts with a player who ranked honesty #1)
 - [ ] **MORAL-05**: End screen shows a Moral vs Ethics conflict map — lists rounds where player's choice diverged from stated values, names the philosophical tension (e.g. "You value loyalty above honesty, but in Round 2 you chose truth over protection — that's deontology overriding care ethics, and your own stated value")
