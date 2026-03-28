@@ -86,7 +86,10 @@ Plans:
   2. When the host clicks "Close Round," the 3D scene plays a 2–4 second reveal animation before the world state meters update — a visible beat of anticipation separates the close action from the result
   3. The reveal animation is visually distinct from normal world state transitions — a player watching the projected screen can perceive the moment as meaningful without explanation
   4. The unified palette (dark glass, amber glow) is consistent across the 3D scene and all overlaid HUD elements
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 10-01-PLAN.md — KingdomScene lerpSpeedRef threading + visual quality pass (particles, fog lerp, colors) + Host.jsx KingdomCanvas-to-KingdomScene swap
+- [ ] 10-02-PLAN.md — Host.jsx HUD pill layout refactor + reveal beat state machine + Framer Motion lesson/tally overlays
 **UI hint**: yes
 
 ### Phase 11: Moral Conflict Detection + End Screen + AI Hooks
@@ -116,6 +119,6 @@ Plans:
 | 6. Kingdom UI Overhaul | v1.0 | 3/3 | Complete | 2026-03-27 |
 | 7. Moral Profile Data Layer | v1.1 | 0/1 | Not started | - |
 | 8. Multi-Pack System | v1.1 | 3/3 | Complete   | 2026-03-28 |
-| 9. Three.js Host Scene | v1.1 | 0/2 | Not started | - |
-| 10. Host UX Unification + Reveal Beat | v1.1 | 0/? | Not started | - |
+| 9. Three.js Host Scene | v1.1 | 1/2 | In progress | - |
+| 10. Host UX Unification + Reveal Beat | v1.1 | 0/2 | Not started | - |
 | 11. Moral Conflict Detection + End Screen + AI Hooks | v1.1 | 0/? | Not started | - |
