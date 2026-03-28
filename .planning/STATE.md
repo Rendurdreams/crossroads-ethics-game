@@ -1,10 +1,10 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.0
-milestone_name: milestone
-status: Milestone complete
-stopped_at: Completed 06-kingdom-ui-overhaul-03-PLAN.md
-last_updated: "2026-03-27T21:46:02.439Z"
+milestone_name: The Crossroads MVP
+status: v1.0 shipped — planning next milestone
+stopped_at: v1.0 milestone archived 2026-03-27
+last_updated: "2026-03-27T22:01:53.180Z"
 progress:
   total_phases: 7
   completed_phases: 7
