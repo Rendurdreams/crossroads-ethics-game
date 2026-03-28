@@ -54,7 +54,11 @@ Plans:
   3. Playing through the real-world pack presents contemporary scenarios (social media, workplace, community) with correct framework tags and world impacts
   4. Playing through the sci-fi pack presents near-future scenarios (AI rights, surveillance, resource scarcity) with the same structure
   5. The pack schema has an `ai_generated` flag and `generator_prompt` field — a new pack object conforming to the shape can be injected at session creation without touching game loop code
-**Plans**: TBD
+**Plans:** 3 plans
+Plans:
+- [ ] 08-01-PLAN.md — New scenario packs (real-world-modern + futures), AI-ready schema fields, pack registry, SQL migration
+- [ ] 08-02-PLAN.md — HostSetup multi-card pack selection UI + pack_id/total_rounds persistence
+- [ ] 08-03-PLAN.md — Host.jsx + Play.jsx pack resolution refactor + reflection guard fix
 **UI hint**: yes
 
 ### Phase 9: Three.js Host Scene
@@ -108,7 +112,7 @@ Plans:
 | 5.1. Visual Experience Overhaul | v1.0 | 3/3 | Complete | 2026-03-27 |
 | 6. Kingdom UI Overhaul | v1.0 | 3/3 | Complete | 2026-03-27 |
 | 7. Moral Profile Data Layer | v1.1 | 0/1 | Not started | - |
-| 8. Multi-Pack System | v1.1 | 0/? | Not started | - |
+| 8. Multi-Pack System | v1.1 | 0/3 | Not started | - |
 | 9. Three.js Host Scene | v1.1 | 0/? | Not started | - |
 | 10. Host UX Unification + Reveal Beat | v1.1 | 0/? | Not started | - |
 | 11. Moral Conflict Detection + End Screen + AI Hooks | v1.1 | 0/? | Not started | - |
