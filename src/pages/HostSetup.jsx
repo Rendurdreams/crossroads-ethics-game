@@ -3,11 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { QRCodeSVG } from 'qrcode.react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { supabase } from '../lib/supabase.js'
-import { getDefaultPack, getPlayableScenarios } from '../lib/scenarios.js'
+import { packs, getPackById, getPlayableScenarios } from '../lib/scenarios.js'
 import styles from './HostSetup.module.css'
-
-const pack = getDefaultPack()
-const dilemmaCount = getPlayableScenarios(pack).length
 
 const pageVariants = {
   initial: { opacity: 0 },
@@ -24,6 +21,7 @@ export default function HostSetup() {
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(true)
   const [opening, setOpening] = useState(false)
+  const [selectedPackId, setSelectedPackId] = useState('kingdom-arc')
 
   useEffect(() => {
     if (!sessionId) {
@@ -48,6 +46,17 @@ export default function HostSetup() {
 
   async function openLobby() {
     setOpening(true)
+    const selectedPack = getPackById(selectedPackId)
+    const totalRounds = getPlayableScenarios(selectedPack).length + 1  // playable + reflection
+    const { error } = await supabase
+      .from('sessions')
+      .update({ pack_id: selectedPackId, total_rounds: totalRounds })
+      .eq('id', sessionId)
+    if (error) {
+      console.error('Failed to set pack:', error)
+      setOpening(false)
+      return
+    }
     navigate(`/host/${sessionId}`)
   }
 
@@ -92,11 +101,21 @@ export default function HostSetup() {
         Share the code. When your council is assembled, open the chamber.
       </p>
 
-      <div className={styles.packCard}>
-        <h2 className={styles.packName}>{pack.name}</h2>
-        <p className={styles.packCount}>{dilemmaCount} dilemmas</p>
-        <div className={styles.packDivider} />
-        <p className={styles.packDescription}>{pack.description}</p>
+      <div className={styles.packRow}>
+        {packs.map(p => (
+          <button
+            key={p.id}
+            className={`${styles.packCard} ${p.id === selectedPackId ? styles.packCardSelected : styles.packCardUnselected}`}
+            onClick={() => setSelectedPackId(p.id)}
+            type="button"
+          >
+            <h2 className={styles.packName}>{p.name}</h2>
+            <p className={styles.packCount}>{getPlayableScenarios(p).length} dilemmas</p>
+            <p className={styles.packSetting}>{p.setting}</p>
+            <div className={styles.packDivider} />
+            <p className={styles.packDescription}>{p.description}</p>
+          </button>
+        ))}
       </div>
 
       <button
