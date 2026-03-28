@@ -71,7 +71,10 @@ Plans:
   3. After a round closes and world state updates, each landmark visually changes state (lighting, geometry, or particle shift) matching the flourishing / neutral / declining tier of its meter
   4. Three.js is installed as an npm dependency (r160+), tree-shaken, and does not inflate the player-phone bundle
   5. The 3D scene runs at stable 60fps on a standard laptop while Supabase subscription events fire during a live round
-**Plans**: TBD
+**Plans:** 2 plans
+Plans:
+- [ ] 09-01-PLAN.md — GLTF model sourcing + KingdomScene.jsx scaffold + Host.jsx swap (replace KingdomMap)
+- [ ] 09-02-PLAN.md — Lerp interpolation + threshold events for all 4 landmarks + 60fps validation
 **UI hint**: yes
 
 ### Phase 10: Host UX Unification + Reveal Beat
@@ -113,6 +116,6 @@ Plans:
 | 6. Kingdom UI Overhaul | v1.0 | 3/3 | Complete | 2026-03-27 |
 | 7. Moral Profile Data Layer | v1.1 | 0/1 | Not started | - |
 | 8. Multi-Pack System | v1.1 | 3/3 | Complete   | 2026-03-28 |
-| 9. Three.js Host Scene | v1.1 | 0/? | Not started | - |
+| 9. Three.js Host Scene | v1.1 | 0/2 | Not started | - |
 | 10. Host UX Unification + Reveal Beat | v1.1 | 0/? | Not started | - |
 | 11. Moral Conflict Detection + End Screen + AI Hooks | v1.1 | 0/? | Not started | - |
