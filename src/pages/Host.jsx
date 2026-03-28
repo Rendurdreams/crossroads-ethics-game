@@ -1,9 +1,7 @@
 import { useState, useEffect, useReducer, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
-import { getDefaultPack, getScenarioByRound } from '../lib/scenarios.js'
-
-const pack = getDefaultPack()
+import { getPackById, getScenarioByRound } from '../lib/scenarios.js'
 import { applyChoicesToWorld, computeNarrative } from '../lib/worldState.js'
 import { computeProfile, findConflicts } from '../lib/detection.js'
 import { FRAMEWORKS } from '../lib/frameworks.js'
@@ -50,6 +48,7 @@ export default function Host() {
   const navigate = useNavigate()
 
   const [session, setSession] = useState(null)
+  const [pack, setPack] = useState(null)
   const [players, setPlayers] = useState([])
   const [loading, setLoading] = useState(true)
   const [started, setStarted] = useState(false)
@@ -79,6 +78,7 @@ export default function Host() {
           return
         }
         setSession(data)
+        setPack(getPackById(data.pack_id))
         setLoading(false)
       })
 
@@ -335,6 +335,14 @@ export default function Host() {
   // ── Render ─────────────────────────────────────────────────────────────
 
   if (loading) {
+    return (
+      <div className={styles.loadingOverlay}>
+        <p className={styles.loadingText}>Loading...</p>
+      </div>
+    )
+  }
+
+  if (!pack) {
     return (
       <div className={styles.loadingOverlay}>
         <p className={styles.loadingText}>Loading...</p>
