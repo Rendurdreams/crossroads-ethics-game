@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Immersion + Moral Identity
 status: executing
-stopped_at: Completed 08-multi-pack-system/08-01-PLAN.md
-last_updated: "2026-03-28T03:55:39.863Z"
+stopped_at: Completed 08-multi-pack-system/08-02-PLAN.md
+last_updated: "2026-03-28T03:58:46.568Z"
 progress:
   total_phases: 5
   completed_phases: 1
   total_plans: 4
-  completed_plans: 2
+  completed_plans: 3
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-27)
 ## Current Position
 
 Phase: 08 (multi-pack-system) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 
 ```
@@ -71,6 +71,7 @@ v1.1 [                      ]   0% (0/5 phases)
 | Phase 06-kingdom-ui-overhaul P03 | 261 | 2 tasks | 5 files |
 | Phase 07-moral-profile-data-layer P01 | 142s | 3 tasks | 6 files |
 | Phase 08-multi-pack-system P01 | 268 | 2 tasks | 5 files |
+| Phase 08-multi-pack-system P02 | 63 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -125,6 +126,8 @@ Recent decisions affecting current work:
 - [Phase 08-multi-pack-system]: realWorldModernPack named Common Ground — contemporary interpersonal and community dilemmas at college-maturity tone
 - [Phase 08-multi-pack-system]: futuresPack named The Weight of Tomorrow — near-future personal dilemmas in 2040 context, no space opera framing
 - [Phase 08-multi-pack-system]: JSDoc @typedef schema added above packs export in scenarios.js — makes pack shape machine-readable for AI generation tools (D-13)
+- [Phase 08-multi-pack-system]: Pack selection persisted to Supabase before navigating to lobby — session row has pack_id and total_rounds before any player joins
+- [Phase 08-multi-pack-system]: total_rounds = getPlayableScenarios(pack).length + 1 to include reflection round in session total
 
 ### Roadmap Evolution
 
@@ -142,7 +145,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T03:55:39.858Z
-Stopped at: Completed 08-multi-pack-system/08-01-PLAN.md
+Last session: 2026-03-28T03:58:46.564Z
+Stopped at: Completed 08-multi-pack-system/08-02-PLAN.md
 Resume file: None
 Next action: `/gsd:plan-phase 7`

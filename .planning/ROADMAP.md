@@ -57,7 +57,7 @@ Plans:
 **Plans:** 3 plans
 Plans:
 - [x] 08-01-PLAN.md — New scenario packs (real-world-modern + futures), AI-ready schema fields, pack registry, SQL migration
-- [ ] 08-02-PLAN.md — HostSetup multi-card pack selection UI + pack_id/total_rounds persistence
+- [x] 08-02-PLAN.md — HostSetup multi-card pack selection UI + pack_id/total_rounds persistence
 - [ ] 08-03-PLAN.md — Host.jsx + Play.jsx pack resolution refactor + reflection guard fix
 **UI hint**: yes
 
