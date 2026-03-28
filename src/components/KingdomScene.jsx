@@ -11,23 +11,28 @@ useGLTF.preload('/models/terrain.glb')
 
 // ── Bridge of Accord (trust landmark) ────────────────────────────────────
 
-function Bridge({ trust = 50 }) {
+function Bridge({ trust = 50, lerpSpeedRef }) {
   const { nodes, materials } = useGLTF('/models/bridge.glb')
   const t = trust / 100
   const emissiveRef = useRef()
   const targetEmissiveRef = useRef(t)
+  const collapsed = useRef(trust < 20)
 
   useEffect(() => {
     targetEmissiveRef.current = t
-  }, [t])
+    collapsed.current = trust < 20
+  }, [t, trust])
 
   useFrame((_, delta) => {
     if (emissiveRef.current) {
+      const speed = lerpSpeedRef?.current ?? 2
       emissiveRef.current.emissiveIntensity = THREE.MathUtils.lerp(
         emissiveRef.current.emissiveIntensity,
         targetEmissiveRef.current * 1.8,
-        delta * 1.5
+        delta * speed
       )
+      const targetColor = collapsed.current ? '#7f1d1d' : '#f59e0b'
+      emissiveRef.current.emissive.lerp(new THREE.Color(targetColor), delta * speed)
     }
   })
 
@@ -119,7 +124,7 @@ function Bridge({ trust = 50 }) {
 
 // ── Citadel Beacon (courage landmark) ────────────────────────────────────
 
-function BeaconTower({ courage = 50 }) {
+function BeaconTower({ courage = 50, lerpSpeedRef }) {
   const { nodes, materials } = useGLTF('/models/beacon-tower.glb')
   const beamRef = useRef()
   const lightRef = useRef()
@@ -141,7 +146,7 @@ function BeaconTower({ courage = 50 }) {
       lightRef.current.intensity = THREE.MathUtils.lerp(
         lightRef.current.intensity,
         targetIntensityRef.current * 55,
-        delta * 2
+        delta * (lerpSpeedRef?.current ?? 2)
       )
     }
   })
@@ -231,7 +236,7 @@ function BeaconTower({ courage = 50 }) {
 
 // ── Village Quarter (solidarity landmark) ─────────────────────────────────
 
-function VillageQuarter({ solidarity = 50 }) {
+function VillageQuarter({ solidarity = 50, lerpSpeedRef }) {
   const { nodes, materials } = useGLTF('/models/village-cluster.glb')
   const s = solidarity / 100
   const windowEmissiveRef = useRef(s)
@@ -248,7 +253,7 @@ function VillageQuarter({ solidarity = 50 }) {
         mat.emissiveIntensity = THREE.MathUtils.lerp(
           mat.emissiveIntensity,
           targetWindowRef.current * 2.2,
-          delta * 1.5
+          delta * (lerpSpeedRef?.current ?? 2)
         )
       }
     })
@@ -412,14 +417,46 @@ function Ground() {
 
 // ── Fog controller (awareness landmark) ──────────────────────────────────
 
-function FogController({ awareness = 50 }) {
+function FogController({ awareness = 50, lerpSpeedRef }) {
   const { scene } = useThree()
+  const targetDensity = useRef(0.015)
+  const initialized = useRef(false)
+
   useEffect(() => {
     // High awareness = clear; low awareness = dense fog (inverted per D-10)
-    const density = 0.015 + (1 - awareness / 100) * 0.04
-    scene.fog = new THREE.FogExp2('#0a0a14', density)
-    return () => { scene.fog = null }
+    let density
+    if (awareness > 85) {
+      density = 0.002
+    } else if (awareness < 20) {
+      density = 0.05
+    } else {
+      density = 0.005 + (1 - awareness / 100) * 0.02
+    }
+    targetDensity.current = density
+
+    // Initialize fog on first render only
+    if (!initialized.current) {
+      scene.fog = new THREE.FogExp2('#080812', density)
+      initialized.current = true
+    }
+
+    return () => {
+      scene.fog = null
+      initialized.current = false
+    }
   }, [awareness, scene])
+
+  // Smooth lerp fog density each frame
+  useFrame((_, delta) => {
+    if (scene.fog) {
+      scene.fog.density = THREE.MathUtils.lerp(
+        scene.fog.density,
+        targetDensity.current,
+        delta * (lerpSpeedRef?.current ?? 2)
+      )
+    }
+  })
+
   return null
 }
 
@@ -452,24 +489,24 @@ function CameraRig() {
 
 function Particles() {
   const ref = useRef()
-  const count = 200
+  const count = 12
 
   const positions = useMemo(() => {
     const arr = new Float32Array(count * 3)
     for (let i = 0; i < count; i++) {
-      arr[i * 3]     = (Math.random() - 0.5) * 40
+      arr[i * 3]     = (Math.random() - 0.5) * 20
       arr[i * 3 + 1] = Math.random() * 15
-      arr[i * 3 + 2] = (Math.random() - 0.5) * 40
+      arr[i * 3 + 2] = (Math.random() - 0.5) * 20
     }
     return arr
   }, [])
 
   useFrame((state) => {
     if (ref.current) {
-      ref.current.rotation.y = state.clock.elapsedTime * 0.008
+      ref.current.rotation.y = state.clock.elapsedTime * 0.003
       const posAttr = ref.current.geometry.attributes.position
       for (let i = 0; i < count; i++) {
-        posAttr.array[i * 3 + 1] += Math.sin(state.clock.elapsedTime * 0.5 + i) * 0.002
+        posAttr.array[i * 3 + 1] += Math.sin(state.clock.elapsedTime * 0.5 + i) * 0.0006
       }
       posAttr.needsUpdate = true
     }
@@ -489,7 +526,7 @@ function Particles() {
         color="#f59e0b"
         size={0.06}
         transparent
-        opacity={0.35}
+        opacity={0.3}
         sizeAttenuation
       />
     </points>
@@ -498,7 +535,7 @@ function Particles() {
 
 // ── Main KingdomScene ─────────────────────────────────────────────────────
 
-export default function KingdomScene({ worldState }) {
+export default function KingdomScene({ worldState, lerpSpeedRef }) {
   const trust      = worldState?.trust      ?? 50
   const courage    = worldState?.courage    ?? 50
   const solidarity = worldState?.solidarity ?? 50
@@ -511,7 +548,7 @@ export default function KingdomScene({ worldState }) {
       style={{ background: '#050510', width: '100%', height: '100%' }}
       shadows
     >
-      <FogController awareness={awareness} />
+      <FogController awareness={awareness} lerpSpeedRef={lerpSpeedRef} />
 
       {/* Ambient lighting — nighttime, very dim, cool purple */}
       <ambientLight intensity={0.08} color="#4a4a6a" />
@@ -532,9 +569,9 @@ export default function KingdomScene({ worldState }) {
       <Stars radius={50} depth={50} count={2000} factor={3} saturation={0} fade speed={0.5} />
 
       {/* Kingdom landmarks */}
-      <Bridge trust={trust} />
-      <BeaconTower courage={courage} />
-      <VillageQuarter solidarity={solidarity} />
+      <Bridge trust={trust} lerpSpeedRef={lerpSpeedRef} />
+      <BeaconTower courage={courage} lerpSpeedRef={lerpSpeedRef} />
+      <VillageQuarter solidarity={solidarity} lerpSpeedRef={lerpSpeedRef} />
       <Ground />
 
       {/* Ambient firefly particles */}
