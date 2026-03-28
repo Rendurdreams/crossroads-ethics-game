@@ -40,7 +40,9 @@
   1. A player joining on their phone sees a value priority ranking UI (loyalty, honesty, fairness, courage, compassion) and 2 stance questions before reaching the lobby — completes in under 60 seconds
   2. The moral baseline (ranked values array + stance key/value pairs) is stored on the player row in Supabase and retrievable for detection logic in later phases
   3. A player who refreshes mid-join does not lose their baseline progress — localStorage preserves state until Supabase write confirms
-**Plans**: TBD
+**Plans:** 1 plan
+Plans:
+- [ ] 07-01-PLAN.md — Baseline page component (value ranking + stance questions), CSS module, SQL migration, route wiring
 
 ### Phase 8: Multi-Pack System
 **Goal**: The host can choose between three distinct scenario packs before starting a session, and the pack system is architected to accept a future AI-generated pack without code changes
@@ -105,7 +107,7 @@
 | 5. Deploy + Polish | v1.0 | 3/3 | Complete | 2026-03-26 |
 | 5.1. Visual Experience Overhaul | v1.0 | 3/3 | Complete | 2026-03-27 |
 | 6. Kingdom UI Overhaul | v1.0 | 3/3 | Complete | 2026-03-27 |
-| 7. Moral Profile Data Layer | v1.1 | 0/? | Not started | - |
+| 7. Moral Profile Data Layer | v1.1 | 0/1 | Not started | - |
 | 8. Multi-Pack System | v1.1 | 0/? | Not started | - |
 | 9. Three.js Host Scene | v1.1 | 0/? | Not started | - |
 | 10. Host UX Unification + Reveal Beat | v1.1 | 0/? | Not started | - |
