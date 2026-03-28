@@ -2,9 +2,7 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { supabase } from '../lib/supabase.js'
-import { getDefaultPack, getScenarioByRound, getReflectionScenario } from '../lib/scenarios.js'
-
-const pack = getDefaultPack()
+import { getPackById, getScenarioByRound, getReflectionScenario } from '../lib/scenarios.js'
 import { FRAMEWORKS } from '../lib/frameworks.js'
 import ScenarioCard from '../components/ScenarioCard.jsx'
 import ContentNote from '../components/ContentNote.jsx'
@@ -36,6 +34,7 @@ export default function Play() {
   // Existing state
   const [player, setPlayer] = useState(null)
   const [session, setSession] = useState(null)
+  const [pack, setPack] = useState(null)
   const [playerCount, setPlayerCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [gameStarted, setGameStarted] = useState(false)
@@ -84,6 +83,7 @@ export default function Play() {
               .then(({ data: sessionData }) => {
                 if (sessionData) {
                   setSession(sessionData)
+                  setPack(getPackById(sessionData.pack_id))
                   if (sessionData.status !== 'lobby') {
                     setGameStarted(true)
                   }
@@ -315,6 +315,20 @@ export default function Play() {
     )
   }
 
+  if (!pack) {
+    return (
+      <motion.div
+        className={styles.page}
+        variants={variants}
+        initial="initial"
+        animate="animate"
+        exit="exit"
+      >
+        <p className={styles.waiting}>Loading...</p>
+      </motion.div>
+    )
+  }
+
   // Lobby waiting view
   if (!gameStarted) {
     return (
@@ -339,7 +353,7 @@ export default function Play() {
 
   // Game finished view — FrameworkProfile + optional reflection input
   if (gameFinished || session?.status === 'finished') {
-    const showReflection = session?.total_rounds === 6
+    const showReflection = pack !== null && getReflectionScenario(pack) !== null
     const reflectionQuestion = getReflectionScenario(pack)?.text ?? ''
     const warmth = computeWarmth(session?.world_state)
 
