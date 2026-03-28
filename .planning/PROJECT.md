@@ -2,12 +2,25 @@
 
 ## What This Is
 
-A real-time multiplayer ethics game for a college critical thinking presentation. The presenter runs a host dashboard on a projected screen while classmates join on their phones via room code. Each round presents a moral dilemma with no clean answer — players choose privately, results aggregate live, and the end screen reveals which ethical frameworks drove each player's decisions and where friction existed between frameworks.
+A real-time multiplayer ethics game for a college critical thinking presentation. The presenter runs a host dashboard on a projected screen while classmates join on their phones via room code. Each round presents a moral dilemma — players choose privately, results aggregate live, and the end screen reveals which ethical frameworks drove each player's decisions *and* where their choices diverged from their own stated personal values.
 
-The UI is a fantasy kingdom aesthetic: a CSS SVG kingdom map on the host screen reacts to world state, choice buttons are styled as royal decree tiles, and the atmosphere evokes a war council rather than a quiz game.
+The central lesson: ethics (reasoned systems) and morals (personal values) are not the same thing. The game makes that tension visible and named.
+
+The host screen runs a Three.js 3D scene tied to world state. Three scenario packs are available: kingdom fantasy arc, real-world modern dilemmas, and sci-fi/future thought experiments.
 
 **Presentation context:** College critical thinking class, ~10–25 classmates, 15 min live.
-**Session length:** 7 rounds (kingdom-arc pack), fixed by pack content — not selectable.
+**Session length:** Fixed by pack content (kingdom-arc = 7 rounds).
+
+## Current Milestone: v1.1 Immersion + Moral Identity
+
+**Goal:** Make the game feel cinematic and personally revelatory — Three.js host scene, 3 scenario packs, and a moral profile layer that shows players when their choices conflict with their own stated values.
+
+**Target features:**
+- Moral profile layer: join-time value baseline → in-round conflict hints → end-screen moral vs ethics conflict map
+- 2 new scenario packs (real-world modern, sci-fi/future) + pack selection on HostSetup
+- Three.js 3D host scene replacing CSS KingdomMap
+- Dramatic round-close reveal beat on host screen
+- AI layer hooks: data shape and integration points for personalized debrief, dynamic scenarios, discussion prompts (no live AI calls)
 
 ## Core Value
 

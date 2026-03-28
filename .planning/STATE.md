@@ -1,9 +1,9 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.0
-milestone_name: The Crossroads MVP
-status: v1.0 shipped — planning next milestone
-stopped_at: v1.0 milestone archived 2026-03-27
+milestone_name: Immersion + Moral Identity
+status: Defining roadmap
+stopped_at: v1.1 requirements defined 2026-03-27
 last_updated: "2026-03-27T22:01:53.180Z"
 progress:
   total_phases: 7

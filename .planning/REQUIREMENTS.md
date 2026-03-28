@@ -1,162 +1,115 @@
-# Requirements: The Crossroads
+# Requirements: The Crossroads v1.1
 
-**Defined:** 2026-03-25
-**Core Value:** Players finish the game understanding their own ethical reasoning — named, visible, and connected to a philosophical tradition.
+**Defined:** 2026-03-27
+**Milestone:** v1.1 — Immersion + Moral Identity
+**Core Value:** Players finish the game understanding that ethics and morals are not the same thing — and that the tension between their stated values and their actual choices is where real thinking begins.
 
-## v1 Requirements
+---
 
-### Host Session
+## v1.1 Requirements
 
-- [x] **HOST-01**: Host can create a new session and receive a 4-digit room code
-- [x] **HOST-02**: Host can select round count (3, 4, 5, or 6) before starting
-- [x] **HOST-03**: Host can start the game when 2 or more players have joined
-- [x] **HOST-04**: Host sees a live roster of joined players (name + emoji) in the lobby
-- [x] **HOST-05**: Host can close the current round to lock all choices
-- [x] **HOST-06**: Host can advance to the next round after closing
-- [x] **HOST-07**: Host sees live anonymous vote tally (% per choice) updating in real time during each round
-- [x] **HOST-08**: Host sees "X of Y submitted" counter during each round
-- [x] **HOST-09**: Host sees current world state (4 meters) after each round closes
-- [x] **HOST-10**: Room code is displayed large enough to read from the back of a classroom
+### Moral Profile Layer
 
-### Player Session
+- [ ] **MORAL-01**: Player completes a hybrid moral baseline at join time — value priority ranking (loyalty, honesty, fairness, courage, compassion) + 2 stance questions (e.g. "Is it ever okay to lie to protect someone?" Yes / No / It depends) — completes in under 60 seconds on phone
+- [ ] **MORAL-02**: Moral baseline data stored on the player row in Supabase (values ranking as ordered array, stance answers as key/value pairs)
+- [ ] **MORAL-03**: After a player locks a choice, a subtle inline indicator appears when that choice conflicts with their stated top values — e.g. "This conflicts with your value of honesty" — shown below the framework label, never before the choice is locked
+- [ ] **MORAL-04**: Conflict detection logic compares choice framework tags against player's stated value priorities to determine moral tension (e.g. consequentialist choice conflicts with a player who ranked honesty #1)
+- [ ] **MORAL-05**: End screen shows a Moral vs Ethics conflict map — lists rounds where player's choice diverged from stated values, names the philosophical tension (e.g. "You value loyalty above honesty, but in Round 2 you chose truth over protection — that's deontology overriding care ethics, and your own stated value")
+- [ ] **MORAL-06**: End screen section title/framing distinguishes moral profile (personal) from ethical framework (reasoned system) — the lesson is explicit in the copy
 
-- [x] **PLAY-01**: Player joins by entering name + 4-digit room code (no login required)
-- [x] **PLAY-02**: Player is assigned an emoji avatar on join
-- [x] **PLAY-03**: Player identity (player_id, session_id) persists across phone page refresh via localStorage
-- [x] **PLAY-04**: Player sees scenario text and 3 choice buttons each round
-- [x] **PLAY-05**: Player's choice locks on tap with optimistic UI (no second submission possible)
-- [x] **PLAY-06**: Player sees framework label for their choice after locking (not before)
-- [x] **PLAY-07**: Player sees private consequence text after host closes the round
-- [x] **PLAY-08**: Player sees "X of Y submitted" counter while waiting for others
-- [x] **PLAY-09**: Player sees a content note with pass option on heavy rounds (Rounds 3 and 4)
-- [x] **PLAY-10**: Player sees current world state (4 CSS meters) after each round closes
+### Scenario Packs
 
-### Scenarios & Framework Logic
+- [ ] **PACK-01**: Real-world modern dilemmas pack — 5–7 scenarios set in contemporary contexts (social media, workplace, community, AI in daily life), same framework-tag + world-impact structure as kingdom-arc
+- [ ] **PACK-02**: Sci-fi / future dilemmas pack — 5–7 scenarios set in near-future contexts (AI rights, genetic decisions, surveillance, resource scarcity), same structure as kingdom-arc
+- [ ] **PACK-03**: Host can select which pack to play on the HostSetup page after session creation — kingdom-arc, real-world, or sci-fi shown with title, description, and scenario count
+- [ ] **PACK-04**: Session `total_rounds` is set from the selected pack's scenario count (same as v1.0 pattern, now applied to 3 packs)
+- [ ] **PACK-05**: Pack system is structured so a future AI-generated pack can be injected with the same interface — pack shape documented, no hardcoded pack assumptions in game loop
 
-- [x] **DATA-01**: Full scenario library loaded from scenarios.js (all 6 rounds, 3 choices each, framework tags, world impacts, consequence text)
-- [x] **DATA-02**: Framework detection computes dominant framework per player after all rounds
-- [x] **DATA-03**: Conflict detection identifies cross-round framework tensions with named description
-- [x] **DATA-04**: World state update function applies aggregate weighted choice impacts after each round
-- [x] **DATA-05**: Pass / abstain behavior defined: abstaining player contributes no weight to world state and no framework count; stored as no-row (not submitted)
+### Three.js Host Scene
 
-### End State
+- [ ] **THREE-01**: Host screen renders a Three.js 3D scene replacing the CSS KingdomMap — nighttime cityscape or kingdom landscape, fixed camera angle, slow ambient drift
+- [ ] **THREE-02**: 3D scene has 4 landmark objects corresponding to world state dimensions: bridge (trust), lighthouse/beacon (courage), building cluster/windows (solidarity), fog layer (awareness)
+- [ ] **THREE-03**: Landmark states update after each round close based on world state values — visual change (lighting, geometry, particles) driven by flourishing / neutral / declining tiers
+- [ ] **THREE-04**: Host screen layout unifies 3D scene and right panel into one visual language — same dark glass palette, amber glow, panel feels like a HUD overlay on the scene, not a separate column
+- [ ] **THREE-05**: Dramatic round-close sequence: when host clicks "Close Round," the 3D scene plays a brief reveal animation (2–4 seconds) before world state meters update — landmark lights shift, a visual beat registers the collective choice
+- [ ] **THREE-06**: Three.js loads from npm (not CDN) with tree-shaking — only imported modules bundled; r160+ for current API compatibility
+- [ ] **THREE-07**: 3D scene runs at stable 60fps on a standard laptop during presentation (no frame drops during Supabase subscription events)
 
-- [x] **END-01**: Each player sees their dominant framework with a full explanation paragraph
-- [x] **END-02**: Each player sees a conflict map if cross-round framework tension detected, named with the philosophical concept
-- [x] **END-03**: Each player sees a "framework you used least" prompt
-- [x] **END-04**: Each player sees their full choice log (round, choice, framework)
-- [x] **END-05**: Round 6 shows a free-text reflection input; responses stored anonymously
-- [x] **END-06**: Host end view shows group framework breakdown (% per framework overall)
-- [x] **END-07**: Host end view shows anonymous reflection responses as they're submitted
+### Host UX
 
-### Infrastructure
+- [ ] **HOSTUX-01**: Host panel and 3D scene share visual language — panel elements (vote tally, meter bars, round controls) styled as HUD overlays on the 3D scene background, not a separate sidebar
+- [ ] **HOSTUX-02**: Round-close reveal beat is visually distinct from normal state — a moment of anticipation before world state animates
 
-- [x] **INFRA-01**: Supabase schema created (sessions, players, choices, reflections tables) with `UNIQUE(player_id, round_number)` constraint on choices
-- [x] **INFRA-02**: RLS policies configured — anon role can read sessions, insert own player row, insert own choices; verified that real-time subscriptions are not silently blocked
-- [x] **INFRA-03**: Real-time enabled on sessions, players, and choices tables
-- [x] **INFRA-04**: Supabase client initialized as singleton with environment variable discipline (service role key never exposed via VITE_ prefix)
-- [x] **INFRA-05**: App deploys to Netlify or Vercel from `vite build` output
+### AI Layer Hooks (Architecture Only — No Live AI Calls)
 
-### Polish (Required Before Presentation)
+- [ ] **AI-01**: Player end-screen data shape includes a `debrief_context` field — structured summary of choices, frameworks used, moral conflicts detected, suitable as an LLM prompt payload
+- [ ] **AI-02**: Session end data includes a `group_debrief_context` field — aggregate framework breakdown, world state final values, notable moral conflicts across the group, suitable as a discussion-prompt generation payload
+- [ ] **AI-03**: Pack schema includes optional `ai_generated: true` flag and `generator_prompt` field — future AI pack generation can use this shape to inject packs at session creation
+- [ ] **AI-04**: A `src/lib/ai.js` stub exists with placeholder functions: `generateDebrief(playerContext)`, `generateDiscussionPrompts(sessionContext)`, `generatePack(prompt)` — returns null, ready for implementation
 
-- [x] **POLISH-01**: Player view is fully usable on a phone (no horizontal scroll, buttons reachable with thumbs)
-- [x] **POLISH-02**: Load test passes — 20+ simultaneous Supabase real-time subscriptions without dropped events or lag
+---
 
-## v1.5 Requirements — UI Overhaul
+## Future Requirements (v1.2+)
 
-### Kingdom Map & Visual Identity
+### AI Layer (Live)
+- Live AI-generated personalized debrief narration at end screen
+- AI-generated discussion prompt suggestions for host post-game
+- AI-generated scenario pack from a theme prompt
 
-- [x] **UI-01**: CSS kingdom map replaces the Three.js city / CityPlaceholder on host screen — rendered as a stylized fantasy map with named landmarks that react to world state
-- [x] **UI-02**: HostSetup removes the round count selector — total_rounds is driven by the loaded pack (kingdom-arc has 7 playable dilemmas); session is created with pack-derived count
-- [x] **UI-03**: Landing page redesigned to match fantasy kingdom aesthetic — royal crest, serif headline, kingdom-tone copy ("Enter the Crossroads"), dark parchment or stone palette
-- [x] **UI-04**: HostSetup page redesigned — war council framing, pack metadata visible (title, dilemma count), no round count selector
-- [x] **UI-05**: Host game view redesigned — map panel left, round/tally panel right, kingdom-appropriate typography and color
-- [x] **UI-06**: Play (player) view redesigned — scenario text in scroll/parchment frame, choice buttons styled as decree/action tiles, world state meters in kingdom framing
-- [x] **UI-07**: Kingdom map landmarks correspond to the 4 world state dimensions: the Bridge of Accord (trust), the Citadel Beacon (courage), the Village Quarter (solidarity), the Fog of the Vale (awareness)
-- [x] **UI-08**: Map landmark states update visually after each round based on world state values — at minimum CSS class-based state changes (flourishing / neutral / declining)
+### Timer
+- Host round timer (30–90 sec) with pause/extend — deferred from v1.0, still pending
 
-## v2 Requirements
+### Social / Persistence
+- Session history — replaying your profile across multiple games
+- Anonymous aggregate data across sessions (what frameworks dominate by scenario?)
 
-### Visual Enhancements
+---
 
-- **VIS-01**: Three.js 3D city on host screen — bridge, lighthouse, windows, fog reacting to world state meters
-- **VIS-02**: Threshold events — bridge split, lighthouse out, blackout wave, sunrise when meters cross critical values
-- **VIS-03**: Animated SVG meter bars on player phones (BridgeMeter, LighthouseMeter, TrainMeter, FogMeter)
-- **VIS-04**: Timer pressure animation — shrinking bar with color shift near zero
-- **VIS-05**: Transition animations between rounds
-
-### AI Layer (Parked)
-
-- **AI-01**: AI-generated personalized debrief commentary — explains player's framework pattern in natural language
-- **AI-02**: AI-generated scenario variations (alternative to fixed library)
-
-### Convenience
-
-- **CONV-01**: QR code generator for room code — players scan from projected screen instead of typing
-- **CONV-02**: Round timer — host sets 30–90 sec, can pause/extend
-
-## Out of Scope
+## Out of Scope (v1.1)
 
 | Feature | Reason |
 |---------|--------|
-| User accounts / login | Ephemeral sessions are the design; localStorage is sufficient |
-| Leaderboard / score | Deliberately anti-genre; ranking contradicts the game's purpose |
-| Speed bonus | Same — this is not Kahoot |
-| "Correct answer" reveal | There is no correct answer; showing one would destroy the lesson |
-| Mid-round chat | Distraction during choices; debrief is Jay's job |
-| Mobile app (iOS/Android) | Web-first; phone-optimized responsive layout is sufficient |
-| Real-time chat | Not needed; host controls the debrief verbally |
-| Video posts / media uploads | Out of scope entirely |
+| Live AI calls | Architecture hooks this milestone; live calls are v1.2 |
+| Timer | Deferred again — pack work + Three.js is enough scope |
+| Player accounts / login | Still ephemeral; localStorage sufficient |
+| Leaderboard / score | Contradicts pedagogical intent |
+| Animated SVG phone meters | Still deferred; CSS class-based is fine |
+
+---
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| INFRA-01 | Phase 1 | Complete |
-| INFRA-02 | Phase 1 | Complete |
-| INFRA-03 | Phase 1 | Complete |
-| INFRA-04 | Phase 1 | Complete |
-| DATA-01 | Phase 1 | Complete |
-| DATA-02 | Phase 1 | Complete |
-| DATA-03 | Phase 1 | Complete |
-| DATA-04 | Phase 1 | Complete |
-| DATA-05 | Phase 1 | Complete |
-| HOST-01 | Phase 2 | Complete |
-| HOST-02 | Phase 2 | Complete |
-| HOST-03 | Phase 2 | Complete |
-| HOST-04 | Phase 2 | Complete |
-| HOST-10 | Phase 2 | Complete |
-| PLAY-01 | Phase 2 | Complete |
-| PLAY-02 | Phase 2 | Complete |
-| PLAY-03 | Phase 2 | Complete |
-| HOST-05 | Phase 3 | Complete |
-| HOST-06 | Phase 3 | Complete |
-| HOST-07 | Phase 3 | Complete |
-| HOST-08 | Phase 3 | Complete |
-| HOST-09 | Phase 3 | Complete |
-| PLAY-04 | Phase 3 | Complete |
-| PLAY-05 | Phase 3 | Complete |
-| PLAY-06 | Phase 3 | Complete |
-| PLAY-07 | Phase 3 | Complete |
-| PLAY-08 | Phase 3 | Complete |
-| PLAY-09 | Phase 3 | Complete |
-| PLAY-10 | Phase 3 | Complete |
-| END-01 | Phase 4 | Complete |
-| END-02 | Phase 4 | Complete |
-| END-03 | Phase 4 | Complete |
-| END-04 | Phase 4 | Complete |
-| END-05 | Phase 4 | Complete |
-| END-06 | Phase 4 | Complete |
-| END-07 | Phase 4 | Complete |
-| INFRA-05 | Phase 5 | Complete |
-| POLISH-01 | Phase 5 | Complete |
-| POLISH-02 | Phase 5 | Complete |
+| MORAL-01 | TBD | Not started |
+| MORAL-02 | TBD | Not started |
+| MORAL-03 | TBD | Not started |
+| MORAL-04 | TBD | Not started |
+| MORAL-05 | TBD | Not started |
+| MORAL-06 | TBD | Not started |
+| PACK-01 | TBD | Not started |
+| PACK-02 | TBD | Not started |
+| PACK-03 | TBD | Not started |
+| PACK-04 | TBD | Not started |
+| PACK-05 | TBD | Not started |
+| THREE-01 | TBD | Not started |
+| THREE-02 | TBD | Not started |
+| THREE-03 | TBD | Not started |
+| THREE-04 | TBD | Not started |
+| THREE-05 | TBD | Not started |
+| THREE-06 | TBD | Not started |
+| THREE-07 | TBD | Not started |
+| HOSTUX-01 | TBD | Not started |
+| HOSTUX-02 | TBD | Not started |
+| AI-01 | TBD | Not started |
+| AI-02 | TBD | Not started |
+| AI-03 | TBD | Not started |
+| AI-04 | TBD | Not started |
 
 **Coverage:**
-- v1 requirements: 32 total
-- Mapped to phases: 32
-- Unmapped: 0 ✓
+- v1.1 requirements: 24 total
+- Mapped to phases: TBD (roadmapper assigns)
+- Unmapped: 24 pending
 
 ---
-*Requirements defined: 2026-03-25*
-*Last updated: 2026-03-25 after initial definition*
+*Requirements defined: 2026-03-27*
