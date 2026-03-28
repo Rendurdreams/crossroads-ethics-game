@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Immersion + Moral Identity
 status: verifying
-stopped_at: Completed 10-host-ux-unification-reveal-beat Plan 01 — lerpSpeedRef threading + visual quality pass
-last_updated: "2026-03-28T20:46:37.390Z"
+stopped_at: "CHECKPOINT: 10-02-PLAN.md Task 2 (human-verify)"
+last_updated: "2026-03-28T20:53:07.075Z"
 progress:
   total_phases: 5
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 8
-  completed_plans: 6
+  completed_plans: 7
 ---
 
 # Project State
@@ -135,6 +135,8 @@ Recent decisions affecting current work:
 - [Phase 09-three-js-host-scene]: Procedural GLB files generated via custom Node.js binary writer — GLTFExporter requires browser APIs; manual GLB 2.0 format used to create valid anchor meshes that useGLTF can load
 - [Phase 10-host-ux-unification-reveal-beat]: lerpSpeedRef as useRef not useState in Host.jsx — avoids re-render chain when timer state changes (Pitfall 2)
 - [Phase 10-host-ux-unification-reveal-beat]: FogController converted to useFrame lerp — eliminates jarring instant fog jump during reveal beat (Pitfall 4)
+- [Phase 10-host-ux-unification-reveal-beat]: lerpSpeedRef.current = 8 set before await supabase in closeRound — prevents race with Supabase subscription delivering new world_state before fast lerp is active
+- [Phase 10-host-ux-unification-reveal-beat]: Host round view uses individually fixed-position glass pills (HUD) instead of flex panel layout — canvas fills 100% screen at all times per D-07
 
 ### Roadmap Evolution
 
@@ -152,7 +154,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T20:46:37.385Z
-Stopped at: Completed 10-host-ux-unification-reveal-beat Plan 01 — lerpSpeedRef threading + visual quality pass
+Last session: 2026-03-28T20:52:59.929Z
+Stopped at: CHECKPOINT: 10-02-PLAN.md Task 2 (human-verify)
 Resume file: None
 Next action: `/gsd:plan-phase 7`
