@@ -1,4 +1,4 @@
-import { useState, useEffect, useReducer, useRef } from 'react'
+import { useState, useEffect, useReducer, useRef, lazy, Suspense } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase.js'
 import { getPackById, getScenarioByRound } from '../lib/scenarios.js'
@@ -7,8 +7,10 @@ import { computeProfile, findConflicts } from '../lib/detection.js'
 import { FRAMEWORKS } from '../lib/frameworks.js'
 import PlayerRoster from '../components/PlayerRoster.jsx'
 import MeterBar from '../components/MeterBar.jsx'
-import KingdomMap from '../components/KingdomMap.jsx'
+import CityPlaceholder from '../components/CityPlaceholder.jsx'
 import styles from './Host.module.css'
+
+const KingdomScene = lazy(() => import('../components/KingdomScene.jsx'))
 
 // ─── Round state machine ───────────────────────────────────────────────────
 
@@ -369,7 +371,9 @@ export default function Host() {
     return (
       <>
         <div className={styles.canvas}>
-          <KingdomMap worldState={worldState} />
+          <Suspense fallback={<CityPlaceholder />}>
+            <KingdomScene worldState={worldState} />
+          </Suspense>
         </div>
 
         <div className={styles.topBar}>
@@ -434,7 +438,9 @@ export default function Host() {
     return (
       <>
         <div className={styles.canvas}>
-          <KingdomMap worldState={worldState} />
+          <Suspense fallback={<CityPlaceholder />}>
+            <KingdomScene worldState={worldState} />
+          </Suspense>
         </div>
 
         <div className={styles.topBar}>
@@ -519,7 +525,9 @@ export default function Host() {
   return (
     <>
       <div className={styles.canvas}>
-        <KingdomMap worldState={worldState} />
+        <Suspense fallback={<CityPlaceholder />}>
+          <KingdomScene worldState={worldState} />
+        </Suspense>
       </div>
 
       <div className={styles.lobbyOverlay}>
