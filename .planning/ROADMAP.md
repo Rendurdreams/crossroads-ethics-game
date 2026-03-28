@@ -73,7 +73,7 @@ Plans:
   5. The 3D scene runs at stable 60fps on a standard laptop while Supabase subscription events fire during a live round
 **Plans:** 2 plans
 Plans:
-- [ ] 09-01-PLAN.md — GLTF model sourcing + KingdomScene.jsx scaffold + Host.jsx swap (replace KingdomMap)
+- [x] 09-01-PLAN.md — GLTF model sourcing + KingdomScene.jsx scaffold + Host.jsx swap (replace KingdomMap)
 - [ ] 09-02-PLAN.md — Lerp interpolation + threshold events for all 4 landmarks + 60fps validation
 **UI hint**: yes
 
