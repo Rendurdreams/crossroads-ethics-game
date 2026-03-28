@@ -52,6 +52,7 @@ Players finish the game understanding that ethics and morals are not the same th
 ### Active (v1.1 in progress)
 
 - ✓ Moral baseline at join time: value ranking (5 values) + 2 stance questions, stored in Supabase as `moral_values` + `moral_stances` on player row — validated in Phase 7
+- ✓ Multi-pack system: host selects from kingdom-arc, real-world-modern, or futures scenario packs; `pack_id` + `total_rounds` written to Supabase on lobby open; game loop resolves pack dynamically — validated in Phase 8
 
 ### Out of Scope (v2+)
 
@@ -68,10 +69,10 @@ Players finish the game understanding that ethics and morals are not the same th
 
 - **Tech stack:** React 18 (Vite 8), Supabase v2, Framer Motion 11, CSS Modules — no TypeScript
 - **Codebase:** ~5,200 LOC (src/ JSX + CSS)
-- **Scenario pack:** kingdom-arc (7 dilemmas, fantasy kingdom framing, ethical framework tags)
+- **Scenario packs:** 3 packs — kingdom-arc (8 rounds), real-world-modern "Common Ground" (7 rounds), futures "The Weight of Tomorrow" (7 rounds); AI-injectable pack schema with `ai_generated` + `generator_prompt` fields
 - **Deployment:** Netlify / Vercel via `vite build`; dist/ is deployment artifact
 - **Session model:** No auth — player_id + session_id in localStorage; ephemeral sessions
-- **Build:** Clean at 458ms, 455 modules
+- **Build:** Clean at 491ms, 459 modules
 
 ## Constraints
 
@@ -111,4 +112,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-27 after v1.0 milestone*
+*Last updated: 2026-03-27 after Phase 8 (Multi-Pack System) — v1.1 milestone in progress*
