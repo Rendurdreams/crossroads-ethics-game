@@ -1,12 +1,12 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
+milestone: v1.1
 milestone_name: Immersion + Moral Identity
-status: Defining roadmap
-stopped_at: v1.1 requirements defined 2026-03-27
+status: Roadmap defined — ready to plan Phase 7
+stopped_at: v1.1 roadmap created 2026-03-27
 last_updated: "2026-03-27T22:01:53.180Z"
 progress:
-  total_phases: 7
+  total_phases: 12
   completed_phases: 7
   total_plans: 18
   completed_plans: 18
@@ -16,23 +16,29 @@ progress:
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-25)
+See: .planning/PROJECT.md (updated 2026-03-27)
 
-**Core value:** Players finish understanding their own ethical reasoning — named, visible, connected to a philosophical tradition.
-**Current focus:** Phase 06 — kingdom-ui-overhaul
+**Core value:** Players finish understanding their own ethical reasoning — named, visible, connected to a philosophical tradition. In v1.1: they also see where their choices diverged from their own stated values.
+**Current focus:** v1.1 Phase 07 — moral-profile-data-layer (not started)
 
 ## Current Position
 
-Phase: 06
+Phase: 07
 Plan: Not started
+Status: Roadmap defined. Next step: `/gsd:plan-phase 7`
+
+```
+v1.0 [██████████████████████] 100% (7/7 phases)
+v1.1 [                      ]   0% (0/5 phases)
+```
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 0
-- Average duration: -
-- Total execution time: -
+- Total plans completed: 18 (v1.0)
+- Average duration: ~140s/plan
+- Total execution time: ~42 minutes
 
 **By Phase:**
 
@@ -42,8 +48,8 @@ Plan: Not started
 
 **Recent Trend:**
 
-- Last 5 plans: -
-- Trend: -
+- Last 5 plans: Phase 06 P01 185s, P02 3min, P03 261s
+- Trend: Stable
 
 *Updated after each plan completion*
 | Phase 01-foundation P01 | 8 | 3 tasks | 10 files |
@@ -110,10 +116,13 @@ Recent decisions affecting current work:
 - [Phase 06-kingdom-ui-overhaul]: Pack identity card replaces round selector entirely — total_rounds set at session creation from pack, not HostSetup
 - [Phase 06-kingdom-ui-overhaul]: KingdomMap imported directly (not lazy) — SVG component in same bundle; no code-splitting benefit
 - [Phase 06-kingdom-ui-overhaul]: Removed totalRounds local state from Host.jsx; session.total_rounds from DB is source of truth
+- [v1.1 roadmap]: Three.js moves from "deferred to v2" to active v1.1 scope — PACK-05 and AI-03 share phase 8; AI-03 placed in Phase 8 (pack schema shape) not Phase 11 (AI stubs) because the pack shape is pack system work
+- [v1.1 roadmap]: MORAL-03/04 held for Phase 11 (not Phase 7) — detection logic requires choice framework tags to exist; Phase 7 only stores the baseline; detection runs at choice-lock time after game loop is complete
 
 ### Roadmap Evolution
 
 - Phase 05.1 inserted after Phase 05: Visual Experience Overhaul (URGENT) — Premium modern emotional design across the entire app. Replace flat UI with atmospheric, immersive game experience. Emotional tone: weight, reflection, moral gravity. Uses Stitch, nanabana, ui-ux-pro-max design tools.
+- v1.1 phases 7–11 defined 2026-03-27: Moral Profile Data Layer, Multi-Pack System, Three.js Host Scene, Host UX Unification + Reveal Beat, Moral Conflict Detection + End Screen + AI Hooks
 
 ### Pending Todos
 
@@ -121,11 +130,12 @@ None yet.
 
 ### Blockers/Concerns
 
-- **Phase 1**: RLS policies can silently block real-time event delivery in Supabase — must be explicitly tested before Phase 2 builds against it
-- **Phase 1**: Schema needs a `reflections` table for Round 6 free-text responses (not in original CLAUDE.md design — added as INFRA-01 scope)
+- **Phase 9 (Three.js)**: r128 was previously noted as the CDN target; v1.1 uses npm with r160+ — verify CatmullRomCurve3 and other APIs are still compatible before implementation
+- **Phase 7 (moral baseline UI)**: Join flow currently goes Landing → lobby wait; inserting a baseline step adds latency before a player sees the lobby — design must not feel like a survey gatekeeping the game
 
 ## Session Continuity
 
-Last session: 2026-03-27T21:28:15.592Z
-Stopped at: Completed 06-kingdom-ui-overhaul-03-PLAN.md
+Last session: 2026-03-27T22:01:53.180Z
+Stopped at: v1.1 roadmap defined — ROADMAP.md, REQUIREMENTS.md, STATE.md written
 Resume file: None
+Next action: `/gsd:plan-phase 7`

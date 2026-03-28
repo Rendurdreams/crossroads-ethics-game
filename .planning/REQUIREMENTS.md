@@ -81,35 +81,36 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| MORAL-01 | TBD | Not started |
-| MORAL-02 | TBD | Not started |
-| MORAL-03 | TBD | Not started |
-| MORAL-04 | TBD | Not started |
-| MORAL-05 | TBD | Not started |
-| MORAL-06 | TBD | Not started |
-| PACK-01 | TBD | Not started |
-| PACK-02 | TBD | Not started |
-| PACK-03 | TBD | Not started |
-| PACK-04 | TBD | Not started |
-| PACK-05 | TBD | Not started |
-| THREE-01 | TBD | Not started |
-| THREE-02 | TBD | Not started |
-| THREE-03 | TBD | Not started |
-| THREE-04 | TBD | Not started |
-| THREE-05 | TBD | Not started |
-| THREE-06 | TBD | Not started |
-| THREE-07 | TBD | Not started |
-| HOSTUX-01 | TBD | Not started |
-| HOSTUX-02 | TBD | Not started |
-| AI-01 | TBD | Not started |
-| AI-02 | TBD | Not started |
-| AI-03 | TBD | Not started |
-| AI-04 | TBD | Not started |
+| MORAL-01 | Phase 7 | Not started |
+| MORAL-02 | Phase 7 | Not started |
+| MORAL-03 | Phase 11 | Not started |
+| MORAL-04 | Phase 11 | Not started |
+| MORAL-05 | Phase 11 | Not started |
+| MORAL-06 | Phase 11 | Not started |
+| PACK-01 | Phase 8 | Not started |
+| PACK-02 | Phase 8 | Not started |
+| PACK-03 | Phase 8 | Not started |
+| PACK-04 | Phase 8 | Not started |
+| PACK-05 | Phase 8 | Not started |
+| THREE-01 | Phase 9 | Not started |
+| THREE-02 | Phase 9 | Not started |
+| THREE-03 | Phase 9 | Not started |
+| THREE-04 | Phase 10 | Not started |
+| THREE-05 | Phase 10 | Not started |
+| THREE-06 | Phase 9 | Not started |
+| THREE-07 | Phase 9 | Not started |
+| HOSTUX-01 | Phase 10 | Not started |
+| HOSTUX-02 | Phase 10 | Not started |
+| AI-01 | Phase 11 | Not started |
+| AI-02 | Phase 11 | Not started |
+| AI-03 | Phase 8 | Not started |
+| AI-04 | Phase 11 | Not started |
 
 **Coverage:**
 - v1.1 requirements: 24 total
-- Mapped to phases: TBD (roadmapper assigns)
-- Unmapped: 24 pending
+- Mapped to phases: 24/24
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-27*
+*Traceability updated: 2026-03-27 (roadmapper)*
