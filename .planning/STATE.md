@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Immersion + Moral Identity
-status: executing
-stopped_at: Completed Phase 09 Plan 01 — KingdomScene foundation
-last_updated: "2026-03-28T04:47:19.407Z"
+status: verifying
+stopped_at: Completed 10-host-ux-unification-reveal-beat Plan 01 — lerpSpeedRef threading + visual quality pass
+last_updated: "2026-03-28T20:46:37.390Z"
 progress:
   total_phases: 5
   completed_phases: 2
-  total_plans: 6
-  completed_plans: 5
+  total_plans: 8
+  completed_plans: 6
 ---
 
 # Project State
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-27)
 
 Phase: 09 (three-js-host-scene) — EXECUTING
 Plan: 2 of 2
-Status: Ready to execute
+Status: Phase complete — ready for verification
 
 ```
 v1.0 [██████████████████████] 100% (7/7 phases)
@@ -74,6 +74,7 @@ v1.1 [                      ]   0% (0/5 phases)
 | Phase 08-multi-pack-system P02 | 63 | 1 tasks | 2 files |
 | Phase 08-multi-pack-system P03 | 75s | 2 tasks | 2 files |
 | Phase 09-three-js-host-scene P01 | 275 | 2 tasks | 9 files |
+| Phase 10-host-ux-unification-reveal-beat P01 | 165 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -132,6 +133,8 @@ Recent decisions affecting current work:
 - [Phase 08-multi-pack-system]: total_rounds = getPlayableScenarios(pack).length + 1 to include reflection round in session total
 - [Phase 08-multi-pack-system]: Pack resolved in mount fetch via getPackById(session.pack_id) — not module-level constant; reflection guard uses getReflectionScenario(pack) for pack-agnostic detection
 - [Phase 09-three-js-host-scene]: Procedural GLB files generated via custom Node.js binary writer — GLTFExporter requires browser APIs; manual GLB 2.0 format used to create valid anchor meshes that useGLTF can load
+- [Phase 10-host-ux-unification-reveal-beat]: lerpSpeedRef as useRef not useState in Host.jsx — avoids re-render chain when timer state changes (Pitfall 2)
+- [Phase 10-host-ux-unification-reveal-beat]: FogController converted to useFrame lerp — eliminates jarring instant fog jump during reveal beat (Pitfall 4)
 
 ### Roadmap Evolution
 
@@ -149,7 +152,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T04:47:19.402Z
-Stopped at: Completed Phase 09 Plan 01 — KingdomScene foundation
+Last session: 2026-03-28T20:46:37.385Z
+Stopped at: Completed 10-host-ux-unification-reveal-beat Plan 01 — lerpSpeedRef threading + visual quality pass
 Resume file: None
 Next action: `/gsd:plan-phase 7`

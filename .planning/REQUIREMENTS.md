@@ -30,8 +30,8 @@
 - [x] **THREE-01**: Host screen renders a Three.js 3D scene replacing the CSS KingdomMap — nighttime cityscape or kingdom landscape, fixed camera angle, slow ambient drift
 - [x] **THREE-02**: 3D scene has 4 landmark objects corresponding to world state dimensions: bridge (trust), lighthouse/beacon (courage), building cluster/windows (solidarity), fog layer (awareness)
 - [ ] **THREE-03**: Landmark states update after each round close based on world state values — visual change (lighting, geometry, particles) driven by flourishing / neutral / declining tiers
-- [ ] **THREE-04**: Host screen layout unifies 3D scene and right panel into one visual language — same dark glass palette, amber glow, panel feels like a HUD overlay on the scene, not a separate column
-- [ ] **THREE-05**: Dramatic round-close sequence: when host clicks "Close Round," the 3D scene plays a brief reveal animation (2–4 seconds) before world state meters update — landmark lights shift, a visual beat registers the collective choice
+- [x] **THREE-04**: Host screen layout unifies 3D scene and right panel into one visual language — same dark glass palette, amber glow, panel feels like a HUD overlay on the scene, not a separate column
+- [x] **THREE-05**: Dramatic round-close sequence: when host clicks "Close Round," the 3D scene plays a brief reveal animation (2–4 seconds) before world state meters update — landmark lights shift, a visual beat registers the collective choice
 - [x] **THREE-06**: Three.js loads from npm (not CDN) with tree-shaking — only imported modules bundled; r160+ for current API compatibility
 - [ ] **THREE-07**: 3D scene runs at stable 60fps on a standard laptop during presentation (no frame drops during Supabase subscription events)
 
