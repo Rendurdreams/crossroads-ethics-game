@@ -63,6 +63,7 @@ export default function Host() {
   const [reflections, setReflections] = useState([])
 
   const timerChannelRef = useRef(null)
+  const lerpSpeedRef = useRef(2)
 
   // ── Initial data load + subscriptions ───────────────────────────────────
 
@@ -372,7 +373,7 @@ export default function Host() {
       <>
         <div className={styles.canvas}>
           <Suspense fallback={<CityPlaceholder />}>
-            <KingdomScene worldState={worldState} />
+            <KingdomScene worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
           </Suspense>
         </div>
 
@@ -439,7 +440,7 @@ export default function Host() {
       <>
         <div className={styles.canvas}>
           <Suspense fallback={<CityPlaceholder />}>
-            <KingdomScene worldState={worldState} />
+            <KingdomScene worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
           </Suspense>
         </div>
 
@@ -526,7 +527,7 @@ export default function Host() {
     <>
       <div className={styles.canvas}>
         <Suspense fallback={<CityPlaceholder />}>
-          <KingdomScene worldState={worldState} />
+          <KingdomScene worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
         </Suspense>
       </div>
 
