@@ -3,6 +3,7 @@ import { AnimatePresence } from 'framer-motion'
 import Landing from './pages/Landing.jsx'
 import HostSetup from './pages/HostSetup.jsx'
 import Host from './pages/Host.jsx'
+import Baseline from './pages/Baseline.jsx'
 import Play from './pages/Play.jsx'
 
 function AppRoutes() {
@@ -15,6 +16,7 @@ function AppRoutes() {
           <Route path="/" element={<Landing />} />
           <Route path="/host-setup/:sessionId" element={<HostSetup />} />
           <Route path="/host/:sessionId" element={<Host />} />
+          <Route path="/baseline/:sessionId" element={<Baseline />} />
           <Route path="/play/:sessionId" element={<Play />} />
         </Routes>
       </AnimatePresence>

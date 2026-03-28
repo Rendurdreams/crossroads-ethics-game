@@ -107,7 +107,7 @@ export default function Landing() {
     localStorage.setItem('player_id', player.id)
     localStorage.setItem('session_id', session.id)
 
-    navigate(`/play/${session.id}`)
+    navigate(`/baseline/${session.id}`)
   }
 
   const joinEnabled = code.length === 4 && name.trim().length > 0 && !joinLoading
