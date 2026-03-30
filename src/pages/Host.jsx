@@ -1,17 +1,15 @@
-import { useState, useEffect, useReducer, useRef, lazy, Suspense } from 'react'
+import { useState, useEffect, useReducer, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { supabase } from '../lib/supabase.js'
 import { getPackById, getScenarioByRound } from '../lib/scenarios.js'
 import { applyChoicesToWorld, computeNarrative } from '../lib/worldState.js'
-import { computeProfile, findConflicts } from '../lib/detection.js'
+import { computeProfile, findConflicts, findMoralConflicts } from '../lib/detection.js'
 import { FRAMEWORKS } from '../lib/frameworks.js'
 import PlayerRoster from '../components/PlayerRoster.jsx'
 import MeterBar from '../components/MeterBar.jsx'
-import CityPlaceholder from '../components/CityPlaceholder.jsx'
+import KingdomCanvas from '../components/KingdomCanvas.jsx'
 import styles from './Host.module.css'
-
-const KingdomScene = lazy(() => import('../components/KingdomScene.jsx'))
 
 // ─── Round state machine ───────────────────────────────────────────────────
 
@@ -329,8 +327,8 @@ export default function Host() {
 
     try {
       const [{ data: allPlayers, error: fetchErr }, { data: allChoices, error: choicesErr }] = await Promise.all([
-        supabase.from('players').select('id').eq('session_id', sessionId),
-        supabase.from('choices').select('player_id, round_number, frameworks').eq('session_id', sessionId)
+        supabase.from('players').select('id, moral_values, moral_stances').eq('session_id', sessionId),
+        supabase.from('choices').select('player_id, round_number, choice_index, scenario_id, frameworks').eq('session_id', sessionId)
       ])
 
       if (fetchErr) throw fetchErr
@@ -341,19 +339,47 @@ export default function Host() {
       const historyByPlayer = {}
       ;(allChoices ?? []).forEach(c => {
         if (!historyByPlayer[c.player_id]) historyByPlayer[c.player_id] = []
-        historyByPlayer[c.player_id].push({ round: c.round_number, frameworks: c.frameworks })
+        historyByPlayer[c.player_id].push({
+          round: c.round_number,
+          frameworks: c.frameworks,
+          choiceIndex: c.choice_index,
+          scenarioId: c.scenario_id
+        })
       })
 
       const updates = allPlayers.map(p => {
         const history = historyByPlayer[p.id] ?? []
         const { dominant, counts } = computeProfile(history)
         const conflicts = findConflicts(history)
+        const moralConflicts = findMoralConflicts(history, p.moral_values ?? null, p.moral_stances ?? null)
+
+        const debriefContext = {
+          playerId: p.id,
+          dominantFramework: dominant,
+          frameworkCounts: counts,
+          frameworkConflicts: conflicts,
+          moralConflicts: moralConflicts,
+          moralBaseline: {
+            topValue: p.moral_values?.[0] ?? null,
+            allValues: p.moral_values ?? [],
+            stances: p.moral_stances ?? {}
+          },
+          choiceHistory: history.map(c => ({
+            round: c.round,
+            scenarioId: c.scenarioId,
+            scenarioTitle: getScenarioByRound(pack, c.round)?.title ?? ('Dilemma ' + c.round),
+            choiceIndex: c.choiceIndex,
+            frameworks: c.frameworks
+          }))
+        }
+
         return {
           id: p.id,
           dominant_framework: dominant,
           conflicts: conflicts,
           framework_counts: counts,
-          choice_history: history
+          choice_history: history,
+          debrief_context: debriefContext
         }
       })
 
@@ -364,14 +390,52 @@ export default function Host() {
               dominant_framework: u.dominant_framework,
               conflicts: u.conflicts,
               framework_counts: u.framework_counts,
-              choice_history: u.choice_history
+              choice_history: u.choice_history,
+              debrief_context: u.debrief_context
             })
             .eq('id', u.id)
         )
       )
 
+      // Aggregate framework breakdown across all players for group debrief
+      const groupFrameworkCounts = { consequentialism: 0, deontology: 0, care: 0, virtue: 0 }
+      updates.forEach(u => {
+        Object.entries(u.framework_counts).forEach(([f, count]) => {
+          groupFrameworkCounts[f] = (groupFrameworkCounts[f] || 0) + count
+        })
+      })
+
+      // Notable moral conflicts: group patterns by top value
+      const notableMoralConflicts = []
+      const valueGroups = {}
+      updates.forEach(u => {
+        const topValue = u.debrief_context.moralBaseline.topValue
+        if (!topValue) return
+        if (!valueGroups[topValue]) valueGroups[topValue] = { total: 0, conflicted: 0 }
+        valueGroups[topValue].total++
+        if (u.debrief_context.moralConflicts.length > 0) valueGroups[topValue].conflicted++
+      })
+      Object.entries(valueGroups).forEach(([value, g]) => {
+        if (g.conflicted > 0) {
+          notableMoralConflicts.push({
+            description: `${g.conflicted} of ${g.total} players who ranked ${value} #1 made choices that conflicted with that value`,
+            playerCount: g.conflicted,
+            totalWithValue: g.total
+          })
+        }
+      })
+
+      const groupDebriefContext = {
+        packId: pack.id,
+        packName: pack.name,
+        totalPlayers: allPlayers.length,
+        frameworkBreakdown: groupFrameworkCounts,
+        finalWorldState: session?.world_state ?? { trust: 50, courage: 50, solidarity: 50, awareness: 50 },
+        notableMoralConflicts
+      }
+
       await supabase.from('sessions')
-        .update({ status: 'finished' })
+        .update({ status: 'finished', group_debrief_context: groupDebriefContext })
         .eq('id', sessionId)
 
     } catch (err) {
@@ -418,9 +482,7 @@ export default function Host() {
     return (
       <>
         <div className={styles.canvas}>
-          <Suspense fallback={<CityPlaceholder />}>
-            <KingdomScene worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
-          </Suspense>
+          <KingdomCanvas worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
         </div>
 
         <div className={styles.topBar}>
@@ -497,9 +559,7 @@ export default function Host() {
     return (
       <>
         <div className={styles.canvas}>
-          <Suspense fallback={<CityPlaceholder />}>
-            <KingdomScene worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
-          </Suspense>
+          <KingdomCanvas worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
         </div>
 
         {/* ── Top-left pill: room code + round ── */}
@@ -670,9 +730,7 @@ export default function Host() {
   return (
     <>
       <div className={styles.canvas}>
-        <Suspense fallback={<CityPlaceholder />}>
-          <KingdomScene worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
-        </Suspense>
+        <KingdomCanvas worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
       </div>
 
       <div className={styles.lobbyOverlay}>
