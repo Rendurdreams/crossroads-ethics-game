@@ -212,3 +212,12 @@
   animation: fadeUp 400ms ease forwards;
   animation-delay: 2200ms;
 }
+
+@media (max-width: 390px) {
+  .card {
+    padding: 20px 14px;
+  }
+  .consequence {
+    font-size: clamp(16px, 5vw, 19px);
+  }
+}

@@ -213,6 +213,23 @@
   font-family: var(--sans);
 }
 
+@media (max-width: 390px) {
+  .wrapper {
+    padding: 24px 16px 48px;
+  }
+  .sectionCard,
+  .conflictSection,
+  .moralsSection {
+    padding: 16px;
+  }
+  .frameworkName {
+    font-size: clamp(22px, 7vw, 28px);
+  }
+  .explanation {
+    font-size: clamp(17px, 5.5vw, 21px);
+  }
+}
+
 /* Empty state */
 .emptyState {
   text-align: center;

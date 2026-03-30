@@ -123,3 +123,9 @@
   font-size: 0.85rem;
   margin: 8px 0 0;
 }
+
+@media (max-width: 390px) {
+  .section {
+    padding: 16px;
+  }
+}

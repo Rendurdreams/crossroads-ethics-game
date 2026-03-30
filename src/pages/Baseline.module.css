@@ -225,3 +225,15 @@
   margin: 8px 0 0 0;
   text-align: center;
 }
+
+@media (max-width: 390px) {
+  .content {
+    padding: 24px 16px 48px;
+  }
+  .stanceText {
+    font-size: clamp(17px, 5.5vw, 21px);
+  }
+  .card {
+    padding: 20px 16px;
+  }
+}

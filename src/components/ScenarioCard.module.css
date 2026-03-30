@@ -121,3 +121,12 @@
   margin: 8px 0 0 0;
   text-align: center;
 }
+
+@media (max-width: 390px) {
+  .card {
+    padding: 20px 16px;
+  }
+  .body {
+    font-size: clamp(17px, 5.5vw, 21px);
+  }
+}
