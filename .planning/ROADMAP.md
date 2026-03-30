@@ -36,7 +36,7 @@
 
 - [ ] **Phase 12: Ethical Framework Depth** — Deeper moral baseline, moral trajectory tracking, conscience cost indicators, deontological awareness prompts, virtue reputation arc, rights awareness, cultural context framing
 - [x] **Phase 13: Text & Mobile Polish** — Meter label rework, high-school-friendly text, 375px mobile optimization (completed 2026-03-30)
-- [ ] **Phase 14: Animated Kingdom Map** — Replace Three.js/R3F 3D scene with GSAP-driven 2D animated map. Four reactive zones (Fire/Courage, Water/Honesty, Purple/Empathy, Compass/Loyalty). Strip mouse effects for projected host screen. Remove Three.js deps after confirmed.
+- [x] **Phase 14: Animated Kingdom Map** — Replace Three.js/R3F 3D scene with GSAP-driven 2D animated map. Four reactive zones (Fire/Courage, Water/Honesty, Purple/Empathy, Compass/Loyalty). Strip mouse effects for projected host screen. Remove Three.js deps after confirmed. (completed 2026-03-30)
 
 ---
 
@@ -96,7 +96,7 @@ Plans:
 **Requirements**: MAP-01, MAP-02, MAP-03, MAP-04
 **Depends on:** Phase 13.1
 **Canonical refs:** integration/AnimatedMap.jsx, integration/AnimatedMap.module.css, integration/INTEGRATION_PROMPT.md, integration/Map1.png
-**Plans:** 1 plan
+**Plans:** 1/1 plans complete
 
 Plans:
 - [ ] 14-01-PLAN.md — Install gsap, adapt AnimatedMap from prototype, swap into Host.jsx (3 sites), delete dead code
