@@ -47,7 +47,7 @@ export default function HostSetup() {
   async function openLobby() {
     setOpening(true)
     const selectedPack = getPackById(selectedPackId)
-    const totalRounds = getPlayableScenarios(selectedPack).length + 1  // playable + reflection
+    const totalRounds = getPlayableScenarios(selectedPack).length
     const { error } = await supabase
       .from('sessions')
       .update({ pack_id: selectedPackId, total_rounds: totalRounds })
