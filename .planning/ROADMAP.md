@@ -69,11 +69,13 @@ Plans:
 
 **Goal**: Every player-facing label, narrative, and UI element reads naturally for a high school audience and renders cleanly on a 375px phone screen — meter names connect to the moral reasoning the game teaches, academic jargon is eliminated, and mobile typography/spacing passes a visual audit
 **Depends on**: Phase 12
-**Requirements**: TBD
-**Plans**: 0 plans
+**Requirements**: METER-01, METER-02, TEXT-01, TEXT-02, TEXT-03, MOBILE-01, MOBILE-02, MOBILE-03
+**Plans**: 3 plans
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 13 to break down)
+- [ ] 13-01-PLAN.md — Meter label rework: rename kingdom geography labels to moral concept names across all 4 files
+- [ ] 13-02-PLAN.md — Text readability: rewrite FRAMEWORKS descriptions and ARC_NARRATIVES with introduce-then-define pattern
+- [ ] 13-03-PLAN.md — Mobile CSS: 390px breakpoints across 7 CSS module files + responsive SVG conflict diagram
 
 ---
 
@@ -93,4 +95,5 @@ Plans:
 | 9. Three.js Host Scene | v1.1 | 2/2 | Complete | 2026-03-29 |
 | 10. Host UX Unification + Reveal Beat | v1.1 | 2/2 | Complete | 2026-03-28 |
 | 11. Moral Conflict Detection + End Screen + AI Hooks | v1.1 | 3/3 | Complete | 2026-03-30 |
-| 12. Ethical Framework Depth | v1.2 | 1/3 | In Progress|  |
+| 12. Ethical Framework Depth | v1.2 | 3/3 | Complete |  |
+| 13. Text & Mobile Polish | v1.2 | 0/3 | Planned |  |

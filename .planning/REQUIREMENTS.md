@@ -46,34 +46,60 @@
 - [x] **CULTURE-01**: Pack selection card on HostSetup shows a one-line "ethical lens" subtitle: Kingdom = "What does a ruler owe?", Real-World = "What do you owe the people around you?", Futures = "What do you owe the people who come after you?" — frames the cultural context before play
 - [ ] **CULTURE-02**: End screen footer shows which pack was played and its ethical lens, so the player understands their results are context-dependent: "Your choices were measured in the context of [pack ethical lens]. A different context might have drawn different reasoning."
 
+### Meter Label Rework (Phase 13)
+
+- [ ] **METER-01**: All player-facing and host-facing meter labels renamed from kingdom geography to moral concepts: Bridge of Accord -> Honesty, Citadel Beacon -> Courage (unchanged), Village Quarter -> Loyalty, Fog of the Vale -> Empathy — same names on both host and player screens
+- [ ] **METER-02**: ConsequenceReveal ImpactMeter inline labels updated to match: Trust -> Honesty, Solidarity -> Loyalty, Awareness -> Empathy
+
+### Text Readability (Phase 13)
+
+- [ ] **TEXT-01**: All 4 FRAMEWORKS descriptions in frameworks.js rewritten — shorter, conversational, relatable for high schoolers while preserving philosophical accuracy
+- [ ] **TEXT-02**: All 12 ARC_NARRATIVES in FrameworkProfile.jsx rewritten using "introduce then define" pattern — every academic philosophy term immediately followed by a plain-language em-dash definition
+- [ ] **TEXT-03**: All end-screen philosophical text (section headers, conflict descriptions, moral arc narratives) uses introduce-then-define pattern where academic terms appear
+
+### 375px Mobile Layout (Phase 13)
+
+- [ ] **MOBILE-01**: All player-facing pages (Play, Baseline, FrameworkProfile, Landing) have @media (max-width: 390px) breakpoints reducing padding to maximize content width on 375px phones (343px+ content area, up from 311-327px)
+- [ ] **MOBILE-02**: Scenario body text and consequence text use CSS clamp() for fluid font scaling at narrow widths
+- [ ] **MOBILE-03**: SVG conflict diagram in FrameworkProfile uses viewBox + width="100%" for responsive scaling — no fixed pixel dimensions
+
 ---
 
 ## Traceability
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| BASELINE-01 | Phase 12 | Not started |
-| BASELINE-02 | Phase 12 | Not started |
-| BASELINE-03 | Phase 12 | Not started |
-| TRAJECTORY-01 | Phase 12 | Not started |
-| TRAJECTORY-02 | Phase 12 | Not started |
+| BASELINE-01 | Phase 12 | Complete |
+| BASELINE-02 | Phase 12 | Complete |
+| BASELINE-03 | Phase 12 | Complete |
+| TRAJECTORY-01 | Phase 12 | Complete |
+| TRAJECTORY-02 | Phase 12 | Complete |
 | TRAJECTORY-03 | Phase 12 | Not started |
-| TRAJECTORY-04 | Phase 12 | Not started |
-| CONSCIENCE-01 | Phase 12 | Not started |
+| TRAJECTORY-04 | Phase 12 | Complete |
+| CONSCIENCE-01 | Phase 12 | Complete |
 | CONSCIENCE-02 | Phase 12 | Not started |
-| DEONTO-01 | Phase 12 | Not started |
-| DEONTO-02 | Phase 12 | Not started |
-| VIRTUE-01 | Phase 12 | Not started |
+| DEONTO-01 | Phase 12 | Complete |
+| DEONTO-02 | Phase 12 | Complete |
+| VIRTUE-01 | Phase 12 | Complete |
 | VIRTUE-02 | Phase 12 | Not started |
-| RIGHTS-01 | Phase 12 | Not started |
+| RIGHTS-01 | Phase 12 | Complete |
 | RIGHTS-02 | Phase 12 | Not started |
-| CULTURE-01 | Phase 12 | Not started |
+| CULTURE-01 | Phase 12 | Complete |
 | CULTURE-02 | Phase 12 | Not started |
+| METER-01 | Phase 13 | Not started |
+| METER-02 | Phase 13 | Not started |
+| TEXT-01 | Phase 13 | Not started |
+| TEXT-02 | Phase 13 | Not started |
+| TEXT-03 | Phase 13 | Not started |
+| MOBILE-01 | Phase 13 | Not started |
+| MOBILE-02 | Phase 13 | Not started |
+| MOBILE-03 | Phase 13 | Not started |
 
 **Coverage:**
-- v1.2 requirements: 17 total
-- Mapped to phases: 17/17
+- v1.2 requirements: 25 total (17 Phase 12 + 8 Phase 13)
+- Mapped to phases: 25/25
 - Unmapped: 0
 
 ---
 *Requirements defined: 2026-03-30*
+*Phase 13 requirements added: 2026-03-30*
