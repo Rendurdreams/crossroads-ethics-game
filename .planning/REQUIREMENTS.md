@@ -12,8 +12,8 @@
 
 - [x] **MORAL-01**: Player completes a hybrid moral baseline at join time — value priority ranking (loyalty, honesty, fairness, courage, compassion) + 2 stance questions (e.g. "Is it ever okay to lie to protect someone?" Yes / No / It depends) — completes in under 60 seconds on phone
 - [x] **MORAL-02**: Moral baseline data stored on the player row in Supabase (values ranking as ordered array, stance answers as key/value pairs)
-- [ ] **MORAL-03**: After a player locks a choice, a subtle inline indicator appears when that choice conflicts with their stated top values — e.g. "This conflicts with your value of honesty" — shown below the framework label, never before the choice is locked
-- [ ] **MORAL-04**: Conflict detection logic compares choice framework tags against player's stated value priorities to determine moral tension (e.g. consequentialist choice conflicts with a player who ranked honesty #1)
+- [x] **MORAL-03**: After a player locks a choice, a subtle inline indicator appears when that choice conflicts with their stated top values — e.g. "This conflicts with your value of honesty" — shown below the framework label, never before the choice is locked
+- [x] **MORAL-04**: Conflict detection logic compares choice framework tags against player's stated value priorities to determine moral tension (e.g. consequentialist choice conflicts with a player who ranked honesty #1)
 - [ ] **MORAL-05**: End screen shows a Moral vs Ethics conflict map — lists rounds where player's choice diverged from stated values, names the philosophical tension (e.g. "You value loyalty above honesty, but in Round 2 you chose truth over protection — that's deontology overriding care ethics, and your own stated value")
 - [ ] **MORAL-06**: End screen section title/framing distinguishes moral profile (personal) from ethical framework (reasoned system) — the lesson is explicit in the copy
 
@@ -42,10 +42,10 @@
 
 ### AI Layer Hooks (Architecture Only — No Live AI Calls)
 
-- [ ] **AI-01**: Player end-screen data shape includes a `debrief_context` field — structured summary of choices, frameworks used, moral conflicts detected, suitable as an LLM prompt payload
-- [ ] **AI-02**: Session end data includes a `group_debrief_context` field — aggregate framework breakdown, world state final values, notable moral conflicts across the group, suitable as a discussion-prompt generation payload
+- [x] **AI-01**: Player end-screen data shape includes a `debrief_context` field — structured summary of choices, frameworks used, moral conflicts detected, suitable as an LLM prompt payload
+- [x] **AI-02**: Session end data includes a `group_debrief_context` field — aggregate framework breakdown, world state final values, notable moral conflicts across the group, suitable as a discussion-prompt generation payload
 - [x] **AI-03**: Pack schema includes optional `ai_generated: true` flag and `generator_prompt` field — future AI pack generation can use this shape to inject packs at session creation
-- [ ] **AI-04**: A `src/lib/ai.js` stub exists with placeholder functions: `generateDebrief(playerContext)`, `generateDiscussionPrompts(sessionContext)`, `generatePack(prompt)` — returns null, ready for implementation
+- [x] **AI-04**: A `src/lib/ai.js` stub exists with placeholder functions: `generateDebrief(playerContext)`, `generateDiscussionPrompts(sessionContext)`, `generatePack(prompt)` — returns null, ready for implementation
 
 ---
 
