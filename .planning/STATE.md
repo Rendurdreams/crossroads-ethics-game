@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Ethical Framework Depth
 status: verifying
-stopped_at: Completed 13.1-02-PLAN.md
-last_updated: "2026-03-30T19:26:45.572Z"
+stopped_at: Completed 13.1-03-PLAN.md
+last_updated: "2026-03-30T19:33:51.688Z"
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 9
-  completed_plans: 8
+  completed_plans: 9
 ---
 
 # Project State
@@ -86,6 +86,7 @@ v1.1 [                      ]   0% (0/5 phases)
 | Phase 13-text-mobile-polish P03 | 121s | 2 tasks | 8 files |
 | Phase 13.1 P01 | 92s | 2 tasks | 2 files |
 | Phase 13.1 P02 | 64s | 2 tasks | 2 files |
+| Phase 13.1 P03 | 141s | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -134,7 +135,6 @@ Recent decisions affecting current work:
 - [Phase 06-kingdom-ui-overhaul]: KingdomMap imported directly (not lazy) — SVG component in same bundle; no code-splitting benefit
 - [Phase 06-kingdom-ui-overhaul]: Removed totalRounds local state from Host.jsx; session.total_rounds from DB is source of truth
 - [Phase 13.1]: Delete+re-insert pattern for answer toggle — respects UNIQUE constraint without upsert RLS
-
 - [v1.1 roadmap]: Three.js moves from "deferred to v2" to active v1.1 scope — PACK-05 and AI-03 share phase 8; AI-03 placed in Phase 8 (pack schema shape) not Phase 11 (AI stubs) because the pack shape is pack system work
 - [v1.1 roadmap]: MORAL-03/04 held for Phase 11 (not Phase 7) — detection logic requires choice framework tags to exist; Phase 7 only stores the baseline; detection runs at choice-lock time after game loop is complete
 - [Phase 07-moral-profile-data-layer]: Stance Q2 additionally gated until Q1 has an answer — prevents out-of-order responses without hiding content
@@ -168,6 +168,8 @@ Recent decisions affecting current work:
 - [Phase 13-text-mobile-polish]: 390px breakpoint chosen to cover both iPhone SE (375px) and standard iPhone (390px)
 - [Phase 13-text-mobile-polish]: SVG conflict diagram uses width=100% with preserved viewBox -- no JS needed, scales via CSS
 - [Phase 13.1]: Bombshell worldImpact values use 2-3x normal range (20-40) for dramatic finale swings
+- [Phase 13.1]: METER_LABELS constant centralizes host meter display names (Honesty/Courage/Loyalty/Empathy)
+- [Phase 13.1]: scenarioOverlay glass panel with pointer-events:none for presenter dilemma text on projected screen
 
 ### Roadmap Evolution
 
@@ -187,7 +189,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T19:26:45.567Z
-Stopped at: Completed 13.1-02-PLAN.md
+Last session: 2026-03-30T19:33:51.683Z
+Stopped at: Completed 13.1-03-PLAN.md
 Resume file: None
 Next action: Phase verification

@@ -485,6 +485,9 @@ export default function Host() {
 
   const worldState = session?.world_state ?? { trust: 50, courage: 50, solidarity: 50, awareness: 50 }
 
+  // ── Meter display labels (value names, not landmark names) ──────────
+  const METER_LABELS = { trust: 'Honesty', courage: 'Courage', solidarity: 'Loyalty', awareness: 'Empathy' }
+
   // ── End state ──────────────────────────────────────────────────────────
 
   if (session?.status === 'finished') {
@@ -561,6 +564,7 @@ export default function Host() {
 
   if (session?.status === 'active' || session?.status === 'round_complete') {
     const currentScenario = getScenarioByRound(pack, session.current_round ?? 1)
+    const isBombshell = currentScenario?.id === 'round-bombshell'
     const tally = computeTally()
     const isLastRound = session.current_round >= session.total_rounds
     const fwCounts = frameworksUsedThisRound(roundState.choices, currentScenario)
@@ -574,12 +578,18 @@ export default function Host() {
       awareness: Math.round(worldState.awareness - prevWorld.awareness),
     } : null
 
-    const METER_LABELS = { trust: 'Trust', courage: 'Courage', solidarity: 'Solidarity', awareness: 'Awareness' }
+    const METER_LABELS = { trust: 'Honesty', courage: 'Courage', solidarity: 'Loyalty', awareness: 'Empathy' }
 
     return (
       <>
         <div className={styles.canvas}>
           <KingdomCanvas worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
+        </div>
+
+        {/* ── Scenario text for presenter ── */}
+        <div className={styles.scenarioOverlay}>
+          <p className={styles.scenarioTitle}>{currentScenario?.title ?? `Dilemma ${session.current_round}`}</p>
+          <p className={styles.scenarioBody}>{currentScenario?.text}</p>
         </div>
 
         {/* ── Top-left pill: room code + round ── */}
@@ -594,9 +604,11 @@ export default function Host() {
         {/* ── Top-right pill: status text ── */}
         <div className={styles.hudPillTopRight}>
           <span className={styles.topStatus}>
-            {revealPhase === 'revealing' ? 'The Realm Shifts...'
-             : revealPhase === 'revealed' ? 'The Realm Has Spoken'
-             : 'The Council Deliberates'}
+            {revealPhase === 'revealing'
+              ? (isBombshell ? 'The Throne Speaks...' : 'The Realm Shifts...')
+              : revealPhase === 'revealed'
+                ? (isBombshell ? 'The Throne Has Spoken' : 'The Realm Has Spoken')
+                : (isBombshell ? 'The Final Reckoning' : 'The Council Deliberates')}
           </span>
         </div>
 
@@ -712,7 +724,7 @@ export default function Host() {
                 exit={{ opacity: 0, scale: 0.97 }}
                 transition={{ duration: 0.35, ease: 'easeOut' }}
               >
-                <p className={styles.lessonLabel}>THE LESSON</p>
+                <p className={styles.lessonLabel}>{isBombshell ? 'THE VERDICT' : 'THE LESSON'}</p>
                 <p className={styles.lessonTitle}>{currentScenario?.moralTension}</p>
                 <p className={styles.lessonBody}>{currentScenario?.teaches}</p>
 
