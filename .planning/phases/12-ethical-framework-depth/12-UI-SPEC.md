@@ -55,14 +55,15 @@ Exceptions:
 | Role | Family | Size | Weight | Line Height |
 |------|--------|------|--------|-------------|
 | Body / UI chrome | Inter (--sans) | 16px | 400 | 1.5 |
-| Label / eyebrow | Inter (--sans) | 13–14px | 700 (uppercase) | 1.4 |
+| Label / eyebrow | Inter (--sans) | 14px | 700 (uppercase) | 1.4 |
 | Scenario / narrative | Playfair Display (--serif) | 21px | 400 | 1.75 |
 | Display / framework name | Playfair Display (--serif) | 28px | 700 | 1.2 |
 
 Notes:
 - New stance questions use `.stanceText` pattern: Playfair Display, 21px, weight 400, line-height 1.75 — matches existing Q1/Q2 questions.
 - Awareness prompt body copy: Inter, 16px, weight 400, line-height 1.5 — matches `.conflictDescription`.
-- End screen section eyebrows (arc, character, friction, rights, culture): Inter, 14px, weight 400, uppercase, letter-spacing 0.1em, color `var(--text-muted)` — matches existing `.eyebrow`.
+- End screen section eyebrows (arc, character, friction, rights, culture): Inter, 14px, weight 700, uppercase, letter-spacing 0.1em, color `var(--text-muted)` — matches existing `.eyebrow`.
+- Pack lens subtitle in HostSetup.jsx: Inter, 14px, italic, color `var(--text-muted)` — shares the same semantic role as eyebrow labels (small secondary text, muted color).
 - Arc narrative explanatory text: Inter, 16px, weight 400, line-height 1.6 — matches `.conflictDescription`.
 - Consistency label: Inter, 16px, weight 400, line-height 1.6.
 
@@ -112,7 +113,7 @@ Components touched or created in this phase:
 New conditional sections added in this order (D-27):
 1. Your Framework (existing — dominant)
 2. Your Morals vs Your Ethics (existing — value/stance conflicts)
-3. **Your Moral Arc** — only when dominant framework shifted between early and late rounds
+3. **Your Moral Arc** — primary visual anchor for end screen additions; only when dominant framework shifted between early and late rounds
 4. **Character** — only when ≥2 virtue choices made
 5. **Moral Friction count** — always shown when ≥1 conflict registered
 6. Where the Conflict Lived (existing — framework conflicts)
@@ -120,6 +121,8 @@ New conditional sections added in this order (D-27):
 8. The Framework You Used Least (existing)
 9. **Cultural Context footer** — always shown (pack lens)
 10. Your Choice Log (existing)
+
+The "Your Moral Arc" glass card (amber border, 24px padding) is the primary visual anchor for the new end screen content — it appears earliest in the new sections and carries the strongest visual weight via the `.conflictSection` amber-border treatment. Sections 4–9 use progressively lighter visual treatments (no amber border) to keep hierarchy clear.
 
 Each new section uses the existing `.sectionCard` or `.leastUsedSection` glass card pattern with `.eyebrow` label. No new card style needed — reuse existing `.conflictSection` pattern for sections 3, 4, 7 and `.leastUsedSection` (border-top divider) pattern for sections 5, 9.
 
@@ -137,7 +140,7 @@ Each new section uses the existing `.sectionCard` or `.leastUsedSection` glass c
 **`HostSetup.jsx` + `HostSetup.module.css`**
 - New `.packLens` element added inside each `.packCard` below `.packDescription`
 - Renders `ethicalLens` string from pack data as italic subtitle
-- Style: Inter, 13px, italic, color `var(--text-muted)`, margin-top 8px
+- Style: Inter, 14px, italic, color `var(--text-muted)`, margin-top 8px
 
 ### New Components
 
@@ -179,6 +182,8 @@ None — all UI work is additive to existing components.
 ### Moral Arc Section (FrameworkProfile.jsx)
 
 **Trigger:** Dominant framework changed between early rounds (1-2) and late rounds (5+)
+
+**Primary visual anchor role:** This is the highest-weight new section on the end screen. Its amber-bordered `.conflictSection` glass card treatment distinguishes it from subsequent sections (Character, Rights Awareness) which use lighter border treatments. Executor should ensure this section renders with full amber glow — not the subtle variant.
 
 **CSS:** Use existing `.conflictSection` pattern — glass card with amber border, 24px padding, `margin-top: 16px`
 
@@ -235,7 +240,7 @@ None — all UI work is additive to existing components.
 
 **Placement:** Below `.packDescription` text within each `.packCard`
 
-**CSS:** `margin-top: 8px; font-family: var(--sans); font-size: 13px; font-style: italic; color: var(--text-muted);`
+**CSS:** `margin-top: 8px; font-family: var(--sans); font-size: 14px; font-style: italic; color: var(--text-muted);`
 
 **No new class needed if inline style used; add `.packLens` to HostSetup.module.css if preferred.**
 
