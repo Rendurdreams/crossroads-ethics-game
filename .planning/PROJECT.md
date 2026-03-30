@@ -117,4 +117,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-30 after Phase 13 (Text & Mobile Polish) — meter labels renamed to moral concepts, text rewritten for high schoolers, 390px mobile breakpoints added*
+*Last updated: 2026-03-30 after Phase 13.1 (Dilemma 1 Flow Redesign + Bug Fixes) — bombshell finale replaces reflection round, answer toggle enabled, host screen shows scenario text + correct meter labels + bombshell-specific copy*
