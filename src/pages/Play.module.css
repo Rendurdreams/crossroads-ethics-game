@@ -332,6 +332,33 @@
   background: rgba(245, 158, 11, 0.25);
 }
 
+/* Scribe record (R8 bombshell mirror moment) */
+.scribeRecord {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 10px;
+}
+
+.scribeLabel {
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(245, 158, 11, 0.7);
+  margin-bottom: 8px;
+  font-family: var(--sans);
+}
+
+.scribeText {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-warm, #f5f0e8);
+  margin: 0;
+}
+
 /* Walk mechanic card wrapper */
 .card {
   background: var(--glass-bg);
