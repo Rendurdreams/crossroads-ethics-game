@@ -9,7 +9,7 @@ import { computeProfile, findConflicts } from '../lib/detection.js'
 import { FRAMEWORKS } from '../lib/frameworks.js'
 import PlayerRoster from '../components/PlayerRoster.jsx'
 import MeterBar from '../components/MeterBar.jsx'
-import KingdomMap from '../components/KingdomMap.jsx'
+import AnimatedMap from '../components/AnimatedMap.jsx'
 import styles from './Host.module.css'
 
 // ─── Round state machine ───────────────────────────────────────────────────
@@ -62,6 +62,7 @@ export default function Host() {
   const [reflections, setReflections] = useState([])
 
   const timerChannelRef = useRef(null)
+  const lerpSpeedRef = useRef(2)
 
   // ── Initial data load + subscriptions ───────────────────────────────────
 
@@ -361,7 +362,7 @@ export default function Host() {
     return (
       <>
         <div className={styles.canvas}>
-          <KingdomMap worldState={worldState} />
+          <AnimatedMap worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
         </div>
 
         <div className={styles.topBar}>
@@ -426,7 +427,7 @@ export default function Host() {
     return (
       <>
         <div className={styles.canvas}>
-          <KingdomMap worldState={worldState} />
+          <AnimatedMap worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
         </div>
 
         <div className={styles.topBar}>
@@ -511,7 +512,7 @@ export default function Host() {
   return (
     <>
       <div className={styles.canvas}>
-        <KingdomMap worldState={worldState} />
+        <AnimatedMap worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
       </div>
 
       <div className={styles.lobbyOverlay}>
