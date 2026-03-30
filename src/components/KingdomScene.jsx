@@ -10,29 +10,76 @@ useGLTF.preload('/models/village-cluster.glb')
 useGLTF.preload('/models/terrain.glb')
 
 // ── Bridge of Accord (trust landmark) ────────────────────────────────────
+//  D-07: emissive amber glow + point lights driven by trust
+//  D-11: continuous lerp interpolation each frame
+//  D-12: < 20 = dark + red shift; > 85 = extra bright
 
 function Bridge({ trust = 50, lerpSpeedRef }) {
   const { nodes, materials } = useGLTF('/models/bridge.glb')
   const t = trust / 100
-  const emissiveRef = useRef()
+
+  // Material ref for lerp — set synchronously in useMemo
+  const emissiveRef = useRef(null)
   const targetEmissiveRef = useRef(t)
-  const collapsed = useRef(trust < 20)
+
+  // Point light refs for always-mounted lights (can't lerp conditionally mounted lights)
+  const lightLeftRef  = useRef()
+  const lightMidRef   = useRef()
+  const lightRightRef = useRef()
+
+  // Threshold tracking
+  const bridgeCollapsedRef = useRef(trust < 20)
+  const bridgeGlowingRef   = useRef(trust > 85)
 
   useEffect(() => {
     targetEmissiveRef.current = t
-    collapsed.current = trust < 20
+    bridgeCollapsedRef.current = trust < 20
+    bridgeGlowingRef.current   = trust > 85
   }, [t, trust])
 
   useFrame((_, delta) => {
+    const speed = lerpSpeedRef?.current ?? 2
+
+    // Lerp emissive intensity
     if (emissiveRef.current) {
-      const speed = lerpSpeedRef?.current ?? 2
+      const targetIntensity = bridgeCollapsedRef.current
+        ? 0.05
+        : bridgeGlowingRef.current
+          ? 3.0
+          : targetEmissiveRef.current * 1.8
+
       emissiveRef.current.emissiveIntensity = THREE.MathUtils.lerp(
         emissiveRef.current.emissiveIntensity,
-        targetEmissiveRef.current * 1.8,
+        targetIntensity,
         delta * speed
       )
-      const targetColor = collapsed.current ? '#7f1d1d' : '#f59e0b'
-      emissiveRef.current.emissive.lerp(new THREE.Color(targetColor), delta * speed)
+
+      // Lerp emissive color: red when collapsed, amber otherwise
+      const targetColor = new THREE.Color(bridgeCollapsedRef.current ? '#ef4444' : '#f59e0b')
+      emissiveRef.current.emissive.lerp(targetColor, delta * speed)
+    }
+
+    // Lerp point light intensities
+    const targetLightIntensity = bridgeCollapsedRef.current
+      ? 0
+      : bridgeGlowingRef.current
+        ? targetEmissiveRef.current * 6
+        : targetEmissiveRef.current * 3
+
+    if (lightLeftRef.current) {
+      lightLeftRef.current.intensity = THREE.MathUtils.lerp(
+        lightLeftRef.current.intensity, targetLightIntensity, delta * speed
+      )
+    }
+    if (lightMidRef.current) {
+      lightMidRef.current.intensity = THREE.MathUtils.lerp(
+        lightMidRef.current.intensity, targetLightIntensity * 0.7, delta * speed
+      )
+    }
+    if (lightRightRef.current) {
+      lightRightRef.current.intensity = THREE.MathUtils.lerp(
+        lightRightRef.current.intensity, targetLightIntensity, delta * speed
+      )
     }
   })
 
@@ -104,49 +151,91 @@ function Bridge({ trust = 50, lerpSpeedRef }) {
         </mesh>
       ))}
       {[-2.0, -1.0, 0, 1.0, 2.0].map((x, i) => (
-        <mesh key={i} position={[x, 0.5, -0.55]}>
+        <mesh key={`r${i}`} position={[x, 0.5, -0.55]}>
           <cylinderGeometry args={[0.04, 0.04, 0.9, 6]} />
           <meshStandardMaterial color="#1a1a2e" />
         </mesh>
       ))}
 
-      {/* Bridge point lights (amber glow, intensity driven by trust) */}
-      {t > 0.2 && (
-        <>
-          <pointLight position={[-2.0, 0.8, 0]} color="#f59e0b" intensity={t * 3} distance={5} />
-          <pointLight position={[0, 0.8, 0]} color="#f59e0b" intensity={t * 2} distance={4} />
-          <pointLight position={[2.0, 0.8, 0]} color="#f59e0b" intensity={t * 3} distance={5} />
-        </>
-      )}
+      {/* Bridge point lights — always mounted so refs persist for lerp */}
+      <pointLight ref={lightLeftRef}  position={[-2.0, 0.8, 0]} color="#f59e0b" intensity={t * 3} distance={5} />
+      <pointLight ref={lightMidRef}   position={[0,    0.8, 0]} color="#f59e0b" intensity={t * 2} distance={4} />
+      <pointLight ref={lightRightRef} position={[2.0,  0.8, 0]} color="#f59e0b" intensity={t * 3} distance={5} />
     </group>
   )
 }
 
 // ── Citadel Beacon (courage landmark) ────────────────────────────────────
+//  D-08: spotlight on/off, rotation speed, intensity proportional to courage
+//  D-11: continuous lerp interpolation each frame
+//  D-12: < 20 = beacon goes completely dark; > 85 = full blast intensity + speed
 
 function BeaconTower({ courage = 50, lerpSpeedRef }) {
   const { nodes, materials } = useGLTF('/models/beacon-tower.glb')
-  const beamRef = useRef()
-  const lightRef = useRef()
   const c = courage / 100
-  const targetIntensityRef = useRef(c)
+
+  const beamGroupRef = useRef()
+  const spotRef      = useRef()
+  const pointRef     = useRef()
+
+  // Lerp targets — updated in useEffect when prop changes
+  const targetIntensityRef = useRef(c * 55)
+  const targetRotSpeedRef  = useRef(0.3 + c * 0.8)
+  const currentRotSpeedRef = useRef(0.3 + c * 0.8)
+
+  // Threshold tracking
+  const beaconDarkRef    = useRef(courage < 20)
+  const beaconFullRef    = useRef(courage > 85)
 
   useEffect(() => {
-    targetIntensityRef.current = c
-  }, [c])
+    const dark = courage < 20
+    const full = courage > 85
+    beaconDarkRef.current = dark
+    beaconFullRef.current = full
 
-  useFrame((state, delta) => {
-    // Rotate beacon beam
-    if (beamRef.current) {
-      const speed = 0.3 + c * 0.8
-      beamRef.current.rotation.y += delta * speed
+    if (dark) {
+      targetIntensityRef.current = 0
+      targetRotSpeedRef.current  = 0
+    } else if (full) {
+      targetIntensityRef.current = 80
+      targetRotSpeedRef.current  = 1.5
+    } else {
+      targetIntensityRef.current = c * 55
+      targetRotSpeedRef.current  = 0.3 + c * 0.8
     }
-    // Lerp light intensity
-    if (lightRef.current) {
-      lightRef.current.intensity = THREE.MathUtils.lerp(
-        lightRef.current.intensity,
-        targetIntensityRef.current * 55,
-        delta * (lerpSpeedRef?.current ?? 2)
+  }, [c, courage])
+
+  useFrame((_, delta) => {
+    const speed = lerpSpeedRef?.current ?? 2
+
+    // Lerp rotation speed
+    currentRotSpeedRef.current = THREE.MathUtils.lerp(
+      currentRotSpeedRef.current,
+      targetRotSpeedRef.current,
+      delta * speed
+    )
+
+    // Rotate beacon beam group
+    if (beamGroupRef.current) {
+      beamGroupRef.current.rotation.y += delta * currentRotSpeedRef.current
+    }
+
+    // Lerp spotlight intensity
+    if (spotRef.current) {
+      spotRef.current.intensity = THREE.MathUtils.lerp(
+        spotRef.current.intensity,
+        targetIntensityRef.current,
+        delta * speed
+      )
+    }
+
+    // Lerp beacon point light intensity
+    if (pointRef.current) {
+      const targetPointIntensity = beaconDarkRef.current ? 0 : beaconFullRef.current ? 12 : c * 4
+      pointRef.current.intensity = THREE.MathUtils.lerp(
+        pointRef.current.intensity,
+        targetPointIntensity,
+        delta * speed
       )
     }
   })
@@ -215,48 +304,111 @@ function BeaconTower({ courage = 50, lerpSpeedRef }) {
         <meshStandardMaterial color="#1a0a2a" roughness={0.7} metalness={0.3} />
       </mesh>
 
-      {/* Rotating beacon beam */}
-      {c > 0.15 && (
-        <group ref={beamRef} position={[0, 6.3, 0]}>
-          <spotLight
-            ref={lightRef}
-            color="#f5c542"
-            intensity={c * 55}
-            angle={0.12}
-            penumbra={0.6}
-            distance={30}
-            position={[0, 0, 0]}
-          />
-          <pointLight color="#f5c542" intensity={c * 4} distance={8} />
-        </group>
-      )}
+      {/* Rotating beacon beam group — always mounted so refs persist for lerp */}
+      <group ref={beamGroupRef} position={[0, 6.3, 0]}>
+        <spotLight
+          ref={spotRef}
+          color="#f5c542"
+          intensity={c * 55}
+          angle={0.12}
+          penumbra={0.6}
+          distance={30}
+          position={[0, 0, 0]}
+        />
+        <pointLight ref={pointRef} color="#f5c542" intensity={c * 4} distance={8} />
+      </group>
     </group>
   )
 }
 
 // ── Village Quarter (solidarity landmark) ─────────────────────────────────
+//  D-09: village window emissive opacity scales with solidarity
+//  D-11: continuous lerp interpolation each frame
+//  D-12: < 20 = staggered rolling blackout wave; > 85 = extra warm glow
 
 function VillageQuarter({ solidarity = 50, lerpSpeedRef }) {
   const { nodes, materials } = useGLTF('/models/village-cluster.glb')
   const s = solidarity / 100
-  const windowEmissiveRef = useRef(s)
-  const windowMatsRef = useRef([])
-  const targetWindowRef = useRef(s)
+
+  // Each window material gets its own ref for the staggered blackout wave
+  const winMat0Ref = useRef(null)
+  const winMat1Ref = useRef(null)
+  const winMat2Ref = useRef(null)
+
+  // Separate lerp targets so the blackout wave can stagger them
+  const targetWin0Ref = useRef(s * 2.2)
+  const targetWin1Ref = useRef(s * 2.2)
+  const targetWin2Ref = useRef(s * 2.2)
+
+  // Village ambient point light ref
+  const villageLightRef = useRef()
+
+  // Threshold tracking
+  const blackoutRef  = useRef(solidarity < 20)
+  const flourishRef  = useRef(solidarity > 85)
 
   useEffect(() => {
-    targetWindowRef.current = s
-  }, [s])
+    const dark   = solidarity < 20
+    const bright = solidarity > 85
+    const prevDark = blackoutRef.current
+    blackoutRef.current = dark
+    flourishRef.current = bright
+
+    if (dark) {
+      // Staggered rolling blackout — main hall first, then left, then right
+      targetWin0Ref.current = 0
+      setTimeout(() => { targetWin1Ref.current = 0 }, 500)
+      setTimeout(() => { targetWin2Ref.current = 0 }, 1000)
+    } else {
+      // Recovery or normal — all come back together
+      const normalTarget = bright ? 2.5 : s * 2.2
+      targetWin0Ref.current = normalTarget
+      targetWin1Ref.current = normalTarget
+      targetWin2Ref.current = normalTarget
+    }
+
+    // Reset stagger if trust recovers above 20
+    if (prevDark && !dark) {
+      targetWin0Ref.current = s * 2.2
+      targetWin1Ref.current = s * 2.2
+      targetWin2Ref.current = s * 2.2
+    }
+  }, [s, solidarity])
 
   useFrame((_, delta) => {
-    windowMatsRef.current.forEach(mat => {
-      if (mat) {
-        mat.emissiveIntensity = THREE.MathUtils.lerp(
-          mat.emissiveIntensity,
-          targetWindowRef.current * 2.2,
-          delta * (lerpSpeedRef?.current ?? 2)
-        )
-      }
-    })
+    const speed = lerpSpeedRef?.current ?? 2
+
+    if (winMat0Ref.current) {
+      winMat0Ref.current.emissiveIntensity = THREE.MathUtils.lerp(
+        winMat0Ref.current.emissiveIntensity,
+        targetWin0Ref.current,
+        delta * speed
+      )
+    }
+    if (winMat1Ref.current) {
+      winMat1Ref.current.emissiveIntensity = THREE.MathUtils.lerp(
+        winMat1Ref.current.emissiveIntensity,
+        targetWin1Ref.current,
+        delta * speed
+      )
+    }
+    if (winMat2Ref.current) {
+      winMat2Ref.current.emissiveIntensity = THREE.MathUtils.lerp(
+        winMat2Ref.current.emissiveIntensity,
+        targetWin2Ref.current,
+        delta * speed
+      )
+    }
+
+    // Lerp village ambient light
+    if (villageLightRef.current) {
+      const targetLightIntensity = blackoutRef.current ? 0 : flourishRef.current ? 8 : s * 4
+      villageLightRef.current.intensity = THREE.MathUtils.lerp(
+        villageLightRef.current.intensity,
+        targetLightIntensity,
+        delta * speed
+      )
+    }
   })
 
   const wallMat = useMemo(() => {
@@ -267,14 +419,37 @@ function VillageQuarter({ solidarity = 50, lerpSpeedRef }) {
     return mat
   }, [materials])
 
-  const windowMat = useMemo(() => {
+  // Three separate window materials for the staggered blackout effect
+  const winMat0 = useMemo(() => {
     const mat = new THREE.MeshStandardMaterial({
       color: new THREE.Color('#f59e0b'),
       emissive: new THREE.Color('#f59e0b'),
       emissiveIntensity: s * 2.2,
       roughness: 0.1,
     })
-    windowEmissiveRef.current = mat.emissiveIntensity
+    winMat0Ref.current = mat
+    return mat
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const winMat1 = useMemo(() => {
+    const mat = new THREE.MeshStandardMaterial({
+      color: new THREE.Color('#f59e0b'),
+      emissive: new THREE.Color('#f59e0b'),
+      emissiveIntensity: s * 2.2,
+      roughness: 0.1,
+    })
+    winMat1Ref.current = mat
+    return mat
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const winMat2 = useMemo(() => {
+    const mat = new THREE.MeshStandardMaterial({
+      color: new THREE.Color('#f59e0b'),
+      emissive: new THREE.Color('#f59e0b'),
+      emissiveIntensity: s * 2.2,
+      roughness: 0.1,
+    })
+    winMat2Ref.current = mat
     return mat
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -282,11 +457,6 @@ function VillageQuarter({ solidarity = 50, lerpSpeedRef }) {
     color: new THREE.Color(0x6a2a1a),
     roughness: 0.85,
   }), [])
-
-  // Register window material for useFrame lerp
-  useEffect(() => {
-    windowMatsRef.current = [windowMat]
-  }, [windowMat])
 
   return (
     <group position={[-7, 0, 1]}>
@@ -338,18 +508,21 @@ function VillageQuarter({ solidarity = 50, lerpSpeedRef }) {
         <primitive object={roofMat} attach="material" />
       </mesh>
 
-      {/* Windows (amber glow, driven by solidarity) */}
+      {/* Windows — one per hut for independent blackout stagger */}
+      {/* Main hall window (first to go dark) */}
       <mesh position={[0, 0.9, 1.02]}>
         <boxGeometry args={[0.45, 0.4, 0.04]} />
-        <primitive object={windowMat} attach="material" />
+        <primitive object={winMat0} attach="material" />
       </mesh>
+      {/* Left hut window (second to go dark) */}
       <mesh position={[-2.3, 0.6, 1.01]}>
         <boxGeometry args={[0.35, 0.3, 0.04]} />
-        <primitive object={windowMat} attach="material" />
+        <primitive object={winMat1} attach="material" />
       </mesh>
+      {/* Right hut window (third to go dark) */}
       <mesh position={[2.2, 0.62, 0.96]}>
         <boxGeometry args={[0.32, 0.28, 0.04]} />
-        <primitive object={windowMat} attach="material" />
+        <primitive object={winMat2} attach="material" />
       </mesh>
 
       {/* Village well */}
@@ -358,10 +531,8 @@ function VillageQuarter({ solidarity = 50, lerpSpeedRef }) {
         <meshStandardMaterial color="#3a3a3a" roughness={0.9} />
       </mesh>
 
-      {/* Ambient village light */}
-      {s > 0.15 && (
-        <pointLight position={[0, 1.5, 1]} color="#f59e0b" intensity={s * 4} distance={8} />
-      )}
+      {/* Ambient village light — always mounted so ref persists */}
+      <pointLight ref={villageLightRef} position={[0, 1.5, 1]} color="#f59e0b" intensity={s * 4} distance={8} />
     </group>
   )
 }
@@ -416,37 +587,62 @@ function Ground() {
 }
 
 // ── Fog controller (awareness landmark) ──────────────────────────────────
+//  D-10: FogExp2 density inverted — high awareness = clear, low = heavy fog
+//  D-11: lerp fog density each frame (useFrame)
+//  D-12: > 85 = near-zero density + dawn light; < 20 = max dense fog
 
 function FogController({ awareness = 50, lerpSpeedRef }) {
   const { scene } = useThree()
-  const targetDensity = useRef(0.015)
-  const initialized = useRef(false)
+  const targetDensity  = useRef(0.015)
+  const dawnLightRef   = useRef(null)
+  const initialized    = useRef(false)
+  const sunriseRef     = useRef(awareness > 85)
 
   useEffect(() => {
-    // High awareness = clear; low awareness = dense fog (inverted per D-10)
+    const dark   = awareness < 20
+    const clear  = awareness > 85
+    sunriseRef.current = clear
+
     let density
-    if (awareness > 85) {
+    if (clear) {
       density = 0.002
-    } else if (awareness < 20) {
-      density = 0.05
+    } else if (dark) {
+      density = 0.06
     } else {
       density = 0.005 + (1 - awareness / 100) * 0.02
     }
     targetDensity.current = density
 
-    // Initialize fog on first render only
+    // Initialize fog on first render
     if (!initialized.current) {
       scene.fog = new THREE.FogExp2('#080812', density)
       initialized.current = true
     }
 
+    // Dawn directional light — add when awareness > 85, remove when it drops
+    if (clear && !dawnLightRef.current) {
+      const light = new THREE.DirectionalLight('#f5c542', 0.15)
+      light.position.set(-10, 8, -5)
+      scene.add(light)
+      dawnLightRef.current = light
+    } else if (!clear && dawnLightRef.current) {
+      scene.remove(dawnLightRef.current)
+      dawnLightRef.current.dispose()
+      dawnLightRef.current = null
+    }
+
     return () => {
+      if (dawnLightRef.current) {
+        scene.remove(dawnLightRef.current)
+        dawnLightRef.current.dispose()
+        dawnLightRef.current = null
+      }
       scene.fog = null
       initialized.current = false
     }
   }, [awareness, scene])
 
-  // Smooth lerp fog density each frame
+  // Smooth lerp fog density each frame — no setState
   useFrame((_, delta) => {
     if (scene.fog) {
       scene.fog.density = THREE.MathUtils.lerp(
