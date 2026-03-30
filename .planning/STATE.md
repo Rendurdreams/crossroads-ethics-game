@@ -1,15 +1,15 @@
 ---
 gsd_state_version: 1.0
 milestone: v1.0
-milestone_name: The Crossroads MVP
+milestone_name: milestone
 status: v1.0 shipped — planning next milestone
-stopped_at: v1.0 milestone archived 2026-03-27
-last_updated: "2026-03-27T22:01:53.180Z"
+stopped_at: Completed 13.1-02-PLAN.md
+last_updated: "2026-03-30T19:25:53.522Z"
 progress:
-  total_phases: 7
+  total_phases: 8
   completed_phases: 7
   total_plans: 18
-  completed_plans: 18
+  completed_plans: 19
 ---
 
 # Project State
@@ -63,6 +63,7 @@ Plan: Not started
 | Phase 06-kingdom-ui-overhaul P02 | 3min | 2 tasks | 4 files |
 | Phase 06-kingdom-ui-overhaul P01 | 185s | 3 tasks | 7 files |
 | Phase 06-kingdom-ui-overhaul P03 | 261 | 2 tasks | 5 files |
+| Phase 13.1 P02 | 64s | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -110,6 +111,7 @@ Recent decisions affecting current work:
 - [Phase 06-kingdom-ui-overhaul]: Pack identity card replaces round selector entirely — total_rounds set at session creation from pack, not HostSetup
 - [Phase 06-kingdom-ui-overhaul]: KingdomMap imported directly (not lazy) — SVG component in same bundle; no code-splitting benefit
 - [Phase 06-kingdom-ui-overhaul]: Removed totalRounds local state from Host.jsx; session.total_rounds from DB is source of truth
+- [Phase 13.1]: Delete+re-insert pattern for answer toggle — respects UNIQUE constraint without upsert RLS
 
 ### Roadmap Evolution
 
@@ -126,6 +128,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-27T21:28:15.592Z
-Stopped at: Completed 06-kingdom-ui-overhaul-03-PLAN.md
+Last session: 2026-03-30T19:25:53.517Z
+Stopped at: Completed 13.1-02-PLAN.md
 Resume file: None
