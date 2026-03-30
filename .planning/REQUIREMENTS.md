@@ -48,8 +48,8 @@
 
 ### Meter Label Rework (Phase 13)
 
-- [ ] **METER-01**: All player-facing and host-facing meter labels renamed from kingdom geography to moral concepts: Bridge of Accord -> Honesty, Citadel Beacon -> Courage (unchanged), Village Quarter -> Loyalty, Fog of the Vale -> Empathy — same names on both host and player screens
-- [ ] **METER-02**: ConsequenceReveal ImpactMeter inline labels updated to match: Trust -> Honesty, Solidarity -> Loyalty, Awareness -> Empathy
+- [x] **METER-01**: All player-facing and host-facing meter labels renamed from kingdom geography to moral concepts: Bridge of Accord -> Honesty, Citadel Beacon -> Courage (unchanged), Village Quarter -> Loyalty, Fog of the Vale -> Empathy — same names on both host and player screens
+- [x] **METER-02**: ConsequenceReveal ImpactMeter inline labels updated to match: Trust -> Honesty, Solidarity -> Loyalty, Awareness -> Empathy
 
 ### Text Readability (Phase 13)
 
