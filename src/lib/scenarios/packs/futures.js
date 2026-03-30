@@ -5,6 +5,7 @@ export const futuresPack = {
   setting: 'near-future',
   ai_generated: false,
   generator_prompt: null,
+  ethicalLens: 'What do you owe the people who come after you?',
   scenarios: [
     {
       id: 'ft-round-1',
@@ -114,6 +115,7 @@ export const futuresPack = {
       round: 4,
       weight: 'medium',
       contentNote: null,
+      rights_dimension: true,
       moralTension: 'Privacy vs. safety — when the system works for most people, does it matter that it works by watching?',
       teaches: 'Epistemic ethics: who decides what the data means, and what do you owe to the people whose data is being read?',
       text: "Your city has rolled out a predictive wellness program — it aggregates ambient data from your devices, anonymized, to predict mental health crises before they escalate and route resources to people showing early warning patterns. The program has measurably reduced hospitalization rates in districts where it's been piloted. Your neighborhood has just been added to the rollout. You received an opt-out form in the mail. You are not in crisis. But your neighbor has been visibly struggling since their partner left, and you know they are extremely private. You have no idea if they opted out.",
@@ -129,6 +131,7 @@ export const futuresPack = {
           choiceIndex: 1,
           text: "Opt out. You don't want to participate in a system you didn't choose.",
           frameworks: ['deontology', 'virtue'],
+          rights_protective: true,
           consequence: "You opt out. Your neighbor does not. The program flags a concern in their data pattern three months later and routes a check-in call. They accept it. They don't tell you about it until much later — and then only because you happened to ask how they were doing and they told you the truth. Opting out was your right. It wasn't costless.",
           worldImpact: { trust: -4, courage: 8, solidarity: -6, awareness: 6 }
         },
@@ -148,6 +151,7 @@ export const futuresPack = {
       round: 5,
       weight: 'heavy',
       contentNote: "This scenario involves resource rationing in a climate disruption context. The dilemma is about your specific role in a community allocation decision — not about climate policy.",
+      rights_dimension: true,
       moralTension: 'Impartiality vs. proximity — can you truly be fair when you know the people in the room?',
       teaches: 'Deontology vs. care ethics: abstract fairness and real relationships give you different answers to the same question',
       text: "You're a member of your neighborhood's water allocation committee — a rotating volunteer position established after the second regional drought left the aquifer at 40% capacity. Tonight's meeting is about the allotment for next month. The data is clear: total usage must drop by 22%. Your committee has three hours to agree on cuts. One of the households facing the steepest proposed cut is your close friend Mara's — they have three kids, one of whom has a medical condition requiring additional water use for hygiene protocols. Mara doesn't know you're on this committee. The medical documentation they'd need to file for an exemption is a process Mara may not have the bandwidth to navigate.",
@@ -170,6 +174,7 @@ export const futuresPack = {
           choiceIndex: 2,
           text: "Advocate within the committee for a medical exemption process before finalizing any cuts.",
           frameworks: ['care', 'consequentialism'],
+          rights_protective: true,
           consequence: "The committee spends an extra forty minutes establishing an exemption pathway. Three households in the neighborhood — including Mara's — eventually file and are approved. The meeting runs late. Two committee members are frustrated with the delay. The process is better for the people who needed it. Mara never knows you're why it exists.",
           worldImpact: { trust: 10, courage: 14, solidarity: 14, awareness: 8 }
         }
@@ -182,6 +187,7 @@ export const futuresPack = {
       round: 6,
       weight: 'heavy',
       contentNote: "This scenario involves a decision about an employer's behavioral monitoring system. No graphic content — the weight comes from the systemic implications of what you choose to do.",
+      rights_dimension: true,
       moralTension: 'Institutional accountability vs. individual risk — when the system is wrong, what do you owe the people inside it?',
       teaches: 'Virtue ethics: what does courage look like when the thing that needs to be said will cost you something real?',
       text: "You work at a company that uses a continuous behavioral scoring system — your activity, communication patterns, and 'engagement signals' are fed into a model that produces a daily score used in compensation and advancement decisions. You've worked with the data long enough to recognize that the model has a consistent bias: employees who work non-standard hours — night shifts, compressed weeks, remote caregivers — score systematically lower even when their output is identical to day-schedule workers. You've run the analysis twice. The pattern is real. The affected workers are disproportionately women and workers with disabilities. Your performance review is next month.",
@@ -197,6 +203,7 @@ export const futuresPack = {
           choiceIndex: 1,
           text: "File a formal complaint with the company's equity office and attach your analysis.",
           frameworks: ['deontology', 'virtue'],
+          rights_protective: true,
           consequence: "The equity office opens a review. Your manager is informed you filed. Your review is delayed six weeks. The investigation finds the bias is real and recommends a model correction. The correction is implemented nine months later. Three affected workers receive compensation adjustments. You are not promoted in the next cycle. The analysis you filed is cited in the correction memo.",
           worldImpact: { trust: 6, courage: 18, solidarity: 12, awareness: 14 }
         },

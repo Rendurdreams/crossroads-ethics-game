@@ -5,6 +5,7 @@ export const realWorldModernPack = {
   setting: 'real-world',
   ai_generated: false,
   generator_prompt: null,
+  ethicalLens: 'What do you owe the people around you?',
   scenarios: [
     {
       id: 'rw-round-1',
@@ -80,6 +81,7 @@ export const realWorldModernPack = {
       round: 3,
       weight: 'medium',
       contentNote: null,
+      rights_dimension: true,
       moralTension: 'Bystander responsibility — does witnessing something make you part of it?',
       teaches: 'Virtue ethics: what would a person of good character do when the cost of acting is real but invisible?',
       text: "There is a group chat you've been part of since freshman year. You're not especially close with most of the people in it — it started as a study group and became something else. Over the last month, the conversation has shifted. One person in particular has been posting content about another student that started as gossip and is escalating into targeted harassment. The target doesn't know the chat exists. No one in the chat has said anything to stop it. You could leave. You could say something. You could screenshot and report it. Any of these costs you something.",
@@ -95,6 +97,7 @@ export const realWorldModernPack = {
           choiceIndex: 1,
           text: 'Post in the chat telling the group to stop. Publicly, where everyone can see.',
           frameworks: ['virtue', 'deontology'],
+          rights_protective: true,
           consequence: "The chat goes quiet for a day. Some people leave. The main offender calls you sensitive and makes the next round of posts directly about you. Two people privately message you to say they were relieved someone said something. The harassment of the original target slows but doesn't fully stop. You said the thing. That's real.",
           worldImpact: { trust: 6, courage: 16, solidarity: 6, awareness: 10 }
         },
@@ -102,6 +105,7 @@ export const realWorldModernPack = {
           choiceIndex: 2,
           text: 'Screenshot and report it to the school\'s conduct office.',
           frameworks: ['deontology', 'consequentialism'],
+          rights_protective: true,
           consequence: "An investigation opens. The school treats it as an active harassment case. The main poster receives a formal warning. The target is asked to participate in the process and finds out what was being said. They're grateful and horrified in equal parts. You're asked about your own role. You say you was a member of the chat. That's true.",
           worldImpact: { trust: 4, courage: 12, solidarity: 4, awareness: 14 }
         }
@@ -148,6 +152,7 @@ export const realWorldModernPack = {
       round: 5,
       weight: 'heavy',
       contentNote: "This scenario involves housing insecurity and a community facing displacement. The dilemma is about your role — not about the larger policy.",
+      rights_dimension: true,
       moralTension: 'Proximity creates obligation — but how much, and at what cost to yourself?',
       teaches: 'Care ethics: the argument that we owe more to those close to us — and the question of what happens when everyone reasons this way',
       text: "A family on your block is being evicted Friday. You know them — their kids played in the street last summer. The eviction is technically legal; they are two months behind on rent. A local advocacy group has organized a presence at the building to slow the process — peaceful, legal, but potentially costly if the landlord calls the police, which they have done before. The group has asked your building to co-sign a public letter and show up Friday. Signing the letter could affect your own lease, which is up for renewal in three months. The family has no one else.",
@@ -156,6 +161,7 @@ export const realWorldModernPack = {
           choiceIndex: 0,
           text: 'Sign the letter and show up Friday.',
           frameworks: ['virtue', 'care'],
+          rights_protective: true,
           consequence: "Fourteen neighbors show up. The eviction is delayed by two weeks through a procedural challenge. The family finds temporary housing. Your landlord sends you a letter noting your 'participation in building activities.' Your lease renewal comes with a rent increase they describe as 'market rate.' You can afford it, but barely.",
           worldImpact: { trust: 8, courage: 16, solidarity: 14, awareness: 8 }
         },
@@ -182,6 +188,7 @@ export const realWorldModernPack = {
       round: 6,
       weight: 'heavy',
       contentNote: "This scenario involves a decision about automated systems and community health data. No graphic content — but the stakes are systemic.",
+      rights_dimension: true,
       moralTension: 'Efficiency vs. equity — who decides when the math works but the people don\'t?',
       teaches: 'Consequentialism challenged: when the outcome metric is flawed, optimizing for it is not the same as doing good',
       text: "You work as a student researcher on a city health department project. The team has developed an algorithm that predicts which households are at highest risk of preventable illness, using publicly available data. The system works — in aggregate, it has directed resources efficiently. But you've noticed something: the training data over-represents certain neighborhoods, and the algorithm has been systematically under-prioritizing an immigrant community in the northeast quadrant. The bias is statistically subtle but directionally consistent. Your supervisor — who has staked significant reputation on this system — wants to publish next month. You are the only analyst who has run this specific diagnostic.",
@@ -197,6 +204,7 @@ export const realWorldModernPack = {
           choiceIndex: 1,
           text: 'Document your findings and send them to the department\'s equity review board.',
           frameworks: ['deontology', 'virtue'],
+          rights_protective: true,
           consequence: "The equity review board flags the paper before publication. An external audit is commissioned. Publication is delayed six months. Your supervisor is formally questioned. The system is corrected. The community is better served. You are not invited back for the following semester's research cycle.",
           worldImpact: { trust: 4, courage: 18, solidarity: 8, awareness: 16 }
         },

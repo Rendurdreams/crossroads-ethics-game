@@ -12,6 +12,7 @@ import { futuresPack } from './scenarios/packs/futures.js'
  * @property {string[]} frameworks - 1-2 of: 'care'|'deontology'|'consequentialism'|'virtue'
  * @property {string} consequence - Private outcome text shown after round closes
  * @property {{trust: number, courage: number, solidarity: number, awareness: number}} worldImpact
+ * @property {boolean} [rights_protective] - True when this choice protects individual rights over group benefit
  *
  * @typedef {Object} PackScenario
  * @property {string} id - Unique scenario ID, pack-prefixed
@@ -23,6 +24,7 @@ import { futuresPack } from './scenarios/packs/futures.js'
  * @property {string} teaches
  * @property {string} text - Full scenario prompt
  * @property {PackChoice[]} choices - Empty array for reflection rounds
+ * @property {boolean} [rights_dimension] - True when scenario involves individual/minority rights at risk from group benefit
  *
  * @typedef {Object} ScenarioPack
  * @property {string} id - URL-safe unique identifier
@@ -31,6 +33,7 @@ import { futuresPack } from './scenarios/packs/futures.js'
  * @property {'fantasy'|'real-world'|'near-future'} setting - Genre tag
  * @property {boolean} ai_generated - True only for AI-generated packs
  * @property {string|null} generator_prompt - LLM prompt used to generate pack, if ai_generated
+ * @property {string} ethicalLens - One-line ethical framing question for this pack's context
  * @property {PackScenario[]} scenarios
  */
 

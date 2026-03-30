@@ -31,6 +31,33 @@ const STANCE_QUESTIONS = [
       { label: 'No', value: 'no' },
       { label: 'It depends', value: 'it_depends' }
     ]
+  },
+  {
+    key: 'break_promise',
+    text: 'Is it right to break a promise to prevent harm?',
+    options: [
+      { label: 'Yes', value: 'yes' },
+      { label: 'No', value: 'no' },
+      { label: 'It depends', value: 'it_depends' }
+    ]
+  },
+  {
+    key: 'truth_over_relationship',
+    text: 'Should a person always tell the truth even if it destroys a relationship?',
+    options: [
+      { label: 'Yes', value: 'yes' },
+      { label: 'No', value: 'no' },
+      { label: 'It depends', value: 'it_depends' }
+    ]
+  },
+  {
+    key: 'punish_innocent',
+    text: 'Is it okay to punish the innocent if it protects the group?',
+    options: [
+      { label: 'Yes', value: 'yes' },
+      { label: 'No', value: 'no' },
+      { label: 'It depends', value: 'it_depends' }
+    ]
   }
 ]
 
@@ -125,7 +152,7 @@ export default function Baseline() {
   }
 
   async function handleSubmit() {
-    if (rankedValues.length < 5 || Object.keys(stances).length < 2) return
+    if (rankedValues.length < 5 || Object.keys(stances).length < 5) return
     setSubmitting(true)
     setSubmitError(false)
     const { error } = await supabase
@@ -143,7 +170,7 @@ export default function Baseline() {
   }
 
   const allRanked = rankedValues.length === 5
-  const allStancesAnswered = Object.keys(stances).length === 2
+  const allStancesAnswered = Object.keys(stances).length === 5
   const canSubmit = allRanked && allStancesAnswered && !submitting
 
   if (loading) {
@@ -233,14 +260,13 @@ export default function Baseline() {
             aria-disabled={!allRanked}
           >
             {STANCE_QUESTIONS.map((question, qIdx) => {
-              const isQ2Disabled = !allRanked || (qIdx === 1 && !stances[STANCE_QUESTIONS[0].key])
               const selectedAnswer = stances[question.key]
               const hasSelection = selectedAnswer !== undefined
 
               return (
                 <div
                   key={question.key}
-                  className={`${styles.stanceQuestion}${isQ2Disabled && qIdx > 0 ? ` ${styles.stanceQuestionDisabled}` : ''}`}
+                  className={styles.stanceQuestion}
                   role="group"
                   aria-labelledby={`stance-q-${qIdx}`}
                 >
@@ -261,7 +287,7 @@ export default function Baseline() {
                           className={`${scenarioStyles.choiceBtn}${isSelected ? ` ${scenarioStyles.choiceLocked}` : ''}${isDimmed ? ` ${scenarioStyles.choiceDimmed}` : ''}`}
                           onClick={() => handleStance(question.key, option.value)}
                           aria-pressed={isSelected}
-                          disabled={!allRanked || (qIdx === 1 && !stances[STANCE_QUESTIONS[0].key])}
+                          disabled={!allRanked}
                         >
                           <span className={scenarioStyles.choiceNumeral}>{ROMAN[oIdx]}.</span>
                           {option.label}

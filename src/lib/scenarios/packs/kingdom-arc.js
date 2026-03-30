@@ -5,6 +5,7 @@ export const kingdomArcPack = {
   setting: 'fantasy',
   ai_generated: false,
   generator_prompt: null,
+  ethicalLens: 'What does a ruler owe?',
   scenarios: [
     {
       id: 'round-1',
@@ -12,6 +13,7 @@ export const kingdomArcPack = {
       round: 1,
       weight: 'low',
       contentNote: null,
+      rights_dimension: true,
       moralTension: 'Equality vs. efficiency — who deserves scarce resources',
       teaches: 'Distributive justice: would you make this choice not knowing where you would land?',
       text: "A brutal frost has killed half the kingdom's crops. Your storehouses hold enough grain to keep the capital fed through winter — but the outer villages will starve. Villagers are already arriving at the gates, gaunt and desperate. Your advisors present two paths. Everyone inside these walls is watching you.",
@@ -20,6 +22,7 @@ export const kingdomArcPack = {
           choiceIndex: 0,
           text: 'Share equally. Distribute all grain across the kingdom.',
           frameworks: ['care', 'consequentialism'],
+          rights_protective: true,
           consequence: "Everyone eats less. The capital's production slows. Some of the very old and very young don't survive the cold. But when spring comes, every village is still standing. You visit the frontier towns. They remember you came.",
           worldImpact: { trust: 6, courage: 4, solidarity: 14, awareness: 4 }
         },
@@ -80,6 +83,7 @@ export const kingdomArcPack = {
       round: 3,
       weight: 'medium',
       contentNote: null,
+      rights_dimension: true,
       moralTension: 'Convenience vs. personhood — what does it cost to act on what you believe?',
       teaches: 'Rights and dignity: every society has used economic stability to justify denying personhood',
       text: "For generations, the Hollow Folk — beings shaped from stone and starlight — have built your roads, worked your mines, tended your fields. They do not eat, sleep, or tire. Your civilization's prosperity rests on their labor. Last night, a delegation appeared before your throne. They spoke. They said: \"We think. We feel. We remember. We are asking to be recognized as citizens.\" Your advisors are divided.",
@@ -88,6 +92,7 @@ export const kingdomArcPack = {
           choiceIndex: 0,
           text: 'Grant citizenship. Full rights, wages, representation, the ability to refuse.',
           frameworks: ['deontology', 'virtue'],
+          rights_protective: true,
           consequence: "The economy reshapes overnight. Some projects stall. Luxury buildings go unfinished. Mixed neighborhoods form where boundaries once stood. A Hollow Folk elder is elected to the council. They are the best vote you've ever counted.",
           worldImpact: { trust: 8, courage: 16, solidarity: 10, awareness: 10 }
         },
@@ -182,6 +187,7 @@ export const kingdomArcPack = {
       round: 6,
       weight: 'heavy',
       contentNote: "This scenario involves a being kept in sustained suffering to benefit a larger group. It engages directly with what we're willing to know — and live with — about the systems we depend on.",
+      rights_dimension: true,
       moralTension: "One being's agony vs. everyone's prosperity — can torture ever be justified by its outcomes?",
       teaches: 'The Omelas dilemma: there is no third option. You stay, you leave, or you free the child and watch the city fall.',
       text: "You have discovered the truth about the Hearthstone's power. It is not a stone at all. Deep within the palace foundations, shackled in a chamber no one was meant to find, is a living being — ancient, luminous, and in agony. Its name is Irel. Every ward, every healing spell, every season of fertile soil — all of it drawn from Irel's life force. It is conscious. It has been screaming for centuries, and your kingdom was built so that no one could hear. Irel looks at you and speaks one word: \"Please.\"",
@@ -190,6 +196,7 @@ export const kingdomArcPack = {
           choiceIndex: 0,
           text: 'Free Irel. Break the shackles. Accept what follows.',
           frameworks: ['deontology', 'virtue'],
+          rights_protective: true,
           consequence: "The wards fail. The fields dim. The Ashlands creep closer. A being of light rises from beneath the palace and drifts upward — and for one moment the world is more beautiful than it has ever been. Then reality settles. Your people face a harder road. The sky is somehow clearer. You can look at it now.",
           worldImpact: { trust: 4, courage: 18, solidarity: -12, awareness: 14 }
         },
