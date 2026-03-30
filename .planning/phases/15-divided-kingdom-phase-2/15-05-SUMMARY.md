@@ -118,6 +118,16 @@ None — scribe record is fully wired with live choice history; split layout is 
 - All navigation flows preserved: createSession → /host-setup, joinSession → /baseline
 - Build passes cleanly at 589ms, 469 modules
 
+## Self-Check: PASSED
+
+- FOUND: src/pages/Play.jsx
+- FOUND: src/pages/Play.module.css
+- FOUND: src/pages/Landing.jsx
+- FOUND: src/pages/Landing.module.css
+- FOUND: 15-05-SUMMARY.md (main repo)
+- FOUND: feat(15-05) commit 24fc741
+- FOUND: feat(15-05) commit 358d3ed
+
 ---
 *Phase: 15-divided-kingdom-phase-2*
 *Completed: 2026-03-30*
