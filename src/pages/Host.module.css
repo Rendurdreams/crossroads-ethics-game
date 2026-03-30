@@ -125,6 +125,48 @@
   margin: 0 0 16px;
 }
 
+/* ── Scenario overlay (presenter reads dilemma text from projected screen) ── */
+
+.scenarioOverlay {
+  position: fixed;
+  top: 60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  max-width: 720px;
+  max-height: 40vh;
+  overflow-y: auto;
+  background: rgba(18, 18, 30, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 20px 28px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.scenarioOverlay .scenarioTitle {
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.scenarioOverlay .scenarioBody {
+  font-size: 16px;
+  line-height: 1.65;
+}
+
+/* ── Lesson / Verdict label ── */
+
+.lessonLabel {
+  font-family: var(--sans);
+  font-size: 11px;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  margin: 12px 0 4px;
+  font-weight: 700;
+}
+
 /* ── Vote tally ── */
 
 .tallySection {
