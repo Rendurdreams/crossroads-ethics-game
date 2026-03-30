@@ -93,13 +93,13 @@ Plans:
 ### Phase 14: Animated Kingdom Map
 
 **Goal:** Replace the Three.js/R3F 3D kingdom scene with a GSAP-driven 2D animated map that reacts to world state meters — Fire zone (Courage), Water zone (Honesty), Purple zone (Empathy), Compass (Loyalty). Integration prototype in /integration. Remove mouse parallax/cursor effects for projected host screen. Strip Three.js dependencies after swap confirmed.
-**Requirements**: TBD
+**Requirements**: MAP-01, MAP-02, MAP-03, MAP-04
 **Depends on:** Phase 13.1
 **Canonical refs:** integration/AnimatedMap.jsx, integration/AnimatedMap.module.css, integration/INTEGRATION_PROMPT.md, integration/Map1.png
-**Plans:** 0 plans
+**Plans:** 1 plan
 
 Plans:
-- [ ] TBD (run /gsd:plan-phase 14 to break down)
+- [ ] 14-01-PLAN.md — Install gsap, adapt AnimatedMap from prototype, swap into Host.jsx (3 sites), delete dead code
 
 ---
 
