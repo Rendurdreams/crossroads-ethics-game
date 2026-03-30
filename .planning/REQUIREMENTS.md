@@ -59,9 +59,9 @@
 
 ### 375px Mobile Layout (Phase 13)
 
-- [ ] **MOBILE-01**: All player-facing pages (Play, Baseline, FrameworkProfile, Landing) have @media (max-width: 390px) breakpoints reducing padding to maximize content width on 375px phones (343px+ content area, up from 311-327px)
-- [ ] **MOBILE-02**: Scenario body text and consequence text use CSS clamp() for fluid font scaling at narrow widths
-- [ ] **MOBILE-03**: SVG conflict diagram in FrameworkProfile uses viewBox + width="100%" for responsive scaling — no fixed pixel dimensions
+- [x] **MOBILE-01**: All player-facing pages (Play, Baseline, FrameworkProfile, Landing) have @media (max-width: 390px) breakpoints reducing padding to maximize content width on 375px phones (343px+ content area, up from 311-327px)
+- [x] **MOBILE-02**: Scenario body text and consequence text use CSS clamp() for fluid font scaling at narrow widths
+- [x] **MOBILE-03**: SVG conflict diagram in FrameworkProfile uses viewBox + width="100%" for responsive scaling — no fixed pixel dimensions
 
 ---
 
