@@ -8,7 +8,7 @@ import { computeProfile, findConflicts, findMoralConflicts } from '../lib/detect
 import { FRAMEWORKS } from '../lib/frameworks.js'
 import PlayerRoster from '../components/PlayerRoster.jsx'
 import MeterBar from '../components/MeterBar.jsx'
-import KingdomCanvas from '../components/KingdomCanvas.jsx'
+import AnimatedMap from '../components/AnimatedMap.jsx'
 import styles from './Host.module.css'
 
 // ─── Round state machine ───────────────────────────────────────────────────
@@ -505,7 +505,7 @@ export default function Host() {
     return (
       <>
         <div className={styles.canvas}>
-          <KingdomCanvas worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
+          <AnimatedMap worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
         </div>
 
         <div className={styles.topBar}>
@@ -583,7 +583,7 @@ export default function Host() {
     return (
       <>
         <div className={styles.canvas}>
-          <KingdomCanvas worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
+          <AnimatedMap worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
         </div>
 
         {/* ── Scenario text for presenter ── */}
@@ -762,7 +762,7 @@ export default function Host() {
   return (
     <>
       <div className={styles.canvas}>
-        <KingdomCanvas worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
+        <AnimatedMap worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
       </div>
 
       <div className={styles.lobbyOverlay}>

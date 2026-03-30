@@ -81,6 +81,12 @@ body {
   animation: ambientDrift 14s ease-in-out infinite;
 }
 
+/* AnimatedMap compass spin — must be global (set via inline style) */
+@keyframes compassSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
