@@ -14,18 +14,18 @@ const sectionVariants = {
 }
 
 const ARC_NARRATIVES = {
-  'consequentialism->deontology': 'You moved from optimizing for outcomes to holding principles regardless of cost. Philosophers call this the shift from teleological to deontological reasoning.',
-  'consequentialism->care': 'You shifted from calculating the greatest good to prioritizing the person in front of you. This is the move from abstract utility to relational ethics.',
-  'consequentialism->virtue': 'You moved from weighing outcomes to asking what a person of character would do. This reflects a shift from results-based to character-based moral reasoning.',
-  'deontology->consequentialism': 'You shifted from holding rules absolutely to weighing outcomes. Philosophers call this moving from principled to pragmatic reasoning.',
-  'deontology->care': 'You moved from duty-based rules to relational concern. This is the shift Gilligan described -- from justice to care as the organizing moral principle.',
-  'deontology->virtue': 'You shifted from following rules to embodying character. Both are principled -- but virtue asks who you are, not just what you must do.',
-  'care->consequentialism': 'You moved from protecting the people closest to you to optimizing for the group. This is the tension between relational and utilitarian ethics.',
-  'care->deontology': 'You shifted from relational loyalty to principled duty. Philosophers call this moving from particularist to universalist moral reasoning.',
-  'care->virtue': 'You moved from protecting relationships to acting from personal integrity. Both center the individual -- but virtue prizes character over connection.',
-  'virtue->consequentialism': 'You shifted from doing what character demands to weighing what produces the best result. This is the move from agent-centered to outcome-centered ethics.',
-  'virtue->deontology': 'You moved from character-driven courage to rule-driven duty. Both are principled -- but deontology answers to rules, virtue answers to the self.',
-  'virtue->care': 'You shifted from personal integrity to relational concern. This is the tension between standing alone for what is right and standing with someone who needs you.'
+  'consequentialism->deontology': 'You started by weighing outcomes -- whichever choice helped the most people won. But as the stakes rose, you shifted to holding rules that don\'t bend. Philosophers call this moving from teleological reasoning -- judging by results -- toward deontology -- following duty because it\'s right, full stop.',
+  'consequentialism->care': 'Early on you calculated what would help the most people. Later, you chose to protect the person right in front of you. That shift -- from utilitarian thinking, where numbers decide, to care ethics, where relationships decide -- is one of the deepest divides in moral philosophy.',
+  'consequentialism->virtue': 'You started by optimizing for the best outcome. By the end, you were asking what a good person would do regardless of results. Philosophers call this the move from consequentialism -- outcomes first -- to virtue ethics -- character first.',
+  'deontology->consequentialism': 'You held firm to principles early on, following rules even when they cost you. Later, the stakes made you start weighing results instead. Philosophers call this shifting from deontology -- duty-bound reasoning -- toward pragmatism -- doing what actually works.',
+  'deontology->care': 'You started from duty -- some rules are absolute. But as the dilemmas got personal, you shifted to protecting the people closest to you. The psychologist Carol Gilligan studied exactly this tension -- the pull between justice, which applies rules equally, and care, which asks what this person needs right now.',
+  'deontology->virtue': 'You followed rules early on and shifted to acting from character. Both are principled -- but deontology asks what the rule demands, while virtue ethics asks who you want to be.',
+  'care->consequentialism': 'You started by protecting the people closest to you. Later, you stepped back and weighed what would help the most people overall. That\'s the tension between relational ethics -- where loyalty comes first -- and utilitarian thinking -- where the math decides.',
+  'care->deontology': 'You prioritized relationships at first -- the person in front of you mattered most. Later, you shifted to following rules regardless of who got hurt. Philosophers call this moving from particularism -- where context drives the decision -- to universalism -- where the same rule applies to everyone.',
+  'care->virtue': 'You started by protecting the people you cared about. By the end, you were acting from personal integrity even when it meant standing alone. Both center the individual -- but care prizes the relationship, while virtue prizes your character.',
+  'virtue->consequentialism': 'Early on you did what character demanded -- the honest thing, the courageous thing. Later, you started weighing which choice would actually produce the best result. Philosophers call this the shift from agent-centered ethics -- who are you? -- to outcome-centered ethics -- what happens?',
+  'virtue->deontology': 'You started from character -- doing what a good person would do. Later, you shifted to following specific rules and duties. Both are principled, but virtue answers to your own integrity while deontology answers to an external code.',
+  'virtue->care': 'You acted from personal integrity early on -- courage, honesty, doing what\'s hard because it\'s right. Later, you chose to protect someone you cared about, even at the cost of standing alone. That\'s the tension between standing up for what\'s right and standing with someone who needs you.'
 }
 
 /**
