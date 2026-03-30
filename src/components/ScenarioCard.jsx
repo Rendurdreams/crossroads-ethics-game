@@ -8,7 +8,7 @@ export default function ScenarioCard({ scenario, lockedIndex, onChoice, submitti
   const isLocked = lockedIndex !== null
 
   function handleClick(choiceIndex) {
-    if (lockedIndex !== null || submitting) return
+    if (submitting) return
     onChoice(choiceIndex)
   }
 
@@ -32,7 +32,7 @@ export default function ScenarioCard({ scenario, lockedIndex, onChoice, submitti
                 isLocked && isLockedChoice && submitError ? styles.choiceError : ''
               ].filter(Boolean).join(' ')}
               onClick={() => handleClick(choice.choiceIndex)}
-              disabled={isLocked && !isLockedChoice && !submitError}
+              disabled={submitting}
               style={isLocked && isLockedChoice && submitError ? { pointerEvents: 'auto' } : undefined}
             >
               <span className={styles.choiceNumeral}>{ROMAN[choice.choiceIndex]}.</span>
