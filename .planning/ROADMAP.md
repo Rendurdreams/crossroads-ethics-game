@@ -74,7 +74,7 @@ Plans:
 **Plans:** 2 plans
 Plans:
 - [x] 09-01-PLAN.md — GLTF model sourcing + KingdomScene.jsx scaffold + Host.jsx swap (replace KingdomMap)
-- [ ] 09-02-PLAN.md — Lerp interpolation + threshold events for all 4 landmarks + 60fps validation
+- [x] 09-02-PLAN.md — Lerp interpolation + threshold events for all 4 landmarks + 60fps validation
 **UI hint**: yes
 
 ### Phase 10: Host UX Unification + Reveal Beat

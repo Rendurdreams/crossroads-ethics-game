@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Immersion + Moral Identity
-status: verifying
-stopped_at: "CHECKPOINT: 10-02-PLAN.md Task 2 (human-verify)"
-last_updated: "2026-03-28T20:53:07.075Z"
+status: executing
+stopped_at: "CHECKPOINT: 09-02-PLAN.md Task 2 (human-verify)"
+last_updated: "2026-03-30T03:35:30.658Z"
 progress:
   total_phases: 5
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 8
-  completed_plans: 7
+  completed_plans: 8
 ---
 
 # Project State
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-27)
 
 Phase: 09 (three-js-host-scene) — EXECUTING
 Plan: 2 of 2
-Status: Phase complete — ready for verification
+Status: Ready to execute
 
 ```
 v1.0 [██████████████████████] 100% (7/7 phases)
@@ -75,6 +75,7 @@ v1.1 [                      ]   0% (0/5 phases)
 | Phase 08-multi-pack-system P03 | 75s | 2 tasks | 2 files |
 | Phase 09-three-js-host-scene P01 | 275 | 2 tasks | 9 files |
 | Phase 10-host-ux-unification-reveal-beat P01 | 165 | 2 tasks | 2 files |
+| Phase 09-three-js-host-scene P02 | 245 | 1 tasks | 1 files |
 
 ## Accumulated Context
 
@@ -137,6 +138,9 @@ Recent decisions affecting current work:
 - [Phase 10-host-ux-unification-reveal-beat]: FogController converted to useFrame lerp — eliminates jarring instant fog jump during reveal beat (Pitfall 4)
 - [Phase 10-host-ux-unification-reveal-beat]: lerpSpeedRef.current = 8 set before await supabase in closeRound — prevents race with Supabase subscription delivering new world_state before fast lerp is active
 - [Phase 10-host-ux-unification-reveal-beat]: Host round view uses individually fixed-position glass pills (HUD) instead of flex panel layout — canvas fills 100% screen at all times per D-07
+- [Phase 09-three-js-host-scene]: Always-mounted Three.js lights (not conditional render) — refs must persist across frames for useFrame lerp to work
+- [Phase 09-three-js-host-scene]: Three separate window materials in VillageQuarter for independent staggered blackout wave via setTimeout
+- [Phase 09-three-js-host-scene]: Dawn DirectionalLight managed imperatively (scene.add/remove) in FogController — avoids R3F conditional component mount
 
 ### Roadmap Evolution
 
@@ -154,7 +158,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-28T20:52:59.929Z
-Stopped at: CHECKPOINT: 10-02-PLAN.md Task 2 (human-verify)
+Last session: 2026-03-30T03:35:30.653Z
+Stopped at: CHECKPOINT: 09-02-PLAN.md Task 2 (human-verify)
 Resume file: None
 Next action: `/gsd:plan-phase 7`
