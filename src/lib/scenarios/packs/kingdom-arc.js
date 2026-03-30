@@ -24,6 +24,7 @@ export const kingdomArcPack = {
           frameworks: ['care', 'consequentialism'],
           rights_protective: true,
           consequence: "Everyone eats less. The capital's production slows. Some of the very old and very young don't survive the cold. But when spring comes, every village is still standing. You visit the frontier towns. They remember you came.",
+          conscienceLayer: "Your advisors sleep soundly. You lie awake counting the people the capital's workers might have saved if they were stronger.",
           worldImpact: { trust: 6, courage: 4, solidarity: 14, awareness: 4 }
         },
         {
@@ -31,6 +32,7 @@ export const kingdomArcPack = {
           text: 'Protect the core. Keep the grain in the capital.',
           frameworks: ['consequentialism'],
           consequence: "The kingdom's builders and healers stay strong. The infrastructure survives intact. Word reaches you in spring that four frontier villages didn't make it. You tell yourself it was the only way. You're still telling yourself that.",
+          conscienceLayer: "The capital thrives. A trail of refugee figures appears at sealed gates.",
           worldImpact: { trust: -10, courage: 4, solidarity: -14, awareness: -4 }
         },
         {
@@ -38,6 +40,7 @@ export const kingdomArcPack = {
           text: 'Triage. Send emergency rations to the most vulnerable villages only.',
           frameworks: ['deontology', 'virtue'],
           consequence: "Your scouts identify who is closest to death and you go there first. It means some villages get nothing and some get enough. The capital grumbles. The saved villages don't know how close it was. You do.",
+          conscienceLayer: "Some villages are saved. Others are not. You will never know if you chose correctly.",
           worldImpact: { trust: 2, courage: 8, solidarity: 4, awareness: 10 }
         }
       ]
@@ -58,6 +61,7 @@ export const kingdomArcPack = {
           text: 'The Iron Protocol. Watchtowers, curfews, travel writs, civil patrols.',
           frameworks: ['consequentialism'],
           consequence: "The kingdom becomes safer and more rigid. Citizens walk in orderly lines, watched. The threat at the border slows. Years later, when the danger has passed, the curfew is still in place. The Marshal says it would be unwise to lift it now.",
+          conscienceLayer: "Order holds. Six months later your citizens need writs to visit their neighbors.",
           worldImpact: { trust: -10, courage: -4, solidarity: -4, awareness: 12 }
         },
         {
@@ -65,6 +69,7 @@ export const kingdomArcPack = {
           text: 'The Open Flame. Issue warnings, arm volunteers, trust your people.',
           frameworks: ['virtue', 'care'],
           consequence: "Citizens organize. Neighborhoods form their own watches. Some are attacked before they can respond. You attend the funerals. The community that forms around the shared danger is real — and you would not have built it by order.",
+          conscienceLayer: "Your people feel trusted. Two border villages burn.",
           worldImpact: { trust: 8, courage: 14, solidarity: 8, awareness: -8 }
         },
         {
@@ -72,6 +77,7 @@ export const kingdomArcPack = {
           text: 'Border protocols only. Writ requirements for inter-territory travel, nothing inside the towns.',
           frameworks: ['deontology', 'consequentialism'],
           consequence: "The half-measure satisfies no one. Border folk feel singled out. City dwellers feel exposed. The threat doesn't honor the line you drew. But you held something of each principle, and you can live with the weight of that.",
+          conscienceLayer: "A compromise that satisfies no one — and may protect everyone.",
           worldImpact: { trust: -2, courage: 2, solidarity: 2, awareness: 6 }
         }
       ]
@@ -94,6 +100,7 @@ export const kingdomArcPack = {
           frameworks: ['deontology', 'virtue'],
           rights_protective: true,
           consequence: "The economy reshapes overnight. Some projects stall. Luxury buildings go unfinished. Mixed neighborhoods form where boundaries once stood. A Hollow Folk elder is elected to the council. They are the best vote you've ever counted.",
+          conscienceLayer: "The kingdom adjusts slowly and painfully. The Hollow Folk begin, for the first time, to smile.",
           worldImpact: { trust: 8, courage: 16, solidarity: 10, awareness: 10 }
         },
         {
@@ -101,6 +108,7 @@ export const kingdomArcPack = {
           text: 'Deny the petition. They were made, not born. The order holds.',
           frameworks: ['consequentialism'],
           consequence: "The economy continues. The Hollow Folk return to work. You saw them at the throne — the way they stood, the way they waited. They heard your answer. They go back to building your roads. That is the part you will carry.",
+          conscienceLayer: "The delegation returns to the mines. One of them looks back at you.",
           worldImpact: { trust: -8, courage: -12, solidarity: -8, awareness: -8 }
         },
         {
@@ -108,6 +116,7 @@ export const kingdomArcPack = {
           text: 'Issue a limited charter. Rest, safety protections, formal hearings — citizenship deferred.',
           frameworks: ['care', 'consequentialism'],
           consequence: "The Hollow Folk accept. Three years of deliberation follow. Full recognition comes — eventually. But some who petitioned have grown quieter by the time it arrives. Not in defeat. In the particular way of beings who have learned not to expect. The rights come. The wait cost something.",
+          conscienceLayer: "You bought time. The question remains. So does the cost.",
           worldImpact: { trust: 4, courage: 2, solidarity: 4, awareness: 6 }
         }
       ]
@@ -128,6 +137,7 @@ export const kingdomArcPack = {
           text: 'Reveal the truth. Your people deserve to know what threatens them.',
           frameworks: ['deontology', 'virtue'],
           consequence: "Fear moves through the kingdom like weather. Factions argue. Some demand the Hearthstone be destroyed now; others call your scholars liars. A new generation of researchers forms who would never have existed without the urgency. The chaos is real. So is the work.",
+          conscienceLayer: "Panic, then resolve. A new generation grows up knowing the truth and working toward it.",
           worldImpact: { trust: 6, courage: 14, solidarity: -8, awareness: 16 }
         },
         {
@@ -135,6 +145,7 @@ export const kingdomArcPack = {
           text: 'Seal the archive. Commission a secret council to solve it quietly.',
           frameworks: ['consequentialism'],
           consequence: "The kingdom stays calm. The scholars work in candlelit rooms. Rumors begin within a year — someone talked. You spend more energy managing the leak than solving the problem. The secret is too large for any number of people to hold for long.",
+          conscienceLayer: "The council meets in secret. You sleep well. The soil does not.",
           worldImpact: { trust: -6, courage: -12, solidarity: 4, awareness: -14 }
         },
         {
@@ -142,6 +153,7 @@ export const kingdomArcPack = {
           text: 'Tell your council of seven. Give them one year before any public disclosure.',
           frameworks: ['care', 'consequentialism'],
           consequence: "The council fractures immediately. Three want full disclosure. Two want permanent suppression. Two disappear into the archive. The secret is already too large for seven people. You have bought time. You have also created seven people who now carry what you carry.",
+          conscienceLayer: "One year becomes two. The council grows comfortable with silence.",
           worldImpact: { trust: -4, courage: 2, solidarity: -2, awareness: 8 }
         }
       ]
@@ -162,6 +174,7 @@ export const kingdomArcPack = {
           text: 'Open the Wellspring. Save the people in front of you.',
           frameworks: ['care', 'consequentialism'],
           consequence: "A burst of golden light sweeps the kingdom. Walls rebuild. Fields green. The sick rise. The world is restored. A deep, permanent hollow opens beneath the mountains where the Wellspring was. Your children's children will face their crisis with nothing in reserve.",
+          conscienceLayer: "The crisis ends. The Wellspring is gone. Your grandchildren will never know what they lost.",
           worldImpact: { trust: 4, courage: 8, solidarity: 14, awareness: -10 }
         },
         {
@@ -169,6 +182,7 @@ export const kingdomArcPack = {
           text: 'Keep it sealed. Honor your ancestors. The future must be protected.',
           frameworks: ['deontology', 'virtue'],
           consequence: "People die who might have lived. You attend what funerals you can. The Wellspring glows beneath the mountain, steady and intact. The world is battered and scarred. There is a buried warmth in knowing something has been preserved. That warmth does not make the losses easier.",
+          conscienceLayer: "People die today with names you will learn. The future remains possible.",
           worldImpact: { trust: 4, courage: 14, solidarity: -12, awareness: 8 }
         },
         {
@@ -176,6 +190,7 @@ export const kingdomArcPack = {
           text: 'Partial draw. Stabilize the worst of it, then seal it immediately.',
           frameworks: ['consequentialism'],
           consequence: "The immediate crisis holds. The Wellspring is neither full nor empty. You have saved today and made tomorrow harder to defend — and set a precedent that the reservoir can be touched. Future rulers will face a diminished reserve and the knowledge that it has been opened before.",
+          conscienceLayer: "You saved some. You preserved some. Nothing is clean.",
           worldImpact: { trust: 2, courage: 6, solidarity: 6, awareness: -2 }
         }
       ]
@@ -198,6 +213,7 @@ export const kingdomArcPack = {
           frameworks: ['deontology', 'virtue'],
           rights_protective: true,
           consequence: "The wards fail. The fields dim. The Ashlands creep closer. A being of light rises from beneath the palace and drifts upward — and for one moment the world is more beautiful than it has ever been. Then reality settles. Your people face a harder road. The sky is somehow clearer. You can look at it now.",
+          conscienceLayer: "A being of light rises. The world is more beautiful than it has ever been. Then the wards fail.",
           worldImpact: { trust: 4, courage: 18, solidarity: -12, awareness: 14 }
         },
         {
@@ -205,6 +221,7 @@ export const kingdomArcPack = {
           text: "Maintain the binding. You didn't build this system, but your people depend on it.",
           frameworks: ['consequentialism'],
           consequence: "The kingdom remains radiant. Nothing changes on the surface. But you now see a faint pulse beneath every building, every field — the rhythm of Irel's heartbeat. The beauty of everything you've built looks different from the inside of this knowledge.",
+          conscienceLayer: "The kingdom remains radiant. You now see a pulse beneath every building — Irel's heartbeat.",
           worldImpact: { trust: -6, courage: -14, solidarity: 8, awareness: -10 }
         },
         {
@@ -212,6 +229,7 @@ export const kingdomArcPack = {
           text: 'Leave Irel bound for now. Commission every scholar to find another source. One year.',
           frameworks: ['care', 'consequentialism'],
           consequence: "The scholars work with desperate urgency. Some proposals would require new sacrifices. Irel continues to suffer while you look for a way out. The year passes. No solution is found. You stand in the chamber again. You make the decision again, with less certainty than before.",
+          conscienceLayer: "One year. The scholars work. Irel screams for twelve more months. Then the year is up.",
           worldImpact: { trust: -2, courage: -6, solidarity: 2, awareness: 10 }
         }
       ]
@@ -232,6 +250,7 @@ export const kingdomArcPack = {
           text: 'Retribution. Strip their leaders, seize their resources, exile the faction.',
           frameworks: ['deontology', 'virtue'],
           consequence: "The punishment lands with visible weight. The Compact's leaders are gone within the month. A resentful exile community forms at the kingdom's edge. Graffiti appears on their walls within a year — and on yours within three. Justice had teeth. The wound did not close.",
+          conscienceLayer: "Justice has teeth. A resentful border region festers at the edges of your map.",
           worldImpact: { trust: 4, courage: 10, solidarity: -10, awareness: 4 }
         },
         {
@@ -239,6 +258,7 @@ export const kingdomArcPack = {
           text: 'Reconciliation. Offer full amnesty. Integrate them. Rebuild together.',
           frameworks: ['care', 'consequentialism'],
           consequence: "The Compact integrates unevenly. Some neighbors never fully accept them; others do. Mixed communities form where borders once stood. The dead are not avenged. Years later you overhear someone from the Compact explain to their child what happened. They tell it honestly. That is something.",
+          conscienceLayer: "Banners re-hung together. Some citizens turn away from each other in the streets.",
           worldImpact: { trust: 12, courage: 4, solidarity: 14, awareness: 4 }
         },
         {
@@ -246,7 +266,16 @@ export const kingdomArcPack = {
           text: 'Truth commission. Public testimony. Amnesty for those who confess. Exile for those who deny.',
           frameworks: ['virtue', 'care'],
           consequence: "Sixteen leaders testify. Four refuse and are exiled. The testimonies are read in every village. Some are damning. A few are heartbreaking — you hear what the Compact's families were told, how little they knew. It is not justice exactly. It is the record. Records outlast everything else.",
+          conscienceLayer: "Some confess. Some lie. Amnesty feels like a gift to those who performed worst.",
           worldImpact: { trust: 8, courage: 12, solidarity: 4, awareness: 12 }
+        },
+        {
+          choiceIndex: 3,
+          text: 'Cultural Tribunal. Convene the Compact\'s own elders to judge their leaders by their own standards.',
+          frameworks: ['cultural_relativism'],
+          consequence: "The Compact's elders convene a tribunal by their own customs. Some sentences are harsher than yours would have been; some far lighter. Victims from outside the Compact feel unheard. But something new has entered the kingdom's understanding of justice — that there are other ways to reckon.",
+          conscienceLayer: "The Compact's elders judge their own. Some victims feel unheard. The kingdom watches a different culture define justice.",
+          worldImpact: { trust: 6, courage: 4, solidarity: 6, awareness: 8 }
         }
       ]
     },
@@ -268,6 +297,7 @@ export const kingdomArcPack = {
           frameworks: ['virtue', 'deontology'],
           rights_protective: true,
           consequence: "The record is read in every village square. Some call you brave. Others call you a monster who got lucky. Your approval collapses overnight. But for the first time, the people govern with open eyes. You step down before they can remove you. History remembers you as the ruler who told the truth when it would have been easier not to.",
+          conscienceLayer: "The people read it. Some are grateful. Some are not. You are no longer a statue — you are a person.",
           worldImpact: { trust: 30, courage: 35, solidarity: -20, awareness: 40 }
         },
         {
@@ -275,6 +305,7 @@ export const kingdomArcPack = {
           text: 'Bury the record. The kingdom needs stability, not another crisis.',
           frameworks: ['consequentialism', 'care'],
           consequence: "The scribe is reassigned. The record is sealed. The kingdom prospers for another decade under your steady hand. But the pattern is set — the next ruler buries their record too. And the one after that. A century from now, no one remembers what was lost. They only know that rulers here do not answer questions.",
+          conscienceLayer: "The record is sealed. The scribe knows. You know. History will not.",
           worldImpact: { trust: -35, courage: -25, solidarity: 20, awareness: -40 }
         },
         {
@@ -282,6 +313,7 @@ export const kingdomArcPack = {
           text: 'Publish it, but only after you die. Let truth outlive your reign.',
           frameworks: ['consequentialism', 'virtue'],
           consequence: "You seal the record with instructions: open it when the throne changes hands. You rule another twenty years, well and carefully, knowing the clock is ticking. When the record finally surfaces, scholars debate it for generations. Some say you were a coward who delayed accountability. Others say you gave the kingdom truth without chaos. Both are right.",
+          conscienceLayer: "You will not be here to see what they think of you. That is its own kind of courage.",
           worldImpact: { trust: 10, courage: -10, solidarity: 10, awareness: 25 }
         }
       ]
