@@ -459,7 +459,6 @@ export default function Play() {
     if (lockedChoiceIndex !== null) {
       const chosenOption = currentScenario.choices[lockedChoiceIndex]
       const frameworkKey = chosenOption.frameworks[0]
-      const frameworkExplanation = FRAMEWORKS[frameworkKey]?.question ?? ''
 
       return (
         <motion.div
@@ -482,8 +481,9 @@ export default function Play() {
                 <ConsequenceReveal
                   consequence={chosenOption.consequence}
                   framework={frameworkKey}
-                  explanation={frameworkExplanation}
                   worldState={session.world_state ?? { trust: 50, courage: 50, solidarity: 50, awareness: 50 }}
+                  moralValues={player?.moral_values ?? null}
+                  moralStances={player?.moral_stances ?? null}
                 />
               </motion.div>
             </AnimatePresence>
