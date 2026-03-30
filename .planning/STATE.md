@@ -161,6 +161,7 @@ Recent decisions affecting current work:
 
 - Phase 05.1 inserted after Phase 05: Visual Experience Overhaul (URGENT) — Premium modern emotional design across the entire app. Replace flat UI with atmospheric, immersive game experience. Emotional tone: weight, reflection, moral gravity. Uses Stitch, nanabana, ui-ux-pro-max design tools.
 - v1.1 phases 7–11 defined 2026-03-27: Moral Profile Data Layer, Multi-Pack System, Three.js Host Scene, Host UX Unification + Reveal Beat, Moral Conflict Detection + End Screen + AI Hooks
+- Phase 13 added 2026-03-30: Text & Mobile Polish — meter labels (Trust→Honesty, Solidarity→Loyalty, Awareness→Empathy), high-school-friendly text pass, 375px mobile optimization
 
 ### Pending Todos
 

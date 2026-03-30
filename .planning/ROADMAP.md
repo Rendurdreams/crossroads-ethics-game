@@ -35,6 +35,7 @@
 ### v1.2 Ethical Framework Depth
 
 - [ ] **Phase 12: Ethical Framework Depth** — Deeper moral baseline, moral trajectory tracking, conscience cost indicators, deontological awareness prompts, virtue reputation arc, rights awareness, cultural context framing
+- [ ] **Phase 13: Text & Mobile Polish** — Meter label rework, high-school-friendly text, 375px mobile optimization
 
 ---
 
@@ -63,6 +64,16 @@ Plans:
 - [x] 12-03-PLAN.md — End screen + host wiring: endSession enrichment + FrameworkProfile 5 new sections + HostSetup ethicalLens
 
 **UI hint**: yes
+
+### Phase 13: Text & Mobile Polish
+
+**Goal**: Every player-facing label, narrative, and UI element reads naturally for a high school audience and renders cleanly on a 375px phone screen — meter names connect to the moral reasoning the game teaches, academic jargon is eliminated, and mobile typography/spacing passes a visual audit
+**Depends on**: Phase 12
+**Requirements**: TBD
+**Plans**: 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 13 to break down)
 
 ---
 
