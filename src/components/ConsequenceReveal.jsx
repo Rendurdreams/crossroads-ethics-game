@@ -62,10 +62,10 @@ export default function ConsequenceReveal({ consequence, framework, worldState, 
         <div className={styles.impactSection}>
           <p className={styles.sectionLabel}>THE REALM</p>
           <div className={styles.impactGrid}>
-            <ImpactMeter label="Trust" value={worldState.trust} />
+            <ImpactMeter label="Honesty" value={worldState.trust} />
             <ImpactMeter label="Courage" value={worldState.courage} />
-            <ImpactMeter label="Solidarity" value={worldState.solidarity} />
-            <ImpactMeter label="Awareness" value={worldState.awareness} />
+            <ImpactMeter label="Loyalty" value={worldState.solidarity} />
+            <ImpactMeter label="Empathy" value={worldState.awareness} />
           </div>
         </div>
       </div>
