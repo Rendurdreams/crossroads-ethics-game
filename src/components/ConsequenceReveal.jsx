@@ -2,11 +2,15 @@ import MeterBar from '../components/MeterBar.jsx'
 import FrameworkLabel from '../components/FrameworkLabel.jsx'
 import styles from './ConsequenceReveal.module.css'
 
-export default function ConsequenceReveal({ consequence, framework, explanation, worldState }) {
+export default function ConsequenceReveal({ consequence, conscienceLayer, framework, explanation, worldState }) {
   return (
     <div className={styles.container}>
       <div className={styles.card}>
         <p className={styles.consequence}>{consequence}</p>
+
+        {conscienceLayer && (
+          <p className={styles.conscienceLayer}>{conscienceLayer}</p>
+        )}
 
         <div className={styles.frameworkWrapper}>
           <FrameworkLabel framework={framework} explanation={explanation} />

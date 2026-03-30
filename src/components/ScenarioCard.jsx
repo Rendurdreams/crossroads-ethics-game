@@ -1,6 +1,6 @@
 import styles from './ScenarioCard.module.css'
 
-const ROMAN = ['I', 'II', 'III']
+const ROMAN = ['I', 'II', 'III', 'IV']
 
 export default function ScenarioCard({ scenario, lockedIndex, onChoice, submitting, submitError }) {
   if (!scenario) return null

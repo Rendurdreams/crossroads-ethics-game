@@ -45,6 +45,20 @@
   animation-delay: 1000ms;
 }
 
+.conscienceLayer {
+  font-style: italic;
+  color: var(--amber, #f5a623);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(245, 158, 11, 0.2);
+
+  opacity: 0;
+  animation: fadeUp 300ms ease forwards;
+  animation-delay: 1200ms;
+}
+
 .frameworkWrapper {
   max-width: 480px;
   width: 100%;
