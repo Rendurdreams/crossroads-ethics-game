@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Ethical Framework Depth
 status: executing
-stopped_at: Completed 13-01-PLAN.md
-last_updated: "2026-03-30T18:37:02.677Z"
+stopped_at: Completed 13-02-PLAN.md
+last_updated: "2026-03-30T18:37:48.205Z"
 progress:
   total_phases: 2
   completed_phases: 1
   total_plans: 6
-  completed_plans: 4
+  completed_plans: 5
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-27)
 ## Current Position
 
 Phase: 13 (text-mobile-polish) — EXECUTING
-Plan: 2 of 3
+Plan: 3 of 3
 Status: Ready to execute
 
 ```
@@ -82,6 +82,7 @@ v1.1 [                      ]   0% (0/5 phases)
 | Phase 12-ethical-framework-depth P02 | 246s | 2 tasks | 4 files |
 | Phase 12-ethical-framework-depth P03 | 357s | 2 tasks | 5 files |
 | Phase 13-text-mobile-polish P01 | 90 | 2 tasks | 4 files |
+| Phase 13-text-mobile-polish P02 | 100s | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -160,6 +161,8 @@ Recent decisions affecting current work:
 - [Phase 12-ethical-framework-depth]: awareness_log stored as JSONB on player row — no schema migration needed for tracking prompt shown/dismissed per round
 - [Phase 12-ethical-framework-depth]: Use player.moral_conflicts from Host storage instead of recomputing in FrameworkProfile
 - [Phase 13-text-mobile-polish]: Meter label mapping: trust=Honesty, courage=Courage, solidarity=Loyalty, awareness=Empathy — connects meter names to moral reasoning concepts
+- [Phase 13-text-mobile-polish]: FRAMEWORKS descriptions rewritten conversational for high schoolers -- textbook-formal language replaced with punchy direct voice
+- [Phase 13-text-mobile-polish]: ARC_NARRATIVES use introduce-then-define pattern -- every academic term immediately followed by plain-language em-dash definition
 
 ### Roadmap Evolution
 
@@ -178,7 +181,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T18:37:02.672Z
-Stopped at: Completed 13-01-PLAN.md
+Last session: 2026-03-30T18:37:48.201Z
+Stopped at: Completed 13-02-PLAN.md
 Resume file: None
 Next action: Phase verification

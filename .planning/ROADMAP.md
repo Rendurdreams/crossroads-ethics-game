@@ -74,7 +74,7 @@ Plans:
 
 Plans:
 - [x] 13-01-PLAN.md — Meter label rework: rename kingdom geography labels to moral concept names across all 4 files
-- [ ] 13-02-PLAN.md — Text readability: rewrite FRAMEWORKS descriptions and ARC_NARRATIVES with introduce-then-define pattern
+- [x] 13-02-PLAN.md — Text readability: rewrite FRAMEWORKS descriptions and ARC_NARRATIVES with introduce-then-define pattern
 - [ ] 13-03-PLAN.md — Mobile CSS: 390px breakpoints across 7 CSS module files + responsive SVG conflict diagram
 
 ---
@@ -96,4 +96,4 @@ Plans:
 | 10. Host UX Unification + Reveal Beat | v1.1 | 2/2 | Complete | 2026-03-28 |
 | 11. Moral Conflict Detection + End Screen + AI Hooks | v1.1 | 3/3 | Complete | 2026-03-30 |
 | 12. Ethical Framework Depth | v1.2 | 3/3 | Complete |  |
-| 13. Text & Mobile Polish | v1.2 | 1/3 | In Progress|  |
+| 13. Text & Mobile Polish | v1.2 | 2/3 | In Progress|  |

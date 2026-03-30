@@ -53,9 +53,9 @@
 
 ### Text Readability (Phase 13)
 
-- [ ] **TEXT-01**: All 4 FRAMEWORKS descriptions in frameworks.js rewritten — shorter, conversational, relatable for high schoolers while preserving philosophical accuracy
-- [ ] **TEXT-02**: All 12 ARC_NARRATIVES in FrameworkProfile.jsx rewritten using "introduce then define" pattern — every academic philosophy term immediately followed by a plain-language em-dash definition
-- [ ] **TEXT-03**: All end-screen philosophical text (section headers, conflict descriptions, moral arc narratives) uses introduce-then-define pattern where academic terms appear
+- [x] **TEXT-01**: All 4 FRAMEWORKS descriptions in frameworks.js rewritten — shorter, conversational, relatable for high schoolers while preserving philosophical accuracy
+- [x] **TEXT-02**: All 12 ARC_NARRATIVES in FrameworkProfile.jsx rewritten using "introduce then define" pattern — every academic philosophy term immediately followed by a plain-language em-dash definition
+- [x] **TEXT-03**: All end-screen philosophical text (section headers, conflict descriptions, moral arc narratives) uses introduce-then-define pattern where academic terms appear
 
 ### 375px Mobile Layout (Phase 13)
 
