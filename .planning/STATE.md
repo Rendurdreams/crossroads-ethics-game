@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Ethical Framework Depth
 status: executing
-stopped_at: Phase 12 context gathered
-last_updated: "2026-03-30T14:19:31.723Z"
+stopped_at: Completed 12-02-PLAN.md
+last_updated: "2026-03-30T14:59:41Z"
 progress:
   total_phases: 1
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 3
+  completed_plans: 1
 ---
 
 # Project State
@@ -19,13 +19,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-27)
 
 **Core value:** Players finish understanding their own ethical reasoning — named, visible, connected to a philosophical tradition. In v1.1: they also see where their choices diverged from their own stated values.
-**Current focus:** Phase 11 — moral-conflict-detection-end-screen-ai-hooks
+**Current focus:** Phase 12 — ethical-framework-depth
 
 ## Current Position
 
-Phase: 11
-Plan: Not started
-Status: Ready to execute
+Phase: 12 (ethical-framework-depth) — EXECUTING
+Plan: 2 of 3 complete
+Status: Executing Phase 12
 
 ```
 v1.0 [██████████████████████] 100% (7/7 phases)
@@ -78,6 +78,7 @@ v1.1 [                      ]   0% (0/5 phases)
 | Phase 09-three-js-host-scene P02 | 245 | 1 tasks | 1 files |
 | Phase 11-moral-conflict-detection-end-screen-ai-hooks P01 | 240s | 2 tasks | 5 files |
 | Phase 11-moral-conflict-detection-end-screen-ai-hooks P03 | 91 | 1 tasks | 3 files |
+| Phase 12-ethical-framework-depth P02 | 246s | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -146,6 +147,8 @@ Recent decisions affecting current work:
 - [Phase 11-moral-conflict-detection-end-screen-ai-hooks]: VALUE_FRAMEWORK_MAP honesty maps to [deontology, virtue]; no-double-fire guard ensures value conflict takes priority over stance conflict per round
 - [Phase 11-moral-conflict-detection-end-screen-ai-hooks]: moralConflictIndicator uses 2200ms animation-delay — positions it as the final beat after tension section (1900ms + 350ms duration)
 - [Phase 11-moral-conflict-detection-end-screen-ai-hooks]: ai.js returns null for all three stubs — documents LLM payload contract without live AI calls; group_debrief_context groups notable moral conflicts by player top value for pedagogically useful patterns
+- [Phase 12-ethical-framework-depth]: hasMoralConflict prop passed from Play.jsx to ConsequenceReveal — parent controls amber border visual while component retains internal moral conflict text indicator
+- [Phase 12-ethical-framework-depth]: awareness_log stored as JSONB on player row — no schema migration needed for tracking prompt shown/dismissed per round
 
 ### Roadmap Evolution
 
@@ -163,7 +166,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T14:19:31.716Z
-Stopped at: Phase 12 context gathered
-Resume file: .planning/phases/12-ethical-framework-depth/12-CONTEXT.md
-Next action: `/gsd:plan-phase 7`
+Last session: 2026-03-30T14:59:41Z
+Stopped at: Completed 12-02-PLAN.md
+Resume file: .planning/phases/12-ethical-framework-depth/12-02-SUMMARY.md
+Next action: Continue Phase 12 execution

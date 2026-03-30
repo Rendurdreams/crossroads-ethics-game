@@ -23,13 +23,13 @@
 
 ### Conscience Cost & Moral Friction
 
-- [ ] **CONSCIENCE-01**: When a player's choice produces a moral conflict (value or stance), the consequence text on the ConsequenceReveal screen gets a subtle visual distinction — a soft amber border or italic prefix — indicating the game registered internal friction, not just external consequence
+- [x] **CONSCIENCE-01**: When a player's choice produces a moral conflict (value or stance), the consequence text on the ConsequenceReveal screen gets a subtle visual distinction — a soft amber border or italic prefix — indicating the game registered internal friction, not just external consequence
 - [ ] **CONSCIENCE-02**: End screen shows cumulative "moral friction" count: "Your choices conflicted with your stated values in X of Y rounds" — framed neutrally ("That tension is the point") not punitively
 
 ### Deontological Constraints (Soft Blocks)
 
-- [ ] **DEONTO-01**: Players who ranked honesty #1 AND answered "no" to "Is it ever right to lie to protect someone?" see a pre-choice awareness prompt on care-tagged choices: "This choice prioritizes loyalty over truth. You declared truth matters most." — appears BEFORE the choice is locked, as a moment of self-awareness, not a hard block
-- [ ] **DEONTO-02**: The prompt is dismissible (tap to continue) and does not prevent any choice — the game reveals tension, never restricts agency — but the fact that the prompt appeared is logged in choice_history for end-screen analysis
+- [x] **DEONTO-01**: Players who ranked honesty #1 AND answered "no" to "Is it ever right to lie to protect someone?" see a pre-choice awareness prompt on care-tagged choices: "This choice prioritizes loyalty over truth. You declared truth matters most." — appears BEFORE the choice is locked, as a moment of self-awareness, not a hard block
+- [x] **DEONTO-02**: The prompt is dismissible (tap to continue) and does not prevent any choice — the game reveals tension, never restricts agency — but the fact that the prompt appeared is logged in choice_history for end-screen analysis
 
 ### Virtue Reputation Arc
 
