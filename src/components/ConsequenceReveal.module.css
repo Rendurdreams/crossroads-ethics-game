@@ -11,13 +11,12 @@
 
 .container {
   background: var(--bg);
-  padding: 28px 20px;
+  padding: 32px 24px;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
-  overflow-y: auto;
 }
 
 .card {
@@ -26,198 +25,71 @@
   -webkit-backdrop-filter: blur(var(--blur-glass));
   border: 1px solid var(--glass-border);
   border-radius: 12px;
-  padding: 24px 20px;
+  padding: 24px;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
   max-width: 480px;
   width: 100%;
 }
 
-.cardConflict {
-  border: 2px solid var(--accent);
-  box-shadow: 0 0 0 2px var(--accent),
-              0 0 16px rgba(245, 158, 11, 0.25),
-              0 4px 24px rgba(0, 0, 0, 0.4),
-              inset 0 1px 0 rgba(255, 255, 255, 0.04);
-}
-
-/* ── 1. Consequence narrative ── */
-
 .consequence {
   font-family: var(--serif);
-  font-size: 19px;
-  line-height: 1.7;
+  font-size: 21px;
+  line-height: 1.75;
   color: var(--text-h);
   text-align: center;
+  max-width: 480px;
   margin: 0;
+
   opacity: 0;
   animation: fadeUp 400ms ease forwards;
-  animation-delay: 800ms;
+  animation-delay: 1000ms;
 }
 
-/* ── Shared section label ── */
+.conscienceLayer {
+  font-style: italic;
+  color: var(--amber, #f5a623);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(245, 158, 11, 0.2);
 
-.sectionLabel {
-  font-family: var(--sans);
-  font-size: 11px;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  margin: 0 0 8px;
-  opacity: 0.7;
-}
-
-/* ── 2. Framework section ── */
-
-.frameworkSection {
-  margin-top: 24px;
-  padding: 16px;
-  background: rgba(245, 158, 11, 0.06);
-  border-left: 3px solid var(--accent);
-  border-radius: 0 10px 10px 0;
   opacity: 0;
-  animation: fadeUp 350ms ease forwards;
+  animation: fadeUp 300ms ease forwards;
+  animation-delay: 1200ms;
+}
+
+.frameworkWrapper {
+  max-width: 480px;
+  width: 100%;
+  margin-top: 24px;
+
+  opacity: 0;
+  animation: fadeUp 300ms ease forwards;
   animation-delay: 1400ms;
 }
 
-.frameworkName {
-  font-family: var(--sans);
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--accent);
-  margin: 0 0 6px;
-}
+.metersWrapper {
+  max-width: 480px;
+  width: 100%;
+  margin-top: 32px;
 
-.frameworkDesc {
-  font-family: var(--serif);
-  font-size: 15px;
-  line-height: 1.6;
-  color: var(--text);
-  margin: 0 0 10px;
-}
-
-.frameworkQuestion {
-  font-family: var(--sans);
-  font-size: 13px;
-  color: var(--text-muted);
-  margin: 0;
-  line-height: 1.5;
-}
-
-.frameworkQuestion em {
-  color: var(--text);
-  font-style: italic;
-}
-
-/* ── 3. Tension section ── */
-
-.tensionSection {
-  margin-top: 20px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
-  opacity: 0;
-  animation: fadeUp 350ms ease forwards;
-  animation-delay: 1900ms;
-}
-
-.tensionText {
-  font-family: var(--serif);
-  font-size: 17px;
-  color: var(--text-h);
-  margin: 0 0 8px;
-  text-align: center;
-}
-
-.tensionHighlight {
-  color: var(--accent);
-  font-style: italic;
-  font-weight: 600;
-}
-
-.tensionDesc {
-  font-family: var(--serif);
-  font-size: 14px;
-  line-height: 1.6;
-  color: var(--text);
-  margin: 0;
-}
-
-/* ── 4. World impact meters ── */
-
-.impactSection {
-  margin-top: 24px;
   opacity: 0;
   animation: fadeUp 300ms ease forwards;
-  animation-delay: 2400ms;
+  animation-delay: 1800ms;
 }
 
-.impactGrid {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.impactMeter {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.impactHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-
-.impactLabel {
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.impactValue {
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-muted);
-}
-
-.impactTrack {
-  height: 6px;
-  background: rgba(255, 255, 255, 0.06);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.impactFill {
-  height: 100%;
-  border-radius: 3px;
-  transition: width 1s ease;
-}
-
-/* ── 3.5. Moral conflict indicator ── */
-
-.moralConflictIndicator {
+.metersLabel {
   font-family: var(--sans);
   font-size: 14px;
   color: var(--text-muted);
-  line-height: 1.5;
-  margin: 12px 16px 0;
-  text-align: center;
-  opacity: 0;
-  animation: fadeUp 400ms ease forwards;
-  animation-delay: 2200ms;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin: 0 0 16px 0;
 }
 
-@media (max-width: 390px) {
-  .card {
-    padding: 20px 14px;
-  }
-  .consequence {
-    font-size: clamp(16px, 5vw, 19px);
-  }
+.meters {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
