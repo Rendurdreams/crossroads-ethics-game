@@ -1,38 +1,44 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.0
-milestone_name: The Crossroads MVP
-status: v1.0 shipped — planning next milestone
-stopped_at: v1.0 milestone archived 2026-03-27
-last_updated: "2026-03-27T22:01:53.180Z"
+milestone: v1.2
+milestone_name: Ethical Framework Depth
+status: executing
+stopped_at: Phase 14 context gathered
+last_updated: "2026-03-30T23:12:07.185Z"
 progress:
-  total_phases: 7
-  completed_phases: 7
-  total_plans: 18
-  completed_plans: 18
+  total_phases: 5
+  completed_phases: 4
+  total_plans: 15
+  completed_plans: 10
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-25)
+See: .planning/PROJECT.md (updated 2026-03-27)
 
-**Core value:** Players finish understanding their own ethical reasoning — named, visible, connected to a philosophical tradition.
-**Current focus:** Phase 06 — kingdom-ui-overhaul
+**Core value:** Players finish understanding their own ethical reasoning — named, visible, connected to a philosophical tradition. In v1.1: they also see where their choices diverged from their own stated values.
+**Current focus:** Phase 15 — divided-kingdom-phase-2
 
 ## Current Position
 
-Phase: 06
-Plan: Not started
+Phase: 15 (divided-kingdom-phase-2) — EXECUTING
+Plan: 1 of 5
+Status: Executing Phase 15
+
+```
+v1.0 [██████████████████████] 100% (7/7 phases)
+v1.1 [                      ]   0% (0/5 phases)
+```
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 0
-- Average duration: -
-- Total execution time: -
+- Total plans completed: 18 (v1.0)
+- Average duration: ~140s/plan
+- Total execution time: ~42 minutes
 
 **By Phase:**
 
@@ -42,8 +48,8 @@ Plan: Not started
 
 **Recent Trend:**
 
-- Last 5 plans: -
-- Trend: -
+- Last 5 plans: Phase 06 P01 185s, P02 3min, P03 261s
+- Trend: Stable
 
 *Updated after each plan completion*
 | Phase 01-foundation P01 | 8 | 3 tasks | 10 files |
@@ -63,6 +69,24 @@ Plan: Not started
 | Phase 06-kingdom-ui-overhaul P02 | 3min | 2 tasks | 4 files |
 | Phase 06-kingdom-ui-overhaul P01 | 185s | 3 tasks | 7 files |
 | Phase 06-kingdom-ui-overhaul P03 | 261 | 2 tasks | 5 files |
+| Phase 07-moral-profile-data-layer P01 | 142s | 3 tasks | 6 files |
+| Phase 08-multi-pack-system P01 | 268 | 2 tasks | 5 files |
+| Phase 08-multi-pack-system P02 | 63 | 1 tasks | 2 files |
+| Phase 08-multi-pack-system P03 | 75s | 2 tasks | 2 files |
+| Phase 09-three-js-host-scene P01 | 275 | 2 tasks | 9 files |
+| Phase 10-host-ux-unification-reveal-beat P01 | 165 | 2 tasks | 2 files |
+| Phase 09-three-js-host-scene P02 | 245 | 1 tasks | 1 files |
+| Phase 11-moral-conflict-detection-end-screen-ai-hooks P01 | 240s | 2 tasks | 5 files |
+| Phase 11-moral-conflict-detection-end-screen-ai-hooks P03 | 91 | 1 tasks | 3 files |
+| Phase 12-ethical-framework-depth P01 | 383s | 2 tasks | 7 files |
+| Phase 12-ethical-framework-depth P02 | 246s | 2 tasks | 4 files |
+| Phase 12-ethical-framework-depth P03 | 357s | 2 tasks | 5 files |
+| Phase 13-text-mobile-polish P01 | 90 | 2 tasks | 4 files |
+| Phase 13-text-mobile-polish P02 | 100s | 2 tasks | 2 files |
+| Phase 13-text-mobile-polish P03 | 121s | 2 tasks | 8 files |
+| Phase 13.1 P01 | 92s | 2 tasks | 2 files |
+| Phase 13.1 P02 | 64s | 2 tasks | 2 files |
+| Phase 13.1 P03 | 141s | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -110,10 +134,51 @@ Recent decisions affecting current work:
 - [Phase 06-kingdom-ui-overhaul]: Pack identity card replaces round selector entirely — total_rounds set at session creation from pack, not HostSetup
 - [Phase 06-kingdom-ui-overhaul]: KingdomMap imported directly (not lazy) — SVG component in same bundle; no code-splitting benefit
 - [Phase 06-kingdom-ui-overhaul]: Removed totalRounds local state from Host.jsx; session.total_rounds from DB is source of truth
+- [Phase 13.1]: Delete+re-insert pattern for answer toggle — respects UNIQUE constraint without upsert RLS
+- [v1.1 roadmap]: Three.js moves from "deferred to v2" to active v1.1 scope — PACK-05 and AI-03 share phase 8; AI-03 placed in Phase 8 (pack schema shape) not Phase 11 (AI stubs) because the pack shape is pack system work
+- [v1.1 roadmap]: MORAL-03/04 held for Phase 11 (not Phase 7) — detection logic requires choice framework tags to exist; Phase 7 only stores the baseline; detection runs at choice-lock time after game loop is complete
+- [Phase 07-moral-profile-data-layer]: Stance Q2 additionally gated until Q1 has an answer — prevents out-of-order responses without hiding content
+- [Phase 07-moral-profile-data-layer]: Stance answers allow re-selection unlike in-round decree tiles that lock permanently — baseline is pre-game introspection
+- [Phase 08-multi-pack-system]: realWorldModernPack named Common Ground — contemporary interpersonal and community dilemmas at college-maturity tone
+- [Phase 08-multi-pack-system]: futuresPack named The Weight of Tomorrow — near-future personal dilemmas in 2040 context, no space opera framing
+- [Phase 08-multi-pack-system]: JSDoc @typedef schema added above packs export in scenarios.js — makes pack shape machine-readable for AI generation tools (D-13)
+- [Phase 08-multi-pack-system]: Pack selection persisted to Supabase before navigating to lobby — session row has pack_id and total_rounds before any player joins
+- [Phase 08-multi-pack-system]: total_rounds = getPlayableScenarios(pack).length + 1 to include reflection round in session total
+- [Phase 08-multi-pack-system]: Pack resolved in mount fetch via getPackById(session.pack_id) — not module-level constant; reflection guard uses getReflectionScenario(pack) for pack-agnostic detection
+- [Phase 09-three-js-host-scene]: Procedural GLB files generated via custom Node.js binary writer — GLTFExporter requires browser APIs; manual GLB 2.0 format used to create valid anchor meshes that useGLTF can load
+- [Phase 10-host-ux-unification-reveal-beat]: lerpSpeedRef as useRef not useState in Host.jsx — avoids re-render chain when timer state changes (Pitfall 2)
+- [Phase 10-host-ux-unification-reveal-beat]: FogController converted to useFrame lerp — eliminates jarring instant fog jump during reveal beat (Pitfall 4)
+- [Phase 10-host-ux-unification-reveal-beat]: lerpSpeedRef.current = 8 set before await supabase in closeRound — prevents race with Supabase subscription delivering new world_state before fast lerp is active
+- [Phase 10-host-ux-unification-reveal-beat]: Host round view uses individually fixed-position glass pills (HUD) instead of flex panel layout — canvas fills 100% screen at all times per D-07
+- [Phase 09-three-js-host-scene]: Always-mounted Three.js lights (not conditional render) — refs must persist across frames for useFrame lerp to work
+- [Phase 09-three-js-host-scene]: Three separate window materials in VillageQuarter for independent staggered blackout wave via setTimeout
+- [Phase 09-three-js-host-scene]: Dawn DirectionalLight managed imperatively (scene.add/remove) in FogController — avoids R3F conditional component mount
+- [Phase 11-moral-conflict-detection-end-screen-ai-hooks]: VALUE_FRAMEWORK_MAP honesty maps to [deontology, virtue]; no-double-fire guard ensures value conflict takes priority over stance conflict per round
+- [Phase 11-moral-conflict-detection-end-screen-ai-hooks]: moralConflictIndicator uses 2200ms animation-delay — positions it as the final beat after tension section (1900ms + 350ms duration)
+- [Phase 11-moral-conflict-detection-end-screen-ai-hooks]: ai.js returns null for all three stubs — documents LLM payload contract without live AI calls; group_debrief_context groups notable moral conflicts by player top value for pedagogically useful patterns
+- [Phase 12-ethical-framework-depth]: Weight-adjusted trajectory: moral_weight multiplier from scenario weight applied to framework counts for trajectory computation
+- [Phase 12-ethical-framework-depth]: 9 rights_dimension scenarios tagged across 3 packs (3 per pack) with rights_protective on qualifying choices
+- [Phase 12-ethical-framework-depth]: Baseline per-question gating removed — all 5 stance questions shown simultaneously after value ranking per D-01
+- [Phase 12-ethical-framework-depth]: hasMoralConflict prop passed from Play.jsx to ConsequenceReveal — parent controls amber border visual while component retains internal moral conflict text indicator
+- [Phase 12-ethical-framework-depth]: awareness_log stored as JSONB on player row — no schema migration needed for tracking prompt shown/dismissed per round
+- [Phase 12-ethical-framework-depth]: Use player.moral_conflicts from Host storage instead of recomputing in FrameworkProfile
+- [Phase 13-text-mobile-polish]: Meter label mapping: trust=Honesty, courage=Courage, solidarity=Loyalty, awareness=Empathy — connects meter names to moral reasoning concepts
+- [Phase 13-text-mobile-polish]: FRAMEWORKS descriptions rewritten conversational for high schoolers -- textbook-formal language replaced with punchy direct voice
+- [Phase 13-text-mobile-polish]: ARC_NARRATIVES use introduce-then-define pattern -- every academic term immediately followed by plain-language em-dash definition
+- [Phase 13-text-mobile-polish]: 390px breakpoint chosen to cover both iPhone SE (375px) and standard iPhone (390px)
+- [Phase 13-text-mobile-polish]: SVG conflict diagram uses width=100% with preserved viewBox -- no JS needed, scales via CSS
+- [Phase 13.1]: Bombshell worldImpact values use 2-3x normal range (20-40) for dramatic finale swings
+- [Phase 13.1]: METER_LABELS constant centralizes host meter display names (Honesty/Courage/Loyalty/Empathy)
+- [Phase 13.1]: scenarioOverlay glass panel with pointer-events:none for presenter dilemma text on projected screen
 
 ### Roadmap Evolution
 
 - Phase 05.1 inserted after Phase 05: Visual Experience Overhaul (URGENT) — Premium modern emotional design across the entire app. Replace flat UI with atmospheric, immersive game experience. Emotional tone: weight, reflection, moral gravity. Uses Stitch, nanabana, ui-ux-pro-max design tools.
+- v1.1 phases 7–11 defined 2026-03-27: Moral Profile Data Layer, Multi-Pack System, Three.js Host Scene, Host UX Unification + Reveal Beat, Moral Conflict Detection + End Screen + AI Hooks
+- Phase 13 added 2026-03-30: Text & Mobile Polish — meter labels (Trust→Honesty, Solidarity→Loyalty, Awareness→Empathy), high-school-friendly text pass, 375px mobile optimization
+- Phase 13.1 inserted after Phase 13: Dilemma 1 Flow Redesign + Bug Fixes (URGENT) — Replace reflection round with bombshell final choice, fix host score labels, player answer toggle, question on host screen, copy polish
+- Phase 14 added 2026-03-30: Animated Kingdom Map — Replace Three.js/R3F 3D scene with GSAP-driven 2D animated map, four reactive zones, strip mouse effects for projection
+- Phase 15 added 2026-03-30: Divided Kingdom Phase 2 — Dynamic scribe, timer pressure, walk mechanic, How Others Chose, detection rework, conscience layer, R7 4th choice, visual accumulation, closing reflection, homepage split
 
 ### Pending Todos
 
@@ -121,11 +186,12 @@ None yet.
 
 ### Blockers/Concerns
 
-- **Phase 1**: RLS policies can silently block real-time event delivery in Supabase — must be explicitly tested before Phase 2 builds against it
-- **Phase 1**: Schema needs a `reflections` table for Round 6 free-text responses (not in original CLAUDE.md design — added as INFRA-01 scope)
+- **Phase 9 (Three.js)**: r128 was previously noted as the CDN target; v1.1 uses npm with r160+ — verify CatmullRomCurve3 and other APIs are still compatible before implementation
+- **Phase 7 (moral baseline UI)**: Join flow currently goes Landing → lobby wait; inserting a baseline step adds latency before a player sees the lobby — design must not feel like a survey gatekeeping the game
 
 ## Session Continuity
 
-Last session: 2026-03-27T21:28:15.592Z
-Stopped at: Completed 06-kingdom-ui-overhaul-03-PLAN.md
-Resume file: None
+Last session: 2026-03-30T20:40:16.307Z
+Stopped at: Phase 14 context gathered
+Resume file: .planning/phases/14-animated-kingdom-map/14-CONTEXT.md
+Next action: Phase verification
