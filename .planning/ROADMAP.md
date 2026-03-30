@@ -117,8 +117,8 @@ Plans:
 | 5. Deploy + Polish | v1.0 | 3/3 | Complete | 2026-03-26 |
 | 5.1. Visual Experience Overhaul | v1.0 | 3/3 | Complete | 2026-03-27 |
 | 6. Kingdom UI Overhaul | v1.0 | 3/3 | Complete | 2026-03-27 |
-| 7. Moral Profile Data Layer | v1.1 | 0/1 | Not started | - |
+| 7. Moral Profile Data Layer | v1.1 | 1/1 | Complete | 2026-03-28 |
 | 8. Multi-Pack System | v1.1 | 3/3 | Complete   | 2026-03-28 |
-| 9. Three.js Host Scene | v1.1 | 1/2 | In progress | - |
+| 9. Three.js Host Scene | v1.1 | 2/2 | Complete | 2026-03-29 |
 | 10. Host UX Unification + Reveal Beat | v1.1 | 2/2 | Complete   | 2026-03-28 |
 | 11. Moral Conflict Detection + End Screen + AI Hooks | v1.1 | 0/? | Not started | - |
