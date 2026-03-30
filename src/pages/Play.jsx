@@ -12,6 +12,8 @@ import ConsequenceReveal from '../components/ConsequenceReveal.jsx'
 import TimerDisplay from '../components/TimerDisplay.jsx'
 import MeterBar from '../components/MeterBar.jsx'
 import FrameworkProfile from '../components/FrameworkProfile.jsx'
+import HowOthersChose from '../components/HowOthersChose.jsx'
+import WalkMechanic from '../components/WalkMechanic.jsx'
 import styles from './Play.module.css'
 
 const pageVariants = {
@@ -56,6 +58,10 @@ export default function Play() {
   const [reflectionSubmitted, setReflectionSubmitted] = useState(false)
   const [reflectionSubmitting, setReflectionSubmitting] = useState(false)
   const [reflectionError, setReflectionError] = useState(false)
+
+  // How Others Chose state
+  const [showHowOthersChose, setShowHowOthersChose] = useState(false)
+  const [roundChoicesForComparison, setRoundChoicesForComparison] = useState([])
 
   // Session restore on mount
   useEffect(() => {
@@ -166,6 +172,15 @@ export default function Play() {
           if (payload.new.status === 'active') {
             setGameStarted(true)
           }
+          if (payload.new.status === 'round_complete') {
+            // Fetch choices for this round to power How Others Chose
+            supabase
+              .from('choices')
+              .select('choice_index')
+              .eq('session_id', sessionId)
+              .eq('round_number', payload.new.current_round)
+              .then(({ data }) => setRoundChoicesForComparison(data ?? []))
+          }
           if (payload.new.status === 'finished') {
             setGameFinished(true)
             // Re-fetch player row with host-computed profile data
@@ -243,6 +258,8 @@ export default function Play() {
     setPassedRound(false)
     setContentNoteAcknowledged(false)
     setSubmittedCount(0)
+    setShowHowOthersChose(false)
+    setRoundChoicesForComparison([])
   }, [session?.current_round])
 
   // Choice submission handler
@@ -467,10 +484,31 @@ export default function Play() {
               >
                 <ConsequenceReveal
                   consequence={chosenOption.consequence}
+                  conscienceLayer={chosenOption.conscienceLayer ?? null}
                   framework={frameworkKey}
                   explanation={frameworkExplanation}
                   worldState={session.world_state ?? { trust: 50, courage: 50, solidarity: 50, awareness: 50 }}
+                  moralValues={player?.moral_values ?? null}
+                  moralStances={player?.moral_stances ?? null}
+                  hasMoralConflict={false}
                 />
+
+                {!showHowOthersChose && (
+                  <button
+                    className={styles.howOthersBtn}
+                    onClick={() => setShowHowOthersChose(true)}
+                  >
+                    See how others chose
+                  </button>
+                )}
+
+                {showHowOthersChose && (
+                  <HowOthersChose
+                    scenarioId={currentScenario.id}
+                    liveChoices={roundChoicesForComparison}
+                    totalPlayers={totalPlayerCount}
+                  />
+                )}
               </motion.div>
             </AnimatePresence>
           </div>
@@ -518,7 +556,10 @@ export default function Play() {
 
   // Active round view
   if (session?.status === 'active' && currentScenario) {
-    // Round 6 detection — show reflection textarea instead of ScenarioCard
+    const isTimerPressureRound = session?.current_round === 5
+    const isWalkRound = session?.current_round === 6
+
+    // Round reflection detection — show reflection textarea instead of ScenarioCard
     const isReflectionRound = currentScenario?.choices?.length === 0
 
     if (isReflectionRound) {
@@ -643,13 +684,27 @@ export default function Play() {
                 <span className={styles.roundLabel}>The Council Deliberates — Dilemma {session.current_round}</span>
               </div>
 
-              <ScenarioCard
-                scenario={currentScenario}
-                lockedIndex={lockedChoiceIndex}
-                onChoice={handleChoice}
-                submitting={submitting}
-                submitError={submitError}
-              />
+              {isWalkRound ? (
+                <>
+                  <div className={styles.card}>
+                    <h2 style={{ fontFamily: 'Georgia, serif', fontSize: '1.3rem', marginBottom: 12, color: 'var(--text-h)' }}>{currentScenario.title}</h2>
+                    <p style={{ lineHeight: 1.6, marginBottom: 0, color: 'var(--text)', fontSize: '1rem' }}>{currentScenario.text}</p>
+                  </div>
+                  <WalkMechanic
+                    onChoice={handleChoice}
+                    submitting={submitting}
+                    lockedIndex={lockedChoiceIndex}
+                  />
+                </>
+              ) : (
+                <ScenarioCard
+                  scenario={currentScenario}
+                  lockedIndex={lockedChoiceIndex}
+                  onChoice={handleChoice}
+                  submitting={submitting}
+                  submitError={submitError}
+                />
+              )}
 
               {lockedChoiceIndex !== null && (
                 <div className={styles.waitingSection}>
@@ -662,8 +717,11 @@ export default function Play() {
               )}
 
               {timerRemaining !== null && (
-                <div className={styles.timerSection}>
+                <div className={`${styles.timerSection} ${isTimerPressureRound ? styles.timerPressure : ''}`}>
                   <TimerDisplay remaining={timerRemaining} total={timerTotal} />
+                  {isTimerPressureRound && timerRemaining !== null && timerRemaining <= 30 && (
+                    <p className={styles.timerUrgency}>The council waits for no one.</p>
+                  )}
                 </div>
               )}
             </motion.div>

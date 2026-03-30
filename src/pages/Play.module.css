@@ -289,7 +289,74 @@
   margin: 8px 0 0 0;
 }
 
+/* Timer pressure (Round 5) */
+.timerPressure {
+  animation: timerPulse 1.5s ease-in-out infinite;
+}
+
+.timerUrgency {
+  color: #ef4444;
+  font-style: italic;
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 4px;
+  animation: urgencyFade 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes timerPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+@keyframes urgencyFade {
+  from { opacity: 0.6; }
+  to { opacity: 1; }
+}
+
+/* How Others Chose button */
+.howOthersBtn {
+  display: block;
+  margin: 16px auto 0;
+  padding: 10px 20px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 8px;
+  color: var(--text-warm, #f5f0e8);
+  font-size: 0.9rem;
+  font-family: var(--sans);
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.howOthersBtn:hover {
+  background: rgba(245, 158, 11, 0.25);
+}
+
+/* Walk mechanic card wrapper */
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  max-width: 480px;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .timerPressure {
+    animation: none;
+  }
+  .timerUrgency {
+    animation: none;
+    opacity: 1;
+  }
 }
