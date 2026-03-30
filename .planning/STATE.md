@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Ethical Framework Depth
-status: verifying
-stopped_at: Phase 14 context gathered
-last_updated: "2026-03-30T20:57:02.637Z"
+status: executing
+stopped_at: Completed 15-divided-kingdom-phase-2 Plan 01
+last_updated: "2026-03-30T23:31:27.147Z"
 progress:
-  total_phases: 4
+  total_phases: 5
   completed_phases: 4
-  total_plans: 10
-  completed_plans: 10
+  total_plans: 15
+  completed_plans: 12
 ---
 
 # Project State
@@ -19,13 +19,13 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-27)
 
 **Core value:** Players finish understanding their own ethical reasoning — named, visible, connected to a philosophical tradition. In v1.1: they also see where their choices diverged from their own stated values.
-**Current focus:** Phase 13 — text-mobile-polish
+**Current focus:** Phase 15 — divided-kingdom-phase-2
 
 ## Current Position
 
-Phase: 14
-Plan: Not started
-Status: Phase complete — ready for verification
+Phase: 15 (divided-kingdom-phase-2) — EXECUTING
+Plan: 2 of 5
+Status: Ready to execute
 
 ```
 v1.0 [██████████████████████] 100% (7/7 phases)
@@ -87,6 +87,7 @@ v1.1 [                      ]   0% (0/5 phases)
 | Phase 13.1 P01 | 92s | 2 tasks | 2 files |
 | Phase 13.1 P02 | 64s | 2 tasks | 2 files |
 | Phase 13.1 P03 | 141s | 2 tasks | 2 files |
+| Phase 15-divided-kingdom-phase-2 P01 | 512 | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -170,6 +171,9 @@ Recent decisions affecting current work:
 - [Phase 13.1]: Bombshell worldImpact values use 2-3x normal range (20-40) for dramatic finale swings
 - [Phase 13.1]: METER_LABELS constant centralizes host meter display names (Honesty/Courage/Loyalty/Empathy)
 - [Phase 13.1]: scenarioOverlay glass panel with pointer-events:none for presenter dilemma text on projected screen
+- [Phase 15-divided-kingdom-phase-2]: STANCE_TRIGGERS replaces generic stance blocks — each trigger fires only for a specific round+choiceIndex, not any round with that framework
+- [Phase 15-divided-kingdom-phase-2]: VALUE_FRAMEWORK_MAP: loyalty→[virtue,care], honesty→[deontology], fairness→[distributive_justice] per PRD D-05
+- [Phase 15-divided-kingdom-phase-2]: Cultural Tribunal (R7 choiceIndex 3) uses cultural_relativism framework tag — new tag for future relativism conflict detection
 
 ### Roadmap Evolution
 
@@ -191,7 +195,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T20:40:16.307Z
-Stopped at: Phase 14 context gathered
-Resume file: .planning/phases/14-animated-kingdom-map/14-CONTEXT.md
+Last session: 2026-03-30T23:31:27.141Z
+Stopped at: Completed 15-divided-kingdom-phase-2 Plan 01
+Resume file: None
 Next action: Phase verification
