@@ -1,7 +1,7 @@
 export const kingdomArcPack = {
   id: 'kingdom-arc',
   name: 'Kingdom of Ash',
-  description: 'Seven moral dilemmas in a fantasy kingdom arc — from resource scarcity to civilizational reckoning. Based on Frostpunk\'s "creeping normality" design and Kohlberg\'s moral development research.',
+  description: 'Eight moral dilemmas in a fantasy kingdom arc — from resource scarcity to civilizational reckoning. Based on Frostpunk\'s "creeping normality" design and Kohlberg\'s moral development research.',
   setting: 'fantasy',
   ai_generated: false,
   generator_prompt: null,
@@ -252,15 +252,39 @@ export const kingdomArcPack = {
     },
 
     {
-      id: 'round-reckoning',
-      title: 'The Reckoning',
+      id: 'round-bombshell',
+      title: 'The Throne or the Truth',
       round: 8,
-      weight: 'reflective',
+      weight: 'heavy',
       contentNote: null,
-      moralTension: 'Self-reflection',
-      teaches: 'Metacognition — examining your own reasoning',
-      text: "Was there a round where your gut said one thing and your reasoning said another? Which one did you follow — and do you think that was right?",
-      choices: []
+      rights_dimension: true,
+      moralTension: 'Power vs. accountability — does a good ruler deserve to keep ruling after what it cost?',
+      teaches: 'The final test of moral reasoning: can you judge yourself by the same standards you applied to everyone else?',
+      text: "The kingdom stands rebuilt. The people call you wise. Statues are carved in your likeness. But you know what they do not — every choice you made had a cost someone else paid. The dead cannot testify. The exiled cannot vote. A young scribe has uncovered the full record of your reign and asks permission to publish it: every sacrifice, every calculated loss, every life traded for stability. Your advisors are unanimous — bury it. The people are happy. Why ruin that?",
+      choices: [
+        {
+          choiceIndex: 0,
+          text: 'Publish everything. Let the people judge you with full knowledge.',
+          frameworks: ['virtue', 'deontology'],
+          rights_protective: true,
+          consequence: "The record is read in every village square. Some call you brave. Others call you a monster who got lucky. Your approval collapses overnight. But for the first time, the people govern with open eyes. You step down before they can remove you. History remembers you as the ruler who told the truth when it would have been easier not to.",
+          worldImpact: { trust: 30, courage: 35, solidarity: -20, awareness: 40 }
+        },
+        {
+          choiceIndex: 1,
+          text: 'Bury the record. The kingdom needs stability, not another crisis.',
+          frameworks: ['consequentialism', 'care'],
+          consequence: "The scribe is reassigned. The record is sealed. The kingdom prospers for another decade under your steady hand. But the pattern is set — the next ruler buries their record too. And the one after that. A century from now, no one remembers what was lost. They only know that rulers here do not answer questions.",
+          worldImpact: { trust: -35, courage: -25, solidarity: 20, awareness: -40 }
+        },
+        {
+          choiceIndex: 2,
+          text: 'Publish it, but only after you die. Let truth outlive your reign.',
+          frameworks: ['consequentialism', 'virtue'],
+          consequence: "You seal the record with instructions: open it when the throne changes hands. You rule another twenty years, well and carefully, knowing the clock is ticking. When the record finally surfaces, scholars debate it for generations. Some say you were a coward who delayed accountability. Others say you gave the kingdom truth without chaos. Both are right.",
+          worldImpact: { trust: 10, courage: -10, solidarity: 10, awareness: 25 }
+        }
+      ]
     }
   ]
 }
