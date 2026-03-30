@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Ethical Framework Depth
 status: executing
-stopped_at: Completed 15-divided-kingdom-phase-2 Plan 04
-last_updated: "2026-03-30T23:37:20.362Z"
+stopped_at: Completed 15-divided-kingdom-phase-2 Plan 05
+last_updated: "2026-03-30T23:48:29.070Z"
 progress:
   total_phases: 5
-  completed_phases: 4
+  completed_phases: 5
   total_plans: 15
-  completed_plans: 13
+  completed_plans: 15
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-27)
 ## Current Position
 
 Phase: 15 (divided-kingdom-phase-2) — EXECUTING
-Plan: 3 of 5
+Plan: 4 of 5
 Status: Ready to execute
 
 ```
@@ -89,6 +89,7 @@ v1.1 [                      ]   0% (0/5 phases)
 | Phase 13.1 P03 | 141s | 2 tasks | 2 files |
 | Phase 15-divided-kingdom-phase-2 P01 | 512 | 3 tasks | 4 files |
 | Phase 15-divided-kingdom-phase-2 P04 | 300 | 2 tasks | 5 files |
+| Phase 15 P05 | 360 | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -177,6 +178,9 @@ Recent decisions affecting current work:
 - [Phase 15-divided-kingdom-phase-2]: Cultural Tribunal (R7 choiceIndex 3) uses cultural_relativism framework tag — new tag for future relativism conflict detection
 - [Phase 15-divided-kingdom-phase-2]: HowOthersChose component created separately from lib — lib holds data logic, component handles display
 - [Phase 15-divided-kingdom-phase-2]: Research overlay uses fixed bottom-right position to avoid collision with left-anchored tally overlay
+- [Phase 15]: myChoiceHistory accumulated locally in Play.jsx — avoids async DB fetch before R8 scribe record render
+- [Phase 15]: isBombshellRound checks scenario ID not round number — resilient to pack reordering
+- [Phase 15]: Homepage splitContainer: side-by-side pathCard layout for host (Convene) vs player (Enter), stacks at 520px
 
 ### Roadmap Evolution
 
@@ -198,7 +202,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T23:37:20.356Z
-Stopped at: Completed 15-divided-kingdom-phase-2 Plan 04
+Last session: 2026-03-30T23:48:29.064Z
+Stopped at: Completed 15-divided-kingdom-phase-2 Plan 05
 Resume file: None
 Next action: Phase verification

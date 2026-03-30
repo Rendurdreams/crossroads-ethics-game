@@ -37,7 +37,7 @@
 - [ ] **Phase 12: Ethical Framework Depth** — Deeper moral baseline, moral trajectory tracking, conscience cost indicators, deontological awareness prompts, virtue reputation arc, rights awareness, cultural context framing
 - [x] **Phase 13: Text & Mobile Polish** — Meter label rework, high-school-friendly text, 375px mobile optimization (completed 2026-03-30)
 - [x] **Phase 14: Animated Kingdom Map** — Replace Three.js/R3F 3D scene with GSAP-driven 2D animated map. Four reactive zones (Fire/Courage, Water/Honesty, Purple/Empathy, Compass/Loyalty). Strip mouse effects for projected host screen. Remove Three.js deps after confirmed. (completed 2026-03-30)
-- [ ] **Phase 15: Divided Kingdom Phase 2** — Dynamic scribe record (R8), 90s timer pressure (R5), walk mechanic (R6), "How Others Chose" post-round screen, detection.js rework (key rename + new conflict triggers), conscience layer text, Round 7 fourth choice, visual accumulation, closing reflection screen, homepage split (host vs player)
+- [x] **Phase 15: Divided Kingdom Phase 2** — Dynamic scribe record (R8), 90s timer pressure (R5), walk mechanic (R6), "How Others Chose" post-round screen, detection.js rework (key rename + new conflict triggers), conscience layer text, Round 7 fourth choice, visual accumulation, closing reflection screen, homepage split (host vs player) (completed 2026-03-30)
 
 ---
 
@@ -108,14 +108,14 @@ Plans:
 **Requirements**: DK2-01, DK2-02, DK2-03, DK2-04, DK2-05, DK2-06, DK2-07, DK2-08, DK2-09, DK2-10, DK2-11, DK2-12, DK2-13, DK2-14, DK2-15
 **Depends on:** Phase 14
 **Canonical refs:** .planning/phases/15-divided-kingdom-phase-2/15-PRD.md
-**Plans:** 3/5 plans executed
+**Plans:** 5/5 plans complete
 
 Plans:
 - [x] 15-01-PLAN.md — Data layer: detection.js rework (key rename + 10 triggers + VALUE_FRAMEWORK_MAP), Baseline Q text, kingdom-arc.js R7 4th choice + conscience layer
 - [x] 15-02-PLAN.md — UI components: ScenarioCard 4-choice support, ConsequenceReveal conscience layer, How Others Chose data module
-- [ ] 15-03-PLAN.md — Play.jsx wiring: How Others Chose screen, R5 timer pressure, R6 walk mechanic, conscienceLayer prop
+- [x] 15-03-PLAN.md — Play.jsx wiring: How Others Chose screen, R5 timer pressure, R6 walk mechanic, conscienceLayer prop
 - [x] 15-04-PLAN.md — R8 scribe record generator, Host How Others Chose overlay, closing reflection screen
-- [ ] 15-05-PLAN.md — R8 scribe wiring in Play.jsx, homepage split (host vs player entry)
+- [x] 15-05-PLAN.md — R8 scribe wiring in Play.jsx, homepage split (host vs player entry)
 
 ---
 
