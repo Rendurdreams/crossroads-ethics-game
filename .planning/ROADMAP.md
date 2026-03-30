@@ -108,13 +108,13 @@ Plans:
 **Requirements**: DK2-01, DK2-02, DK2-03, DK2-04, DK2-05, DK2-06, DK2-07, DK2-08, DK2-09, DK2-10, DK2-11, DK2-12, DK2-13, DK2-14, DK2-15
 **Depends on:** Phase 14
 **Canonical refs:** .planning/phases/15-divided-kingdom-phase-2/15-PRD.md
-**Plans:** 2/5 plans executed
+**Plans:** 3/5 plans executed
 
 Plans:
 - [x] 15-01-PLAN.md — Data layer: detection.js rework (key rename + 10 triggers + VALUE_FRAMEWORK_MAP), Baseline Q text, kingdom-arc.js R7 4th choice + conscience layer
 - [x] 15-02-PLAN.md — UI components: ScenarioCard 4-choice support, ConsequenceReveal conscience layer, How Others Chose data module
 - [ ] 15-03-PLAN.md — Play.jsx wiring: How Others Chose screen, R5 timer pressure, R6 walk mechanic, conscienceLayer prop
-- [ ] 15-04-PLAN.md — R8 scribe record generator, Host How Others Chose overlay, closing reflection screen
+- [x] 15-04-PLAN.md — R8 scribe record generator, Host How Others Chose overlay, closing reflection screen
 - [ ] 15-05-PLAN.md — R8 scribe wiring in Play.jsx, homepage split (host vs player entry)
 
 ---

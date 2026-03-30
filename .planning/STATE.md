@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Ethical Framework Depth
 status: executing
-stopped_at: Completed 15-divided-kingdom-phase-2 Plan 01
-last_updated: "2026-03-30T23:31:27.147Z"
+stopped_at: Completed 15-divided-kingdom-phase-2 Plan 04
+last_updated: "2026-03-30T23:37:20.362Z"
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 15
-  completed_plans: 12
+  completed_plans: 13
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-27)
 ## Current Position
 
 Phase: 15 (divided-kingdom-phase-2) — EXECUTING
-Plan: 2 of 5
+Plan: 3 of 5
 Status: Ready to execute
 
 ```
@@ -88,6 +88,7 @@ v1.1 [                      ]   0% (0/5 phases)
 | Phase 13.1 P02 | 64s | 2 tasks | 2 files |
 | Phase 13.1 P03 | 141s | 2 tasks | 2 files |
 | Phase 15-divided-kingdom-phase-2 P01 | 512 | 3 tasks | 4 files |
+| Phase 15-divided-kingdom-phase-2 P04 | 300 | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -174,6 +175,8 @@ Recent decisions affecting current work:
 - [Phase 15-divided-kingdom-phase-2]: STANCE_TRIGGERS replaces generic stance blocks — each trigger fires only for a specific round+choiceIndex, not any round with that framework
 - [Phase 15-divided-kingdom-phase-2]: VALUE_FRAMEWORK_MAP: loyalty→[virtue,care], honesty→[deontology], fairness→[distributive_justice] per PRD D-05
 - [Phase 15-divided-kingdom-phase-2]: Cultural Tribunal (R7 choiceIndex 3) uses cultural_relativism framework tag — new tag for future relativism conflict detection
+- [Phase 15-divided-kingdom-phase-2]: HowOthersChose component created separately from lib — lib holds data logic, component handles display
+- [Phase 15-divided-kingdom-phase-2]: Research overlay uses fixed bottom-right position to avoid collision with left-anchored tally overlay
 
 ### Roadmap Evolution
 
@@ -195,7 +198,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T23:31:27.141Z
-Stopped at: Completed 15-divided-kingdom-phase-2 Plan 01
+Last session: 2026-03-30T23:37:20.356Z
+Stopped at: Completed 15-divided-kingdom-phase-2 Plan 04
 Resume file: None
 Next action: Phase verification
