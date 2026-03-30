@@ -57,6 +57,10 @@ export default function Play() {
   const [reflectionSubmitting, setReflectionSubmitting] = useState(false)
   const [reflectionError, setReflectionError] = useState(false)
 
+  // Awareness prompt tracking
+  const [promptDismissedRounds, setPromptDismissedRounds] = useState(new Set())
+  const [promptShownRounds, setPromptShownRounds] = useState(new Set())
+
   // Session restore on mount
   useEffect(() => {
     if (!sessionId) return
@@ -246,6 +250,21 @@ export default function Play() {
     setSubmittedCount(0)
   }, [session?.current_round])
 
+  // Track awareness prompt shown state for logging
+  useEffect(() => {
+    if (!session?.current_round || !player?.moral_values) return
+    const topVal = player.moral_values[0]
+    const ltp = player.moral_stances?.lie_to_protect
+    if (topVal !== 'honesty' || ltp !== 'no') return
+    const currentPack = pack
+    if (!currentPack) return
+    const scenario = getScenarioByRound(currentPack, session.current_round)
+    const hasCare = scenario?.choices?.some(c => (c.frameworks ?? []).includes('care'))
+    if (hasCare && !promptShownRounds.has(session.current_round)) {
+      setPromptShownRounds(prev => new Set(prev).add(session.current_round))
+    }
+  }, [session?.current_round, player?.moral_values, pack])
+
   // Choice submission handler
   async function handleChoice(choiceIndex) {
     if (lockedChoiceIndex !== null || submitting) return
@@ -270,6 +289,21 @@ export default function Play() {
         setLockedChoiceIndex(null)
         setSubmitError(true)
       }
+    }
+
+    // Log awareness prompt flags if applicable (non-blocking)
+    if (!error && promptShownRounds.has(session.current_round)) {
+      const wasPromptDismissed = promptDismissedRounds.has(session.current_round)
+      supabase.from('players').update({
+        awareness_log: [
+          ...(player?.awareness_log ?? []),
+          {
+            round: session.current_round,
+            awareness_prompt_shown: true,
+            awareness_prompt_dismissed: wasPromptDismissed
+          }
+        ]
+      }).eq('id', player.id).then(() => {})
     }
   }
 
@@ -641,6 +675,17 @@ export default function Play() {
       )
     }
 
+    // Awareness prompt: honesty-first + lie_to_protect=no + care-tagged scenario
+    const topValue = player?.moral_values?.[0]
+    const lieToProtect = player?.moral_stances?.lie_to_protect
+    const scenarioHasCareChoice = currentScenario?.choices?.some(c =>
+      (c.frameworks ?? []).includes('care')
+    )
+    const showAwarenessPrompt = topValue === 'honesty'
+      && lieToProtect === 'no'
+      && scenarioHasCareChoice
+      && !promptDismissedRounds.has(session.current_round)
+
     // Scenario + choice view
     return (
       <motion.div
@@ -664,6 +709,23 @@ export default function Play() {
                 {player?.avatar && <span className={styles.headerAvatar}>{player.avatar}</span>}
                 <span className={styles.roundLabel}>The Council Deliberates — Dilemma {session.current_round}</span>
               </div>
+
+              {showAwarenessPrompt && (
+                <div
+                  className={styles.awarenessPrompt}
+                  role="alert"
+                  onClick={() => setPromptDismissedRounds(prev => new Set(prev).add(session.current_round))}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault()
+                      setPromptDismissedRounds(prev => new Set(prev).add(session.current_round))
+                    }
+                  }}
+                  tabIndex={0}
+                >
+                  This choice prioritizes loyalty over truth. You declared truth matters most.
+                </div>
+              )}
 
               <ScenarioCard
                 scenario={currentScenario}

@@ -289,6 +289,23 @@
   margin: 8px 0 0 0;
 }
 
+/* ── Awareness prompt banner ── */
+
+.awarenessPrompt {
+  background: rgba(245, 158, 11, 0.06);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+  padding: 16px;
+  margin-bottom: 16px;
+  font-family: var(--sans);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text);
+  cursor: pointer;
+  animation: fadeUp 300ms ease forwards;
+}
+
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
