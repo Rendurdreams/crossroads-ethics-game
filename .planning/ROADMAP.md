@@ -37,6 +37,7 @@
 - [ ] **Phase 12: Ethical Framework Depth** — Deeper moral baseline, moral trajectory tracking, conscience cost indicators, deontological awareness prompts, virtue reputation arc, rights awareness, cultural context framing
 - [x] **Phase 13: Text & Mobile Polish** — Meter label rework, high-school-friendly text, 375px mobile optimization (completed 2026-03-30)
 - [x] **Phase 14: Animated Kingdom Map** — Replace Three.js/R3F 3D scene with GSAP-driven 2D animated map. Four reactive zones (Fire/Courage, Water/Honesty, Purple/Empathy, Compass/Loyalty). Strip mouse effects for projected host screen. Remove Three.js deps after confirmed. (completed 2026-03-30)
+- [ ] **Phase 15: Divided Kingdom Phase 2** — Dynamic scribe record (R8), 90s timer pressure (R5), walk mechanic (R6), "How Others Chose" post-round screen, detection.js rework (key rename + new conflict triggers), conscience layer text, Round 7 fourth choice, visual accumulation, closing reflection screen, homepage split (host vs player)
 
 ---
 
@@ -100,6 +101,17 @@ Plans:
 
 Plans:
 - [ ] 14-01-PLAN.md — Install gsap, adapt AnimatedMap from prototype, swap into Host.jsx (3 sites), delete dead code
+
+### Phase 15: Divided Kingdom Phase 2
+
+**Goal:** Bring the game to presentation-ready depth — R8 dynamic scribe record reflecting player's actual choices, R5 90-second timer for System 1 pressure, R6 physical walk mechanic, "How Others Chose" percentages after every round, detection.js rework (key rename + 10 new conflict trigger strings), conscience layer text per choice, Round 7 fourth choice (Cultural Tribunal), visual world accumulation, closing reflection screen, homepage split for host vs player entry.
+**Requirements**: TBD
+**Depends on:** Phase 14
+**Canonical refs:** .planning/phases/prd-dilemma1-flow.md
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 15 to break down)
 
 ---
 

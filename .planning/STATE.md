@@ -178,6 +178,7 @@ Recent decisions affecting current work:
 - Phase 13 added 2026-03-30: Text & Mobile Polish — meter labels (Trust→Honesty, Solidarity→Loyalty, Awareness→Empathy), high-school-friendly text pass, 375px mobile optimization
 - Phase 13.1 inserted after Phase 13: Dilemma 1 Flow Redesign + Bug Fixes (URGENT) — Replace reflection round with bombshell final choice, fix host score labels, player answer toggle, question on host screen, copy polish
 - Phase 14 added 2026-03-30: Animated Kingdom Map — Replace Three.js/R3F 3D scene with GSAP-driven 2D animated map, four reactive zones, strip mouse effects for projection
+- Phase 15 added 2026-03-30: Divided Kingdom Phase 2 — Dynamic scribe, timer pressure, walk mechanic, How Others Chose, detection rework, conscience layer, R7 4th choice, visual accumulation, closing reflection, homepage split
 
 ### Pending Todos
 
