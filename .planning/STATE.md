@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Ethical Framework Depth
 status: verifying
-stopped_at: Completed 13.1-01-PLAN.md
+stopped_at: Completed 13.1-02-PLAN.md
 last_updated: "2026-03-30T19:26:45.572Z"
 progress:
   total_phases: 3
   completed_phases: 2
   total_plans: 9
-  completed_plans: 7
+  completed_plans: 8
 ---
 
 # Project State
@@ -85,6 +85,7 @@ v1.1 [                      ]   0% (0/5 phases)
 | Phase 13-text-mobile-polish P02 | 100s | 2 tasks | 2 files |
 | Phase 13-text-mobile-polish P03 | 121s | 2 tasks | 8 files |
 | Phase 13.1 P01 | 92s | 2 tasks | 2 files |
+| Phase 13.1 P02 | 64s | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -132,8 +133,7 @@ Recent decisions affecting current work:
 - [Phase 06-kingdom-ui-overhaul]: Pack identity card replaces round selector entirely — total_rounds set at session creation from pack, not HostSetup
 - [Phase 06-kingdom-ui-overhaul]: KingdomMap imported directly (not lazy) — SVG component in same bundle; no code-splitting benefit
 - [Phase 06-kingdom-ui-overhaul]: Removed totalRounds local state from Host.jsx; session.total_rounds from DB is source of truth
-
-<<<<<<< HEAD
+- [Phase 13.1]: Delete+re-insert pattern for answer toggle — respects UNIQUE constraint without upsert RLS
 
 - [v1.1 roadmap]: Three.js moves from "deferred to v2" to active v1.1 scope — PACK-05 and AI-03 share phase 8; AI-03 placed in Phase 8 (pack schema shape) not Phase 11 (AI stubs) because the pack shape is pack system work
 - [v1.1 roadmap]: MORAL-03/04 held for Phase 11 (not Phase 7) — detection logic requires choice framework tags to exist; Phase 7 only stores the baseline; detection runs at choice-lock time after game loop is complete
@@ -188,6 +188,6 @@ None yet.
 ## Session Continuity
 
 Last session: 2026-03-30T19:26:45.567Z
-Stopped at: Completed 13.1-01-PLAN.md
+Stopped at: Completed 13.1-02-PLAN.md
 Resume file: None
 Next action: Phase verification

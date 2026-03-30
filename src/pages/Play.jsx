@@ -265,14 +265,24 @@ export default function Play() {
     }
   }, [session?.current_round, player?.moral_values, pack])
 
-  // Choice submission handler
+  // Choice submission handler — supports re-selection (delete + re-insert)
   async function handleChoice(choiceIndex) {
-    if (lockedChoiceIndex !== null || submitting) return
+    if (submitting) return
+    const previousChoice = lockedChoiceIndex
     setLockedChoiceIndex(choiceIndex)
     setSubmitting(true)
     setSubmitError(false)
 
     const currentScenario = getScenarioByRound(pack, session.current_round)
+
+    // Delete existing choice for this round if changing answer
+    if (previousChoice !== null) {
+      await supabase.from('choices').delete()
+        .eq('session_id', sessionId)
+        .eq('player_id', player.id)
+        .eq('round_number', session.current_round)
+    }
+
     const { error } = await supabase.from('choices').insert({
       session_id: sessionId,
       player_id: player.id,
@@ -284,9 +294,27 @@ export default function Play() {
 
     setSubmitting(false)
     if (error) {
-      if (error.code !== '23505') {
-        // 23505 = UNIQUE violation = already submitted, keep locked
-        setLockedChoiceIndex(null)
+      if (error.code === '23505') {
+        // Unique violation — race condition, choice already exists
+        // Delete and retry once
+        await supabase.from('choices').delete()
+          .eq('session_id', sessionId)
+          .eq('player_id', player.id)
+          .eq('round_number', session.current_round)
+        const { error: retryError } = await supabase.from('choices').insert({
+          session_id: sessionId,
+          player_id: player.id,
+          round_number: session.current_round,
+          scenario_id: currentScenario.id,
+          choice_index: choiceIndex,
+          frameworks: currentScenario.choices[choiceIndex].frameworks
+        })
+        if (retryError) {
+          setLockedChoiceIndex(previousChoice)
+          setSubmitError(true)
+        }
+      } else {
+        setLockedChoiceIndex(previousChoice)
         setSubmitError(true)
       }
     }
