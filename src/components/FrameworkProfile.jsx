@@ -219,9 +219,8 @@ export default function FrameworkProfile({ player, pack }) {
                 </p>
                 <svg
                   className={styles.conflictSvg}
-                  width="240"
-                  height="80"
                   viewBox="0 0 240 80"
+                  width="100%"
                   aria-hidden="true"
                 >
                   {/* Connecting line */}
