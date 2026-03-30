@@ -53,6 +53,11 @@ Players finish the game understanding that ethics and morals are not the same th
 
 - ✓ Moral baseline at join time: value ranking (5 values) + 2 stance questions, stored in Supabase as `moral_values` + `moral_stances` on player row — validated in Phase 7
 - ✓ Multi-pack system: host selects from kingdom-arc, real-world-modern, or futures scenario packs; `pack_id` + `total_rounds` written to Supabase on lobby open; game loop resolves pack dynamically — validated in Phase 8
+- ✓ Three.js 3D host scene replacing CSS KingdomMap with 4 landmarks wired to world state — validated in Phase 9
+- ✓ Host HUD overlay + dramatic round-close reveal beat — validated in Phase 10
+- ✓ In-round moral conflict indicator (subtle label below framework tag when choice conflicts with stated top value) — validated in Phase 11
+- ✓ End screen Morals vs Ethics section listing rounds where choices diverged from stated values — validated in Phase 11
+- ✓ AI data shape stubs: `debrief_context` per player, `group_debrief_context` per session, `src/lib/ai.js` with 3 null-returning stubs — validated in Phase 11
 
 ### Out of Scope (v2+)
 
@@ -112,4 +117,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-27 after Phase 8 (Multi-Pack System) — v1.1 milestone in progress*
+*Last updated: 2026-03-30 after Phase 11 (Moral Conflict Detection + End Screen + AI Hooks) — v1.1 milestone complete*
