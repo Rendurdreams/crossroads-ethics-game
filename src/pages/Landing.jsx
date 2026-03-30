@@ -138,52 +138,60 @@ export default function Landing() {
         <line x1="48" y1="16" x2="16" y2="52" stroke="#0a0a14" strokeWidth="3.5" strokeLinecap="round" />
       </svg>
       <h1 className={styles.title}>The Crossroads</h1>
-      <p className={styles.subtitle}>Enter the Crossroads</p>
+      <p className={styles.subtitle}>A kingdom awaits your judgment</p>
 
-      <div className={styles.section}>
-        <h2 className={styles.sectionHeading}>Begin</h2>
-        <button
-          className={styles.btn}
-          onClick={createSession}
-          disabled={hostLoading}
-        >
-          {hostLoading ? 'Summoning...' : 'Convene'}
-        </button>
-        {hostError && <p className={styles.error}>{hostError}</p>}
-      </div>
+      <div className={styles.splitContainer}>
+        {/* Host path */}
+        <div className={styles.pathCard}>
+          <h2 className={styles.pathHeading}>Convene</h2>
+          <p className={styles.pathDescription}>Create a new council chamber. You will be the ruler.</p>
+          <button
+            className={styles.btn}
+            onClick={createSession}
+            disabled={hostLoading}
+          >
+            {hostLoading ? 'Summoning...' : 'Create Chamber'}
+          </button>
+          {hostError && <p className={styles.error}>{hostError}</p>}
+        </div>
 
-      <div className={styles.divider} />
+        <div className={styles.pathDivider}>
+          <span className={styles.pathDividerText}>or</span>
+        </div>
 
-      <div className={styles.section}>
-        <h2 className={styles.sectionHeading}>Enter</h2>
-        <input
-          className={styles.input}
-          type="text"
-          inputMode="numeric"
-          pattern="[0-9]*"
-          placeholder="Room Code"
-          maxLength={4}
-          value={code}
-          onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
-          disabled={joinLoading}
-        />
-        <input
-          className={styles.input}
-          type="text"
-          placeholder="Your Name"
-          maxLength={20}
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          disabled={joinLoading}
-        />
-        <button
-          className={styles.btn}
-          onClick={joinSession}
-          disabled={!joinEnabled}
-        >
-          {joinLoading ? 'Entering...' : 'Enter'}
-        </button>
-        {joinError && <p className={styles.error}>{joinError}</p>}
+        {/* Player path */}
+        <div className={styles.pathCard}>
+          <h2 className={styles.pathHeading}>Enter</h2>
+          <p className={styles.pathDescription}>Join an existing council. Enter your chamber code.</p>
+          <input
+            className={styles.input}
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            placeholder="Room Code"
+            maxLength={4}
+            value={code}
+            onChange={(e) => setCode(e.target.value.replace(/\D/g, ''))}
+            disabled={joinLoading}
+          />
+          <input
+            className={styles.input}
+            type="text"
+            placeholder="Your Name"
+            maxLength={20}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            disabled={joinLoading}
+          />
+          <button
+            className={styles.btn}
+            onClick={joinSession}
+            disabled={!joinEnabled}
+          >
+            {joinLoading ? 'Entering...' : 'Enter Council'}
+          </button>
+          {joinError && <p className={styles.error}>{joinError}</p>}
+        </div>
       </div>
     </motion.div>
   )
