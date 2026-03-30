@@ -26,7 +26,7 @@
 - [x] **Phase 8: Multi-Pack System** — Two new scenario packs (real-world, sci-fi) + pack selection UI + AI-ready pack schema (completed 2026-03-28)
 - [ ] **Phase 9: Three.js Host Scene** — Static 3D scene installed via npm, 4 landmark objects wired to world state, 60fps validated
 - [x] **Phase 10: Host UX Unification + Reveal Beat** — HUD overlay layout, dramatic round-close animation, unified 3D + panel visual language (completed 2026-03-28)
-- [ ] **Phase 11: Moral Conflict Detection + End Screen + AI Hooks** — In-round moral conflict indicator, end-screen moral vs ethics map, AI data shape stubs
+- [x] **Phase 11: Moral Conflict Detection + End Screen + AI Hooks** — In-round moral conflict indicator, end-screen moral vs ethics map, AI data shape stubs (completed 2026-03-30)
 
 ---
 
@@ -102,7 +102,7 @@ Plans:
   3. The end screen shows a Moral vs Ethics conflict map section listing each round where the player's choice diverged from their stated values, with the philosophical tension named explicitly
   4. The end screen copy explicitly distinguishes moral profile (personal, stated) from ethical framework (reasoned system) — the lesson is in the text, not left implicit
   5. `src/lib/ai.js` exists with stub functions `generateDebrief(playerContext)`, `generateDiscussionPrompts(sessionContext)`, and `generatePack(prompt)` returning null; player end-screen data includes `debrief_context`; session end data includes `group_debrief_context`; pack schema includes `ai_generated` and `generator_prompt` fields
-**Plans:** 2/3 plans executed
+**Plans:** 3/3 plans complete
 Plans:
 - [x] 11-01-PLAN.md — Detection logic (VALUE_FRAMEWORK_MAP + findMoralConflicts) + tests + ConsequenceReveal conflict indicator
 - [ ] 11-02-PLAN.md — FrameworkProfile moral vs ethics section + pack prop fix
@@ -125,4 +125,4 @@ Plans:
 | 8. Multi-Pack System | v1.1 | 3/3 | Complete   | 2026-03-28 |
 | 9. Three.js Host Scene | v1.1 | 2/2 | Complete | 2026-03-29 |
 | 10. Host UX Unification + Reveal Beat | v1.1 | 2/2 | Complete   | 2026-03-28 |
-| 11. Moral Conflict Detection + End Screen + AI Hooks | v1.1 | 2/3 | In Progress|  |
+| 11. Moral Conflict Detection + End Screen + AI Hooks | v1.1 | 2/3 | Complete    | 2026-03-30 |
