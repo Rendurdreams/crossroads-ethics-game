@@ -1,15 +1,15 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: Immersion + Moral Identity
+milestone: v1.2
+milestone_name: Ethical Framework Depth
 status: executing
-stopped_at: Completed 11-03-PLAN.md
-last_updated: "2026-03-30T04:24:43.522Z"
+stopped_at: Phase 12 context gathered
+last_updated: "2026-03-30T14:19:31.723Z"
 progress:
-  total_phases: 5
-  completed_phases: 5
-  total_plans: 11
-  completed_plans: 11
+  total_phases: 1
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
 ---
 
 # Project State
@@ -163,7 +163,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T04:21:50.171Z
-Stopped at: Completed 11-03-PLAN.md
-Resume file: None
+Last session: 2026-03-30T14:19:31.716Z
+Stopped at: Phase 12 context gathered
+Resume file: .planning/phases/12-ethical-framework-depth/12-CONTEXT.md
 Next action: `/gsd:plan-phase 7`
