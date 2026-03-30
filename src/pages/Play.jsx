@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { supabase } from '../lib/supabase.js'
 import { getDefaultPack, getScenarioByRound, getReflectionScenario } from '../lib/scenarios.js'
+import { generateScribeRecord } from '../lib/scribeRecord.js'
 
 const pack = getDefaultPack()
 import { FRAMEWORKS } from '../lib/frameworks.js'
@@ -62,6 +63,9 @@ export default function Play() {
   // How Others Chose state
   const [showHowOthersChose, setShowHowOthersChose] = useState(false)
   const [roundChoicesForComparison, setRoundChoicesForComparison] = useState([])
+
+  // Scribe record — accumulates across rounds, never reset
+  const [myChoiceHistory, setMyChoiceHistory] = useState([])
 
   // Session restore on mount
   useEffect(() => {
@@ -286,6 +290,17 @@ export default function Play() {
         setLockedChoiceIndex(null)
         setSubmitError(true)
       }
+    } else {
+      // Accumulate choice for scribe record (R8 bombshell mirror)
+      setMyChoiceHistory(prev => [
+        ...prev.filter(c => c.round !== session.current_round),
+        {
+          round: session.current_round,
+          choiceIndex: choiceIndex,
+          scenarioId: currentScenario.id,
+          frameworks: currentScenario.choices[choiceIndex].frameworks
+        }
+      ])
     }
   }
 
@@ -558,6 +573,7 @@ export default function Play() {
   if (session?.status === 'active' && currentScenario) {
     const isTimerPressureRound = session?.current_round === 5
     const isWalkRound = session?.current_round === 6
+    const isBombshellRound = currentScenario?.id === 'round-bombshell'
 
     // Round reflection detection — show reflection textarea instead of ScenarioCard
     const isReflectionRound = currentScenario?.choices?.length === 0
@@ -683,6 +699,13 @@ export default function Play() {
                 {player?.avatar && <span className={styles.headerAvatar}>{player.avatar}</span>}
                 <span className={styles.roundLabel}>The Council Deliberates — Dilemma {session.current_round}</span>
               </div>
+
+              {isBombshellRound && (
+                <div className={styles.scribeRecord}>
+                  <p className={styles.scribeLabel}>THE SCRIBE&apos;S RECORD</p>
+                  <p className={styles.scribeText}>{generateScribeRecord(myChoiceHistory)}</p>
+                </div>
+              )}
 
               {isWalkRound ? (
                 <>
