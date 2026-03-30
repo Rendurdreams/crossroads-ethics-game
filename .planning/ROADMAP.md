@@ -59,7 +59,7 @@
 
 Plans:
 - [x] 12-01-PLAN.md — Data layer: detection.js extensions (trajectory, virtue, stance checks) + Baseline 5 questions + scenario schema (ethicalLens, rights_dimension)
-- [ ] 12-02-PLAN.md — In-game UI: ConsequenceReveal amber border + deontological awareness prompt banner
+- [x] 12-02-PLAN.md — In-game UI: ConsequenceReveal amber border + deontological awareness prompt banner
 - [ ] 12-03-PLAN.md — End screen + host wiring: endSession enrichment + FrameworkProfile 5 new sections + HostSetup ethicalLens
 
 **UI hint**: yes

@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Ethical Framework Depth
 status: executing
-stopped_at: Completed 12-01-PLAN.md
-last_updated: "2026-03-30T15:02:46Z"
+stopped_at: Completed 12-01 and 12-02
+last_updated: "2026-03-30T15:03:00Z"
 progress:
   total_phases: 1
   completed_phases: 0
   total_plans: 3
-  completed_plans: 1
+  completed_plans: 2
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-27)
 ## Current Position
 
 Phase: 12
-Plan: 01 complete, 02 next
+Plan: 01 and 02 complete, 03 next
 Status: Executing
 
 ```
@@ -79,6 +79,7 @@ v1.1 [                      ]   0% (0/5 phases)
 | Phase 11-moral-conflict-detection-end-screen-ai-hooks P01 | 240s | 2 tasks | 5 files |
 | Phase 11-moral-conflict-detection-end-screen-ai-hooks P03 | 91 | 1 tasks | 3 files |
 | Phase 12-ethical-framework-depth P01 | 383s | 2 tasks | 7 files |
+| Phase 12-ethical-framework-depth P02 | 246s | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -150,6 +151,8 @@ Recent decisions affecting current work:
 - [Phase 12-ethical-framework-depth]: Weight-adjusted trajectory: moral_weight multiplier from scenario weight applied to framework counts for trajectory computation
 - [Phase 12-ethical-framework-depth]: 9 rights_dimension scenarios tagged across 3 packs (3 per pack) with rights_protective on qualifying choices
 - [Phase 12-ethical-framework-depth]: Baseline per-question gating removed — all 5 stance questions shown simultaneously after value ranking per D-01
+- [Phase 12-ethical-framework-depth]: hasMoralConflict prop passed from Play.jsx to ConsequenceReveal — parent controls amber border visual while component retains internal moral conflict text indicator
+- [Phase 12-ethical-framework-depth]: awareness_log stored as JSONB on player row — no schema migration needed for tracking prompt shown/dismissed per round
 
 ### Roadmap Evolution
 
@@ -167,7 +170,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T15:02:46Z
-Stopped at: Completed 12-01-PLAN.md
+Last session: 2026-03-30T15:03:00Z
+Stopped at: Completed 12-01 and 12-02
 Resume file: None
-Next action: Execute 12-02-PLAN.md
+Next action: Execute 12-03-PLAN.md (Wave 2)
