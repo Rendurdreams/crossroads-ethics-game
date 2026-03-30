@@ -11,11 +11,15 @@ The host screen runs a Three.js 3D scene tied to world state. Three scenario pac
 **Presentation context:** College critical thinking class, ~10–25 classmates, 15 min live.
 **Session length:** Fixed by pack content (kingdom-arc = 7 rounds).
 
-## Current Milestone: v1.1 Immersion + Moral Identity
+## Current Milestone: v1.2 Ethical Framework Depth
+
+**Goal:** Deepen the game's ethical framework detection, add condition-specific conflict triggers, conscience layer, How Others Chose comparison, R6 walk mechanic, R8 scribe record, and homepage split.
+
+## Completed Milestone: v1.1 Immersion + Moral Identity
 
 **Goal:** Make the game feel cinematic and personally revelatory — Three.js host scene, 3 scenario packs, and a moral profile layer that shows players when their choices conflict with their own stated values.
 
-**Target features:**
+**Completed features:**
 - Moral profile layer: join-time value baseline → in-round conflict hints → end-screen moral vs ethics conflict map
 - 2 new scenario packs (real-world modern, sci-fi/future) + pack selection on HostSetup
 - Three.js 3D host scene replacing CSS KingdomMap
@@ -59,6 +63,20 @@ Players finish the game understanding that ethics and morals are not the same th
 - ✓ End screen Morals vs Ethics section listing rounds where choices diverged from stated values — validated in Phase 11
 - ✓ AI data shape stubs: `debrief_context` per player, `group_debrief_context` per session, `src/lib/ai.js` with 3 null-returning stubs — validated in Phase 11
 
+### Active (v1.2 in progress — Phase 15 complete)
+
+- ✓ Detection rework: `loyalty_vs_fairness` key, 10 condition-specific conflict triggers, updated VALUE_FRAMEWORK_MAP — validated in Phase 15
+- ✓ Revised baseline questions (Q2/Q3/Q4) with nuanced framing — validated in Phase 15
+- ✓ Round 7 4th choice (Cultural Tribunal, cultural_relativism framework) — validated in Phase 15
+- ✓ Conscience layer text on all 25 scenario choices — validated in Phase 15
+- ✓ ScenarioCard 4-choice support + ConsequenceReveal conscience layer display — validated in Phase 15
+- ✓ How Others Chose reference data + post-round comparison screen (player + host) — validated in Phase 15
+- ✓ R5 timer pressure (90s forced timer with urgency styling) — validated in Phase 15
+- ✓ R6 walk mechanic (walk-left/walk-right replacing choice buttons) — validated in Phase 15
+- ✓ R8 dynamic scribe record (personalized narrative from R1-R7 choices) — validated in Phase 15
+- ✓ Host closing reflection screen with per-round gain/loss — validated in Phase 15
+- ✓ Homepage split into host (Convene) and player (Enter) paths — validated in Phase 15
+
 ### Out of Scope (v2+)
 
 - 3D Three.js city — replaced by CSS KingdomMap; 3D deferred indefinitely
@@ -78,6 +96,8 @@ Players finish the game understanding that ethics and morals are not the same th
 - **Deployment:** Netlify / Vercel via `vite build`; dist/ is deployment artifact
 - **Session model:** No auth — player_id + session_id in localStorage; ephemeral sessions
 - **Build:** Clean at 491ms, 459 modules
+
+Last updated: 2026-03-30
 
 ## Constraints
 
