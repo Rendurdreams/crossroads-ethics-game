@@ -20,7 +20,7 @@ export const VALUE_FRAMEWORK_MAP = {
  *
  * @param {Array<{round: number, frameworks: string[], choiceIndex?: number}>} choiceHistory
  * @param {string[]|null} moralValues - Ordered array, index 0 = player's top value
- * @param {object|null} moralStances - { lie_to_protect?: string, ends_justify?: string }
+ * @param {object|null} moralStances - { lie_to_protect?: string, ends_justify?: string, break_promise?: string, truth_over_relationship?: string, punish_innocent?: string }
  * @returns {Array<{round: number, type: 'value'|'stance', valueName?: string, stanceKey?: string, choiceFrameworks: string[], message: string}>}
  */
 export function findMoralConflicts(choiceHistory, moralValues, moralStances) {
@@ -79,15 +79,68 @@ export function findMoralConflicts(choiceHistory, moralValues, moralStances) {
         }
       })
     }
+    // break_promise='no' → flags consequentialist choices
+    if (moralStances.break_promise === 'no') {
+      choiceHistory.forEach(choice => {
+        if ((choice.frameworks ?? []).includes('consequentialism')) {
+          if (!conflicts.some(c => c.round === choice.round)) {
+            conflicts.push({
+              round: choice.round,
+              type: 'stance',
+              stanceKey: 'break_promise',
+              choiceFrameworks: choice.frameworks,
+              message: "You said it's not right to break promises — but this choice optimized for outcome over commitment."
+            })
+          }
+        }
+      })
+    }
+    // truth_over_relationship='no' → flags virtue choices
+    if (moralStances.truth_over_relationship === 'no') {
+      choiceHistory.forEach(choice => {
+        if ((choice.frameworks ?? []).includes('virtue')) {
+          if (!conflicts.some(c => c.round === choice.round)) {
+            conflicts.push({
+              round: choice.round,
+              type: 'stance',
+              stanceKey: 'truth_over_relationship',
+              choiceFrameworks: choice.frameworks,
+              message: "You said truth shouldn't override relationship — but this choice held personal integrity above the bond."
+            })
+          }
+        }
+      })
+    }
+    // punish_innocent='yes' → flags consequentialist choices
+    if (moralStances.punish_innocent === 'yes') {
+      choiceHistory.forEach(choice => {
+        if ((choice.frameworks ?? []).includes('consequentialism')) {
+          if (!conflicts.some(c => c.round === choice.round)) {
+            conflicts.push({
+              round: choice.round,
+              type: 'stance',
+              stanceKey: 'punish_innocent',
+              choiceFrameworks: choice.frameworks,
+              message: "You said punishing the innocent is justified — but this choice carried that cost."
+            })
+          }
+        }
+      })
+    }
   }
 
   return conflicts
 }
 
 /**
+ * Weight map: scenario weight string → numeric multiplier for trajectory computation.
+ */
+const WEIGHT_MAP = { low: 1, medium: 2, heavy: 3, reflective: 0 }
+
+/**
  * Compute a player's framework profile from their choice history.
- * @param {Array<{round: number, frameworks: string[]}>} choiceHistory
- * @returns {{ dominant: string|null, counts: object, leastUsed: string|null }}
+ * @param {Array<{round: number, frameworks: string[], moral_weight?: number}>} choiceHistory
+ * @returns {{ dominant: string|null, counts: object, leastUsed: string|null, trajectory: {early: string|null, late: string|null, shifted: boolean}, consistency_score: string|null, virtue_streak: number, virtue_heavy_count: number }}
  */
 export function computeProfile(choiceHistory) {
   const counts = { consequentialism: 0, deontology: 0, care: 0, virtue: 0 }
@@ -104,7 +157,63 @@ export function computeProfile(choiceHistory) {
   // Least used: framework with lowest count (non-zero dominant implies at least one choice)
   const leastUsed = dominant ? sorted[sorted.length - 1][0] : null
 
-  return { dominant, counts, leastUsed }
+  // Trajectory: early (rounds <= 2) vs late (rounds >= 5), weight-adjusted
+  const early = choiceHistory.filter(c => c.round <= 2)
+  const late = choiceHistory.filter(c => c.round >= 5)
+
+  function weightedDominant(entries) {
+    if (entries.length === 0) return null
+    const wCounts = { consequentialism: 0, deontology: 0, care: 0, virtue: 0 }
+    let totalWeighted = 0
+    entries.forEach(entry => {
+      const w = entry.moral_weight ?? 1
+      ;(entry.frameworks ?? []).forEach(f => {
+        if (wCounts.hasOwnProperty(f)) {
+          wCounts[f] += w
+          totalWeighted += w
+        }
+      })
+    })
+    if (totalWeighted === 0) return null
+    const wSorted = Object.entries(wCounts).sort((a, b) => b[1] - a[1])
+    return wSorted[0][1] > 0 ? wSorted[0][0] : null
+  }
+
+  const earlyDominant = early.length >= 1 ? weightedDominant(early) : null
+  const lateDominant = late.length >= 1 ? weightedDominant(late) : null
+  const trajectory = {
+    early: earlyDominant,
+    late: lateDominant,
+    shifted: earlyDominant !== null && lateDominant !== null && earlyDominant !== lateDominant
+  }
+
+  // Consistency score
+  const total = Object.values(counts).reduce((a, b) => a + b, 0)
+  const maxCount = Math.max(...Object.values(counts))
+  let consistency_score = null
+  if (total > 0) {
+    consistency_score = (maxCount / total) >= 0.5 ? 'high' : 'low'
+  }
+
+  // Virtue streak: longest consecutive rounds with a virtue-tagged choice
+  const sortedByRound = [...choiceHistory].sort((a, b) => a.round - b.round)
+  let virtue_streak = 0
+  let currentStreak = 0
+  sortedByRound.forEach(entry => {
+    if ((entry.frameworks ?? []).includes('virtue')) {
+      currentStreak++
+      if (currentStreak > virtue_streak) virtue_streak = currentStreak
+    } else {
+      currentStreak = 0
+    }
+  })
+
+  // Virtue heavy count: virtue choices in heavy-weight rounds (moral_weight === 3)
+  const virtue_heavy_count = choiceHistory.filter(
+    entry => entry.moral_weight === 3 && (entry.frameworks ?? []).includes('virtue')
+  ).length
+
+  return { dominant, counts, leastUsed, trajectory, consistency_score, virtue_streak, virtue_heavy_count }
 }
 
 /**

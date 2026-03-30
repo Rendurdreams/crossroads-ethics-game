@@ -164,6 +164,119 @@ const mc8 = findMoralConflicts(
 )
 assert(mc8.length === 0, 'empty moralValues array returns empty array')
 
+// Test: break_promise='no' + consequentialist choice -> stance conflict fires
+const mc9 = findMoralConflicts(
+  [{ round: 2, frameworks: ['consequentialism'] }],
+  ['fairness'],  // fairness maps to [consequentialism, deontology] — aligned, no value conflict
+  { break_promise: 'no' }
+)
+assert(mc9.length === 1, 'break_promise=no + consequentialism = 1 stance conflict')
+assert(mc9[0].type === 'stance', 'break_promise conflict type is stance')
+assert(mc9[0].stanceKey === 'break_promise', 'stanceKey is break_promise')
+
+// Test: truth_over_relationship='no' + virtue choice -> stance conflict fires
+const mc10 = findMoralConflicts(
+  [{ round: 3, frameworks: ['virtue'] }],
+  ['courage'],  // courage maps to [virtue] — aligned, no value conflict
+  { truth_over_relationship: 'no' }
+)
+assert(mc10.length === 1, 'truth_over_relationship=no + virtue = 1 stance conflict')
+assert(mc10[0].type === 'stance', 'truth_over_relationship conflict type is stance')
+assert(mc10[0].stanceKey === 'truth_over_relationship', 'stanceKey is truth_over_relationship')
+
+// Test: punish_innocent='yes' + consequentialist choice -> stance conflict fires
+const mc11 = findMoralConflicts(
+  [{ round: 4, frameworks: ['consequentialism'] }],
+  ['fairness'],  // aligned, no value conflict
+  { punish_innocent: 'yes' }
+)
+assert(mc11.length === 1, 'punish_innocent=yes + consequentialism = 1 stance conflict')
+assert(mc11[0].type === 'stance', 'punish_innocent conflict type is stance')
+assert(mc11[0].stanceKey === 'punish_innocent', 'stanceKey is punish_innocent')
+
+// Test: dedup — value conflict on round 3 prevents stance conflict on same round
+const mc12 = findMoralConflicts(
+  [{ round: 3, frameworks: ['consequentialism'] }],
+  ['loyalty'],  // loyalty->care, so consequentialism causes VALUE conflict
+  { break_promise: 'no' }  // would also fire stance conflict
+)
+assert(mc12.length === 1, 'dedup: only 1 conflict per round even when value + break_promise would match')
+assert(mc12[0].type === 'value', 'dedup: value conflict takes priority over stance')
+
+console.log('\n--- computeProfile extended fields tests ---')
+
+// Test: trajectory detection — care early, deontology late
+const profileT1 = computeProfile([
+  { round: 1, frameworks: ['care'], moral_weight: 1 },
+  { round: 2, frameworks: ['care'], moral_weight: 1 },
+  { round: 3, frameworks: ['virtue'], moral_weight: 2 },
+  { round: 5, frameworks: ['deontology'], moral_weight: 3 },
+  { round: 6, frameworks: ['deontology'], moral_weight: 3 }
+])
+assert(profileT1.trajectory.early === 'care', 'trajectory early is care')
+assert(profileT1.trajectory.late === 'deontology', 'trajectory late is deontology')
+assert(profileT1.trajectory.shifted === true, 'trajectory shifted is true')
+
+// Test: trajectory with consistent player — all care
+const profileT2 = computeProfile([
+  { round: 1, frameworks: ['care'], moral_weight: 1 },
+  { round: 2, frameworks: ['care'], moral_weight: 1 },
+  { round: 5, frameworks: ['care'], moral_weight: 3 },
+  { round: 6, frameworks: ['care'], moral_weight: 3 }
+])
+assert(profileT2.trajectory.shifted === false, 'consistent player: trajectory shifted is false')
+
+// Test: trajectory with insufficient late rounds — only rounds 1-4
+const profileT3 = computeProfile([
+  { round: 1, frameworks: ['care'], moral_weight: 1 },
+  { round: 2, frameworks: ['care'], moral_weight: 1 },
+  { round: 3, frameworks: ['virtue'], moral_weight: 2 },
+  { round: 4, frameworks: ['deontology'], moral_weight: 2 }
+])
+assert(profileT3.trajectory.late === null, 'no late rounds: trajectory.late is null')
+assert(profileT3.trajectory.shifted === false, 'no late rounds: shifted is false')
+
+// Test: consistency_score high — all same framework
+const profileC1 = computeProfile([
+  { round: 1, frameworks: ['care'] },
+  { round: 2, frameworks: ['care'] },
+  { round: 3, frameworks: ['care'] },
+  { round: 4, frameworks: ['care'] }
+])
+assert(profileC1.consistency_score === 'high', 'all care: consistency_score is high')
+
+// Test: consistency_score low — evenly mixed
+const profileC2 = computeProfile([
+  { round: 1, frameworks: ['care'] },
+  { round: 2, frameworks: ['deontology'] },
+  { round: 3, frameworks: ['consequentialism'] },
+  { round: 4, frameworks: ['virtue'] }
+])
+assert(profileC2.consistency_score === 'low', 'evenly mixed: consistency_score is low')
+
+// Test: consistency_score null — empty history
+const profileC3 = computeProfile([])
+assert(profileC3.consistency_score === null, 'empty history: consistency_score is null')
+
+// Test: virtue_streak — 1,2,3 virtue then care then virtue
+const profileV1 = computeProfile([
+  { round: 1, frameworks: ['virtue'] },
+  { round: 2, frameworks: ['virtue'] },
+  { round: 3, frameworks: ['virtue'] },
+  { round: 4, frameworks: ['care'] },
+  { round: 5, frameworks: ['virtue'] }
+])
+assert(profileV1.virtue_streak === 3, 'virtue_streak is 3 (rounds 1-3)')
+
+// Test: virtue_heavy_count — 2 heavy virtue, 1 non-heavy virtue
+const profileV2 = computeProfile([
+  { round: 1, frameworks: ['virtue'], moral_weight: 3 },
+  { round: 2, frameworks: ['virtue'], moral_weight: 1 },
+  { round: 3, frameworks: ['virtue'], moral_weight: 3 },
+  { round: 4, frameworks: ['care'], moral_weight: 3 }
+])
+assert(profileV2.virtue_heavy_count === 2, 'virtue_heavy_count is 2 (two virtue choices with moral_weight 3)')
+
 console.log('\n--- Results ---')
 console.log(passed + ' passed, ' + failed + ' failed')
 if (failed > 0) process.exit(1)
