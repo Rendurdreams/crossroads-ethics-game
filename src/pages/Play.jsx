@@ -402,7 +402,7 @@ export default function Play() {
         style={{ '--atmosphere-warmth': warmth }}
       >
         <div className={styles.profileWrapper}>
-          <FrameworkProfile player={player} />
+          <FrameworkProfile player={player} pack={pack} />
 
           {showReflection && (
             <motion.div

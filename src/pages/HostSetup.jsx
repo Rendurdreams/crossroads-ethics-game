@@ -114,6 +114,9 @@ export default function HostSetup() {
             <p className={styles.packSetting}>{p.setting}</p>
             <div className={styles.packDivider} />
             <p className={styles.packDescription}>{p.description}</p>
+            {p.ethicalLens && (
+              <p className={styles.packLens}>{p.ethicalLens}</p>
+            )}
           </button>
         ))}
       </div>

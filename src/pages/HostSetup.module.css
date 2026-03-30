@@ -134,6 +134,14 @@
   margin: 0;
 }
 
+.packLens {
+  margin-top: 8px;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
 .openBtn {
   display: block;
   width: 100%;

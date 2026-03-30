@@ -93,6 +93,64 @@
   margin: 16px 0 0 0;
 }
 
+/* Section 2 — Morals vs Ethics */
+.moralsSection {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  padding: 24px;
+  margin-top: 16px;
+}
+
+.moralsIntro {
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--text);
+  margin: 0 0 20px 0;
+}
+
+.moralsIntro strong {
+  color: var(--accent);
+}
+
+.moralConflictRow {
+  padding: 12px 0;
+  border-bottom: 1px solid var(--glass-border-subtle);
+}
+
+.moralConflictRow:last-of-type {
+  border-bottom: none;
+}
+
+.moralConflictRound {
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-h);
+  margin: 0 0 4px 0;
+}
+
+.moralConflictMessage {
+  font-family: var(--sans);
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text);
+  margin: 0;
+}
+
+.moralsFooter {
+  font-family: var(--serif);
+  font-size: 17px;
+  font-style: italic;
+  color: var(--text-muted);
+  margin: 20px 0 0 0;
+  text-align: center;
+}
+
 /* Section 3 — Least Used Framework */
 .leastUsedSection {
   padding: 24px 0;

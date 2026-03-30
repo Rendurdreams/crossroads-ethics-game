@@ -347,9 +347,15 @@ export default function Host() {
         })
       })
 
+      const WEIGHT_MAP = { low: 1, medium: 2, heavy: 3, reflective: 0 }
+
       const updates = allPlayers.map(p => {
-        const history = historyByPlayer[p.id] ?? []
-        const { dominant, counts } = computeProfile(history)
+        const rawHistory = historyByPlayer[p.id] ?? []
+        const history = rawHistory.map(entry => ({
+          ...entry,
+          moral_weight: WEIGHT_MAP[getScenarioByRound(pack, entry.round)?.weight] ?? 1
+        }))
+        const { dominant, counts, leastUsed, trajectory, consistency_score, virtue_streak, virtue_heavy_count } = computeProfile(history)
         const conflicts = findConflicts(history)
         const moralConflicts = findMoralConflicts(history, p.moral_values ?? null, p.moral_stances ?? null)
 
@@ -359,6 +365,10 @@ export default function Host() {
           frameworkCounts: counts,
           frameworkConflicts: conflicts,
           moralConflicts: moralConflicts,
+          trajectory: trajectory,
+          consistencyScore: consistency_score,
+          virtueStreak: virtue_streak,
+          virtueHeavyCount: virtue_heavy_count,
           moralBaseline: {
             topValue: p.moral_values?.[0] ?? null,
             allValues: p.moral_values ?? [],
@@ -379,7 +389,12 @@ export default function Host() {
           conflicts: conflicts,
           framework_counts: counts,
           choice_history: history,
-          debrief_context: debriefContext
+          debrief_context: debriefContext,
+          trajectory: trajectory,
+          consistency_score: consistency_score,
+          virtue_streak: virtue_streak,
+          virtue_heavy_count: virtue_heavy_count,
+          moral_conflicts: moralConflicts
         }
       })
 
@@ -391,7 +406,12 @@ export default function Host() {
               conflicts: u.conflicts,
               framework_counts: u.framework_counts,
               choice_history: u.choice_history,
-              debrief_context: u.debrief_context
+              debrief_context: u.debrief_context,
+              trajectory: u.trajectory,
+              consistency_score: u.consistency_score,
+              virtue_streak: u.virtue_streak,
+              virtue_heavy_count: u.virtue_heavy_count,
+              moral_conflicts: u.moral_conflicts
             })
             .eq('id', u.id)
         )
