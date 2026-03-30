@@ -13,7 +13,7 @@ function findTension(frameworkKey) {
   }
 }
 
-export default function ConsequenceReveal({ consequence, framework, worldState, moralValues, moralStances }) {
+export default function ConsequenceReveal({ consequence, framework, worldState, moralValues, moralStances, hasMoralConflict }) {
   const fw = FRAMEWORKS[framework]
   const tension = findTension(framework)
 
@@ -24,7 +24,7 @@ export default function ConsequenceReveal({ consequence, framework, worldState, 
 
   return (
     <div className={styles.container}>
-      <div className={styles.card}>
+      <div className={`${styles.card}${hasMoralConflict ? ` ${styles.cardConflict}` : ''}`}>
         {/* 1. The narrative consequence — what happened */}
         <p className={styles.consequence}>{consequence}</p>
 

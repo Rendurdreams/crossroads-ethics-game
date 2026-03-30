@@ -4,6 +4,7 @@ import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { supabase } from '../lib/supabase.js'
 import { getPackById, getScenarioByRound, getReflectionScenario } from '../lib/scenarios.js'
 import { FRAMEWORKS } from '../lib/frameworks.js'
+import { findMoralConflicts } from '../lib/detection.js'
 import ScenarioCard from '../components/ScenarioCard.jsx'
 import ContentNote from '../components/ContentNote.jsx'
 import ConsequenceReveal from '../components/ConsequenceReveal.jsx'
@@ -459,6 +460,12 @@ export default function Play() {
     if (lockedChoiceIndex !== null) {
       const chosenOption = currentScenario.choices[lockedChoiceIndex]
       const frameworkKey = chosenOption.frameworks[0]
+      const roundMoralConflict = (() => {
+        if (!frameworkKey) return false
+        const singleHistory = [{ round: 1, frameworks: [frameworkKey] }]
+        const mc = findMoralConflicts(singleHistory, player?.moral_values ?? null, player?.moral_stances ?? null)
+        return mc.length > 0
+      })()
 
       return (
         <motion.div
@@ -484,6 +491,7 @@ export default function Play() {
                   worldState={session.world_state ?? { trust: 50, courage: 50, solidarity: 50, awareness: 50 }}
                   moralValues={player?.moral_values ?? null}
                   moralStances={player?.moral_stances ?? null}
+                  hasMoralConflict={roundMoralConflict}
                 />
               </motion.div>
             </AnimatePresence>
