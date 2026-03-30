@@ -5,12 +5,87 @@ import { CONFLICT_PAIRS } from './frameworks.js'
  * Used by findMoralConflicts to detect value-framework tension.
  */
 export const VALUE_FRAMEWORK_MAP = {
-  honesty:    ['deontology', 'virtue'],
-  loyalty:    ['care'],
-  fairness:   ['consequentialism', 'deontology'],
+  loyalty:    ['virtue', 'care'],
+  honesty:    ['deontology'],
+  fairness:   ['distributive_justice'],
   courage:    ['virtue'],
   compassion: ['care']
 }
+
+/**
+ * Condition-specific stance conflict triggers.
+ * Each trigger fires when the player's stated stance answer AND a specific
+ * round+choice (or framework) match the condition.
+ *
+ * Fields:
+ *   stanceKey     - key in moralStances object
+ *   stanceAnswer  - value that triggers the conflict ('yes'|'no'|'it_depends')
+ *   matchCondition - (optional) function(choice) => boolean — checks specific round+choiceIndex
+ *   matchFramework - (optional) string — fires for any round where choice includes this framework
+ *   message       - exact conflict string shown to player
+ */
+const STANCE_TRIGGERS = [
+  {
+    stanceKey: 'lie_to_protect',
+    stanceAnswer: 'no',
+    matchFramework: 'care',
+    message: "Your instinct was honesty. What changed?"
+  },
+  {
+    stanceKey: 'lie_to_protect',
+    stanceAnswer: 'yes',
+    matchFramework: 'deontology',
+    message: "You said protecting people matters. Here honesty was the protection."
+  },
+  {
+    stanceKey: 'ends_justify',
+    stanceAnswer: 'yes',
+    matchCondition: (choice) => choice.scenarioId === 'round-6' && choice.choiceIndex === 0,
+    message: "You said the math matters. Here the math said keep Irel bound."
+  },
+  {
+    stanceKey: 'ends_justify',
+    stanceAnswer: 'no',
+    matchCondition: (choice) => choice.scenarioId === 'round-1' && choice.choiceIndex === 1,
+    message: "You said the math doesn't justify harm. But you just ran the same calculation."
+  },
+  {
+    stanceKey: 'break_promise',
+    stanceAnswer: 'no',
+    matchCondition: (choice) => choice.scenarioId === 'round-5' && choice.choiceIndex === 0,
+    message: "Your ancestors made a commitment. You just broke it cleanly."
+  },
+  {
+    stanceKey: 'break_promise',
+    stanceAnswer: 'yes',
+    matchCondition: (choice) => choice.scenarioId === 'round-5' && choice.choiceIndex === 1,
+    message: "You said partial is better than broken. But you kept the whole promise while villages burned."
+  },
+  {
+    stanceKey: 'loyalty_vs_fairness',
+    stanceAnswer: 'yes',
+    matchCondition: (choice) => choice.scenarioId === 'round-7' && choice.choiceIndex === 1,
+    message: "You said you'd call out your group. Here you let them walk free."
+  },
+  {
+    stanceKey: 'loyalty_vs_fairness',
+    stanceAnswer: 'no',
+    matchCondition: (choice) => choice.scenarioId === 'round-7' && choice.choiceIndex === 0,
+    message: "You said loyalty comes first. But you just stripped the Compact's children of their home."
+  },
+  {
+    stanceKey: 'punish_innocent',
+    stanceAnswer: 'no',
+    matchCondition: (choice) => choice.scenarioId === 'round-7' && choice.choiceIndex === 0,
+    message: "Soldiers who followed orders. Children who had no voice. You said this wasn't okay."
+  },
+  {
+    stanceKey: 'punish_innocent',
+    stanceAnswer: 'yes',
+    matchCondition: (choice) => choice.scenarioId === 'round-6' && choice.choiceIndex === 0,
+    message: "You said one can suffer for the group. Irel has suffered for centuries. Why stop now?"
+  }
+]
 
 /**
  * Detect rounds where a player's choice conflicted with their stated moral baseline.
@@ -18,9 +93,9 @@ export const VALUE_FRAMEWORK_MAP = {
  * Secondary signal: stance answer check (D-03).
  * Only one conflict per round — value conflict takes priority over stance conflict (D-04).
  *
- * @param {Array<{round: number, frameworks: string[], choiceIndex?: number}>} choiceHistory
+ * @param {Array<{round: number, frameworks: string[], choiceIndex?: number, scenarioId?: string}>} choiceHistory
  * @param {string[]|null} moralValues - Ordered array, index 0 = player's top value
- * @param {object|null} moralStances - { lie_to_protect?: string, ends_justify?: string, break_promise?: string, truth_over_relationship?: string, punish_innocent?: string }
+ * @param {object|null} moralStances - { lie_to_protect?: string, ends_justify?: string, break_promise?: string, loyalty_vs_fairness?: string, punish_innocent?: string }
  * @returns {Array<{round: number, type: 'value'|'stance', valueName?: string, stanceKey?: string, choiceFrameworks: string[], message: string}>}
  */
 export function findMoralConflicts(choiceHistory, moralValues, moralStances) {
@@ -49,84 +124,32 @@ export function findMoralConflicts(choiceHistory, moralValues, moralStances) {
 
   // Secondary: stance-based conflict detection (only fires if round not already conflicted)
   if (moralStances) {
-    if (moralStances.ends_justify === 'no') {
+    STANCE_TRIGGERS.forEach(trigger => {
+      if (moralStances[trigger.stanceKey] !== trigger.stanceAnswer) return
+
       choiceHistory.forEach(choice => {
-        if ((choice.frameworks ?? []).includes('consequentialism')) {
-          if (!conflicts.some(c => c.round === choice.round)) {
-            conflicts.push({
-              round: choice.round,
-              type: 'stance',
-              stanceKey: 'ends_justify',
-              choiceFrameworks: choice.frameworks,
-              message: "You said the ends don't justify the means — but this choice optimized for outcome."
-            })
-          }
+        // Check if already conflicted this round — value conflict takes priority
+        if (conflicts.some(c => c.round === choice.round)) return
+
+        let matches = false
+
+        if (trigger.matchCondition) {
+          matches = trigger.matchCondition(choice)
+        } else if (trigger.matchFramework) {
+          matches = (choice.frameworks ?? []).includes(trigger.matchFramework)
+        }
+
+        if (matches) {
+          conflicts.push({
+            round: choice.round,
+            type: 'stance',
+            stanceKey: trigger.stanceKey,
+            choiceFrameworks: choice.frameworks,
+            message: trigger.message
+          })
         }
       })
-    }
-    if (moralStances.lie_to_protect === 'no') {
-      choiceHistory.forEach(choice => {
-        if ((choice.frameworks ?? []).includes('care')) {
-          if (!conflicts.some(c => c.round === choice.round)) {
-            conflicts.push({
-              round: choice.round,
-              type: 'stance',
-              stanceKey: 'lie_to_protect',
-              choiceFrameworks: choice.frameworks,
-              message: "You said loyalty shouldn't override truth — but this choice prioritized the relationship."
-            })
-          }
-        }
-      })
-    }
-    // break_promise='no' → flags consequentialist choices
-    if (moralStances.break_promise === 'no') {
-      choiceHistory.forEach(choice => {
-        if ((choice.frameworks ?? []).includes('consequentialism')) {
-          if (!conflicts.some(c => c.round === choice.round)) {
-            conflicts.push({
-              round: choice.round,
-              type: 'stance',
-              stanceKey: 'break_promise',
-              choiceFrameworks: choice.frameworks,
-              message: "You said it's not right to break promises — but this choice optimized for outcome over commitment."
-            })
-          }
-        }
-      })
-    }
-    // truth_over_relationship='no' → flags virtue choices
-    if (moralStances.truth_over_relationship === 'no') {
-      choiceHistory.forEach(choice => {
-        if ((choice.frameworks ?? []).includes('virtue')) {
-          if (!conflicts.some(c => c.round === choice.round)) {
-            conflicts.push({
-              round: choice.round,
-              type: 'stance',
-              stanceKey: 'truth_over_relationship',
-              choiceFrameworks: choice.frameworks,
-              message: "You said truth shouldn't override relationship — but this choice held personal integrity above the bond."
-            })
-          }
-        }
-      })
-    }
-    // punish_innocent='yes' → flags consequentialist choices
-    if (moralStances.punish_innocent === 'yes') {
-      choiceHistory.forEach(choice => {
-        if ((choice.frameworks ?? []).includes('consequentialism')) {
-          if (!conflicts.some(c => c.round === choice.round)) {
-            conflicts.push({
-              round: choice.round,
-              type: 'stance',
-              stanceKey: 'punish_innocent',
-              choiceFrameworks: choice.frameworks,
-              message: "You said punishing the innocent is justified — but this choice carried that cost."
-            })
-          }
-        }
-      })
-    }
+    })
   }
 
   return conflicts
