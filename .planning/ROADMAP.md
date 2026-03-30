@@ -97,3 +97,13 @@ Plans:
 | 11. Moral Conflict Detection + End Screen + AI Hooks | v1.1 | 3/3 | Complete | 2026-03-30 |
 | 12. Ethical Framework Depth | v1.2 | 3/3 | Complete |  |
 | 13. Text & Mobile Polish | v1.2 | 3/3 | Complete    | 2026-03-30 |
+
+### Phase 13.1: Dilemma 1 Flow Redesign + Bug Fixes (INSERTED)
+
+**Goal:** Ship revised Dilemma 1 end-to-end: bombshell final round replacing reflection, fix host score labels, player answer toggle, question on host screen, and copy polish
+**Requirements**: TBD
+**Depends on:** Phase 13
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 13.1 to break down)
