@@ -9,6 +9,7 @@ import { FRAMEWORKS } from '../lib/frameworks.js'
 import PlayerRoster from '../components/PlayerRoster.jsx'
 import MeterBar from '../components/MeterBar.jsx'
 import AnimatedMap from '../components/AnimatedMap.jsx'
+import HowOthersChose from '../components/HowOthersChose.jsx'
 import styles from './Host.module.css'
 
 // ─── Round state machine ───────────────────────────────────────────────────
@@ -65,6 +66,7 @@ export default function Host() {
   const [revealPhase, setRevealPhase] = useState('idle') // 'idle' | 'revealing' | 'revealed'
   const [showTally, setShowTally] = useState(false)
   const [showLesson, setShowLesson] = useState(false)
+  const [showHowOthers, setShowHowOthers] = useState(false)
 
   const timerChannelRef = useRef(null)
   const lerpSpeedRef = useRef(2)
@@ -314,6 +316,7 @@ export default function Host() {
     setRevealPhase('idle')
     setShowTally(false)
     setShowLesson(false)
+    setShowHowOthers(false)
     dispatch({ type: 'ROUND_START', duration: timerDuration })
     await supabase.from('sessions')
       .update({ status: 'active', current_round: session.current_round + 1 })
@@ -519,6 +522,17 @@ export default function Host() {
               <p className={styles.endSectionLabel}>WHAT HAPPENED</p>
               <p className={styles.narrativeText}>{narrative}</p>
 
+              <p className={styles.endSectionLabel} style={{ marginTop: 20 }}>THE RECORD</p>
+              <div className={styles.recordLines}>
+                {(pack.scenarios ?? []).filter(s => s.choices && s.choices.length > 0).map((scenario, idx) => (
+                  <div key={scenario.id} className={styles.recordLine}>
+                    <span className={styles.recordRound}>Dilemma {idx + 1}</span>
+                    <span className={styles.recordTitle}>{scenario.title}</span>
+                  </div>
+                ))}
+              </div>
+              <p className={styles.closingQuestion}>Would you make these choices again?</p>
+
               <p className={styles.endSectionLabel} style={{ marginTop: 20 }}>FROM THE COUNCIL</p>
               {reflections.length === 0 ? (
                 <p className={styles.reflectionEmpty}>Reflections will appear as players submit them.</p>
@@ -623,7 +637,7 @@ export default function Host() {
           </span>
         </div>
 
-        {/* ── Bottom-left pill: vote tally toggle ── */}
+        {/* ── Bottom-left pill: vote tally toggle + research toggle ── */}
         <div className={styles.hudPillBottomLeft}>
           <button
             className={styles.hudBtn}
@@ -631,6 +645,15 @@ export default function Host() {
           >
             {showTally ? 'Hide Votes' : 'Votes'}
           </button>
+          {roundState.roundClosed && (
+            <button
+              className={styles.hudBtn}
+              style={{ marginLeft: 8 }}
+              onClick={() => setShowHowOthers(v => !v)}
+            >
+              {showHowOthers ? 'Hide Research' : 'Research'}
+            </button>
+          )}
         </div>
 
         {/* ── Bottom-right pill: action button ── */}
@@ -702,6 +725,25 @@ export default function Host() {
                   <span className={styles.tallyPct}>{t.pct}%</span>
                 </div>
               ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* ── How Others Chose overlay (toggle-on after round close) ── */}
+        <AnimatePresence>
+          {showHowOthers && (
+            <motion.div
+              className={styles.howOthersOverlay}
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.25 }}
+            >
+              <HowOthersChose
+                scenarioId={currentScenario?.id}
+                liveChoices={roundState.choices}
+                totalPlayers={players.length}
+              />
             </motion.div>
           )}
         </AnimatePresence>

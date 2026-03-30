@@ -704,7 +704,7 @@
 .lessonBackdrop {
   position: fixed;
   inset: 0;
-  background: #050510;
+  background: rgba(5, 5, 16, 0.75);
   z-index: 5;
 }
 
@@ -757,4 +757,62 @@
   text-align: center;
   margin: 0;
   line-height: 1.5;
+}
+
+/* ── THE RECORD section (end state) ── */
+
+.recordLines {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0 20px;
+}
+
+.recordLine {
+  display: flex;
+  gap: 8px;
+  align-items: baseline;
+  font-size: 0.85rem;
+  color: var(--text-warm, #f5f0e8);
+}
+
+.recordRound {
+  font-variant-numeric: tabular-nums;
+  opacity: 0.6;
+  min-width: 72px;
+  font-family: var(--sans);
+}
+
+.recordTitle {
+  font-style: italic;
+  font-family: var(--serif);
+}
+
+.closingQuestion {
+  font-family: Georgia, serif;
+  font-size: 1.3rem;
+  text-align: center;
+  color: var(--amber, #f5a623);
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+/* ── How Others Chose overlay (toggle-on after round close) ── */
+
+.howOthersOverlay {
+  position: fixed;
+  bottom: 80px;
+  right: 24px;
+  width: 420px;
+  max-height: 60vh;
+  overflow-y: auto;
+  background: rgba(18, 18, 30, 0.92);
+  border: 1px solid rgba(245, 158, 11, 0.15);
+  border-radius: 12px;
+  padding: 16px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 20;
+  pointer-events: auto;
 }
