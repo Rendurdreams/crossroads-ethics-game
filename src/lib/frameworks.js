@@ -2,22 +2,22 @@
 export const FRAMEWORKS = {
   consequentialism: {
     name: 'Consequentialism',
-    description: 'The right action is the one that produces the best outcome for the most people. Results justify means. Numbers matter.',
+    description: 'Do whatever produces the best result for the most people. If lying saves five lives, you lie. The ends can justify the means -- what matters is the outcome, not how you got there.',
     question: 'What produces the best overall result?'
   },
   deontology: {
     name: 'Deontology',
-    description: 'Some duties and rules are absolute. You must follow them regardless of outcome. Keeping a promise is right even if breaking it would help more people.',
+    description: 'Some rules don\'t bend, period. A promise is a promise even when breaking it would help more people. It\'s not about what works -- it\'s about what\'s right.',
     question: 'What does my duty require?'
   },
   care: {
     name: 'Care Ethics',
-    description: 'Relationships and context matter most. Abstract principles ignore the real human in front of you. Proximity creates obligation.',
+    description: 'The person in front of you matters more than any abstract principle. Relationships create responsibility -- you owe something different to the people you know than to strangers.',
     question: 'What does this specific person need from me?'
   },
   virtue: {
     name: 'Virtue Ethics',
-    description: 'Ask not what the rule says or what the outcome is — ask what a person of good character would do. Integrity, courage, honesty as ends in themselves.',
+    description: 'Forget the rules and the results -- what would a genuinely good person do here? Integrity, courage, honesty aren\'t tools to get what you want. They\'re the point.',
     question: 'What would a person of good character do?'
   }
 }
