@@ -3,10 +3,10 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Ethical Framework Depth
 status: verifying
-stopped_at: Completed 13.1-03-PLAN.md
-last_updated: "2026-03-30T19:36:53.580Z"
+stopped_at: Phase 14 context gathered
+last_updated: "2026-03-30T20:40:16.312Z"
 progress:
-  total_phases: 3
+  total_phases: 4
   completed_phases: 3
   total_plans: 9
   completed_plans: 9
@@ -190,7 +190,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T19:33:51.683Z
-Stopped at: Completed 13.1-03-PLAN.md
-Resume file: None
+Last session: 2026-03-30T20:40:16.307Z
+Stopped at: Phase 14 context gathered
+Resume file: .planning/phases/14-animated-kingdom-map/14-CONTEXT.md
 Next action: Phase verification
