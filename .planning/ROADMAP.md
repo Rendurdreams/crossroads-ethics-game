@@ -36,6 +36,7 @@
 
 - [ ] **Phase 12: Ethical Framework Depth** — Deeper moral baseline, moral trajectory tracking, conscience cost indicators, deontological awareness prompts, virtue reputation arc, rights awareness, cultural context framing
 - [x] **Phase 13: Text & Mobile Polish** — Meter label rework, high-school-friendly text, 375px mobile optimization (completed 2026-03-30)
+- [ ] **Phase 14: Animated Kingdom Map** — Replace Three.js/R3F 3D scene with GSAP-driven 2D animated map. Four reactive zones (Fire/Courage, Water/Honesty, Purple/Empathy, Compass/Loyalty). Strip mouse effects for projected host screen. Remove Three.js deps after confirmed.
 
 ---
 
@@ -88,6 +89,17 @@ Plans:
 - [x] 13.1-01-PLAN.md — Bombshell scenario replacing reflection round + totalRounds fix
 - [ ] 13.1-02-PLAN.md — Player answer toggle (delete+re-insert, ScenarioCard re-selection)
 - [ ] 13.1-03-PLAN.md — Host screen fixes: METER_LABELS, scenario text overlay, bombshell copy
+
+### Phase 14: Animated Kingdom Map
+
+**Goal:** Replace the Three.js/R3F 3D kingdom scene with a GSAP-driven 2D animated map that reacts to world state meters — Fire zone (Courage), Water zone (Honesty), Purple zone (Empathy), Compass (Loyalty). Integration prototype in /integration. Remove mouse parallax/cursor effects for projected host screen. Strip Three.js dependencies after swap confirmed.
+**Requirements**: TBD
+**Depends on:** Phase 13.1
+**Canonical refs:** integration/AnimatedMap.jsx, integration/AnimatedMap.module.css, integration/INTEGRATION_PROMPT.md, integration/Map1.png
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 14 to break down)
 
 ---
 

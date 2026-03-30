@@ -177,6 +177,7 @@ Recent decisions affecting current work:
 - v1.1 phases 7–11 defined 2026-03-27: Moral Profile Data Layer, Multi-Pack System, Three.js Host Scene, Host UX Unification + Reveal Beat, Moral Conflict Detection + End Screen + AI Hooks
 - Phase 13 added 2026-03-30: Text & Mobile Polish — meter labels (Trust→Honesty, Solidarity→Loyalty, Awareness→Empathy), high-school-friendly text pass, 375px mobile optimization
 - Phase 13.1 inserted after Phase 13: Dilemma 1 Flow Redesign + Bug Fixes (URGENT) — Replace reflection round with bombshell final choice, fix host score labels, player answer toggle, question on host screen, copy polish
+- Phase 14 added 2026-03-30: Animated Kingdom Map — Replace Three.js/R3F 3D scene with GSAP-driven 2D animated map, four reactive zones, strip mouse effects for projection
 
 ### Pending Todos
 
