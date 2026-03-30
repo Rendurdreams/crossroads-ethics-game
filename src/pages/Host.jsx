@@ -344,6 +344,9 @@ export default function Host() {
 
   const worldState = session?.world_state ?? { trust: 50, courage: 50, solidarity: 50, awareness: 50 }
 
+  // ── Meter display labels (value names, not landmark names) ──────────
+  const METER_LABELS = { trust: 'Honesty', courage: 'Courage', solidarity: 'Loyalty', awareness: 'Empathy' }
+
   // ── End state ──────────────────────────────────────────────────────────
 
   if (session?.status === 'finished') {
@@ -404,10 +407,10 @@ export default function Host() {
 
               <p className={styles.endSectionLabel} style={{ marginTop: 20 }}>FINAL STATE</p>
               <div className={styles.endMeters}>
-                <MeterBar label="Bridge of Accord" value={worldState.trust} />
-                <MeterBar label="Citadel Beacon" value={worldState.courage} />
-                <MeterBar label="Village Quarter" value={worldState.solidarity} />
-                <MeterBar label="Fog of the Vale" value={worldState.awareness} />
+                <MeterBar label={METER_LABELS.trust} value={worldState.trust} />
+                <MeterBar label={METER_LABELS.courage} value={worldState.courage} />
+                <MeterBar label={METER_LABELS.solidarity} value={worldState.solidarity} />
+                <MeterBar label={METER_LABELS.awareness} value={worldState.awareness} />
               </div>
             </div>
           </div>
@@ -420,6 +423,7 @@ export default function Host() {
 
   if (session?.status === 'active' || session?.status === 'round_complete') {
     const currentScenario = getScenarioByRound(pack, session.current_round ?? 1)
+    const isBombshell = currentScenario?.id === 'round-bombshell'
     const tally = computeTally()
     const isLastRound = session.current_round >= session.total_rounds
 
@@ -429,11 +433,19 @@ export default function Host() {
           <KingdomMap worldState={worldState} />
         </div>
 
+        {/* ── Scenario text for presenter ── */}
+        <div className={styles.scenarioOverlay}>
+          <p className={styles.scenarioTitle}>{currentScenario?.title ?? `Dilemma ${session.current_round}`}</p>
+          <p className={styles.scenarioBody}>{currentScenario?.text}</p>
+        </div>
+
         <div className={styles.topBar}>
           <span className={styles.topRoomCode}>{session.room_code}</span>
           <span className={styles.topRound}>Dilemma {session.current_round} of {session.total_rounds}</span>
           <span className={styles.topStatus}>
-            {roundState.roundClosed ? 'The Realm Has Spoken' : 'The Council Deliberates'}
+            {roundState.roundClosed
+              ? (isBombshell ? 'The Throne Has Spoken' : 'The Realm Has Spoken')
+              : (isBombshell ? 'The Final Reckoning' : 'The Council Deliberates')}
           </span>
         </div>
 
@@ -445,6 +457,10 @@ export default function Host() {
                 {currentScenario?.title ?? `Dilemma ${session.current_round}`}
                 {currentScenario?.weight && ` — ${currentScenario.weight}`}
               </p>
+
+              {roundState.roundClosed && (
+                <p className={styles.lessonLabel}>{isBombshell ? 'THE VERDICT' : 'THE LESSON'}</p>
+              )}
 
               {tally.length > 0 && (
                 <div className={styles.tallySection}>
@@ -469,10 +485,10 @@ export default function Host() {
             <div className={`${styles.glassPanel} ${styles.metersPanel}`}>
               <p className={styles.metersTitle}>The Kingdom</p>
               <div className={styles.metersGrid}>
-                <MeterBar label="Bridge of Accord" value={worldState.trust} />
-                <MeterBar label="Citadel Beacon" value={worldState.courage} />
-                <MeterBar label="Village Quarter" value={worldState.solidarity} />
-                <MeterBar label="Fog of the Vale" value={worldState.awareness} />
+                <MeterBar label={METER_LABELS.trust} value={worldState.trust} />
+                <MeterBar label={METER_LABELS.courage} value={worldState.courage} />
+                <MeterBar label={METER_LABELS.solidarity} value={worldState.solidarity} />
+                <MeterBar label={METER_LABELS.awareness} value={worldState.awareness} />
               </div>
             </div>
 
