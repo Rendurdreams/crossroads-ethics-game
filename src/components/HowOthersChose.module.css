@@ -1,0 +1,135 @@
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.container {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 480px;
+  width: 100%;
+  margin-top: 16px;
+
+  animation: slideIn 400ms ease forwards;
+}
+
+.heading {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin: 0 0 4px 0;
+}
+
+.subheading {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--text-warm, #f5f0e8);
+  margin: 0 0 16px 0;
+  opacity: 0.8;
+}
+
+.legend {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.legendRef,
+.legendLive {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+}
+
+.legendRef::before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 3px;
+  background: rgba(180, 180, 200, 0.6);
+  border-radius: 2px;
+}
+
+.legendLive::before {
+  content: '';
+  display: inline-block;
+  width: 12px;
+  height: 3px;
+  background: rgba(245, 158, 11, 0.8);
+  border-radius: 2px;
+}
+
+.row {
+  margin-bottom: 16px;
+}
+
+.row:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  font-family: var(--sans);
+  font-size: 0.85rem;
+  color: var(--text-h);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.bars {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.barGroup {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.barTrack {
+  flex: 1;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.barRef {
+  height: 100%;
+  background: rgba(180, 180, 200, 0.5);
+  border-radius: 4px;
+  transition: width 0.6s ease;
+}
+
+.barLive {
+  height: 100%;
+  background: rgba(245, 158, 11, 0.75);
+  border-radius: 4px;
+  transition: width 0.6s ease;
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.3);
+}
+
+.pctLabel {
+  font-family: var(--sans);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  min-width: 32px;
+  text-align: right;
+}
