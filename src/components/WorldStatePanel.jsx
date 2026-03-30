@@ -43,10 +43,10 @@ export default function WorldStatePanel({
       <div className={styles.section}>
         <p className={styles.sectionLabel}>The Realm</p>
         <div className={styles.meters}>
-          <MeterBar label="Bridge of Accord" value={worldState?.trust ?? 50} />
-          <MeterBar label="Citadel Beacon" value={worldState?.courage ?? 50} />
-          <MeterBar label="Village Quarter" value={worldState?.solidarity ?? 50} />
-          <MeterBar label="Fog of the Vale" value={worldState?.awareness ?? 50} />
+          <MeterBar label="Honesty" value={worldState?.trust ?? 50} />
+          <MeterBar label="Courage" value={worldState?.courage ?? 50} />
+          <MeterBar label="Loyalty" value={worldState?.solidarity ?? 50} />
+          <MeterBar label="Empathy" value={worldState?.awareness ?? 50} />
         </div>
       </div>
 

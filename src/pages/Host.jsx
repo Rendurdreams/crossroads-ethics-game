@@ -545,10 +545,10 @@ export default function Host() {
 
               <p className={styles.endSectionLabel} style={{ marginTop: 20 }}>FINAL STATE</p>
               <div className={styles.endMeters}>
-                <MeterBar label="Bridge of Accord" value={worldState.trust} />
-                <MeterBar label="Citadel Beacon" value={worldState.courage} />
-                <MeterBar label="Village Quarter" value={worldState.solidarity} />
-                <MeterBar label="Fog of the Vale" value={worldState.awareness} />
+                <MeterBar label="Honesty" value={worldState.trust} />
+                <MeterBar label="Courage" value={worldState.courage} />
+                <MeterBar label="Loyalty" value={worldState.solidarity} />
+                <MeterBar label="Empathy" value={worldState.awareness} />
               </div>
             </div>
           </div>

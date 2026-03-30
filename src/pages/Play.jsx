@@ -477,10 +477,10 @@ export default function Play() {
                   <div className={styles.metersSection}>
                     <p className={styles.metersLabel}>THE REALM</p>
                     <div className={styles.meters}>
-                      <MeterBar label="Bridge of Accord" value={session.world_state?.trust ?? 50} />
-                      <MeterBar label="Citadel Beacon" value={session.world_state?.courage ?? 50} />
-                      <MeterBar label="Village Quarter" value={session.world_state?.solidarity ?? 50} />
-                      <MeterBar label="Fog of the Vale" value={session.world_state?.awareness ?? 50} />
+                      <MeterBar label="Honesty" value={session.world_state?.trust ?? 50} />
+                      <MeterBar label="Courage" value={session.world_state?.courage ?? 50} />
+                      <MeterBar label="Loyalty" value={session.world_state?.solidarity ?? 50} />
+                      <MeterBar label="Empathy" value={session.world_state?.awareness ?? 50} />
                     </div>
                   </div>
                 </div>
@@ -558,10 +558,10 @@ export default function Play() {
                 <div className={styles.metersSection}>
                   <p className={styles.metersLabel}>THE REALM</p>
                   <div className={styles.meters}>
-                    <MeterBar label="Bridge of Accord" value={session.world_state?.trust ?? 50} />
-                    <MeterBar label="Citadel Beacon" value={session.world_state?.courage ?? 50} />
-                    <MeterBar label="Village Quarter" value={session.world_state?.solidarity ?? 50} />
-                    <MeterBar label="Fog of the Vale" value={session.world_state?.awareness ?? 50} />
+                    <MeterBar label="Honesty" value={session.world_state?.trust ?? 50} />
+                    <MeterBar label="Courage" value={session.world_state?.courage ?? 50} />
+                    <MeterBar label="Loyalty" value={session.world_state?.solidarity ?? 50} />
+                    <MeterBar label="Empathy" value={session.world_state?.awareness ?? 50} />
                   </div>
                 </div>
               </div>
