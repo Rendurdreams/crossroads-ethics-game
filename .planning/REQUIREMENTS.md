@@ -1,79 +1,50 @@
-# Requirements: The Crossroads v1.1
+# Requirements: The Crossroads v1.2
 
-**Defined:** 2026-03-27
-**Milestone:** v1.1 — Immersion + Moral Identity
-**Core Value:** Players finish the game understanding that ethics and morals are not the same thing — and that the tension between their stated values and their actual choices is where real thinking begins.
-
----
-
-## v1.1 Requirements
-
-### Moral Profile Layer
-
-- [x] **MORAL-01**: Player completes a hybrid moral baseline at join time — value priority ranking (loyalty, honesty, fairness, courage, compassion) + 2 stance questions (e.g. "Is it ever okay to lie to protect someone?" Yes / No / It depends) — completes in under 60 seconds on phone
-- [x] **MORAL-02**: Moral baseline data stored on the player row in Supabase (values ranking as ordered array, stance answers as key/value pairs)
-- [x] **MORAL-03**: After a player locks a choice, a subtle inline indicator appears when that choice conflicts with their stated top values — e.g. "This conflicts with your value of honesty" — shown below the framework label, never before the choice is locked
-- [x] **MORAL-04**: Conflict detection logic compares choice framework tags against player's stated value priorities to determine moral tension (e.g. consequentialist choice conflicts with a player who ranked honesty #1)
-- [ ] **MORAL-05**: End screen shows a Moral vs Ethics conflict map — lists rounds where player's choice diverged from stated values, names the philosophical tension (e.g. "You value loyalty above honesty, but in Round 2 you chose truth over protection — that's deontology overriding care ethics, and your own stated value")
-- [ ] **MORAL-06**: End screen section title/framing distinguishes moral profile (personal) from ethical framework (reasoned system) — the lesson is explicit in the copy
-
-### Scenario Packs
-
-- [x] **PACK-01**: Real-world modern dilemmas pack — 5–7 scenarios set in contemporary contexts (social media, workplace, community, AI in daily life), same framework-tag + world-impact structure as kingdom-arc
-- [x] **PACK-02**: Sci-fi / future dilemmas pack — 5–7 scenarios set in near-future contexts (AI rights, genetic decisions, surveillance, resource scarcity), same structure as kingdom-arc
-- [x] **PACK-03**: Host can select which pack to play on the HostSetup page after session creation — kingdom-arc, real-world, or sci-fi shown with title, description, and scenario count
-- [x] **PACK-04**: Session `total_rounds` is set from the selected pack's scenario count (same as v1.0 pattern, now applied to 3 packs)
-- [x] **PACK-05**: Pack system is structured so a future AI-generated pack can be injected with the same interface — pack shape documented, no hardcoded pack assumptions in game loop
-
-### Three.js Host Scene
-
-- [x] **THREE-01**: Host screen renders a Three.js 3D scene replacing the CSS KingdomMap — nighttime cityscape or kingdom landscape, fixed camera angle, slow ambient drift
-- [x] **THREE-02**: 3D scene has 4 landmark objects corresponding to world state dimensions: bridge (trust), lighthouse/beacon (courage), building cluster/windows (solidarity), fog layer (awareness)
-- [x] **THREE-03**: Landmark states update after each round close based on world state values — visual change (lighting, geometry, particles) driven by flourishing / neutral / declining tiers
-- [x] **THREE-04**: Host screen layout unifies 3D scene and right panel into one visual language — same dark glass palette, amber glow, panel feels like a HUD overlay on the scene, not a separate column
-- [x] **THREE-05**: Dramatic round-close sequence: when host clicks "Close Round," the 3D scene plays a brief reveal animation (2–4 seconds) before world state meters update — landmark lights shift, a visual beat registers the collective choice
-- [x] **THREE-06**: Three.js loads from npm (not CDN) with tree-shaking — only imported modules bundled; r160+ for current API compatibility
-- [x] **THREE-07**: 3D scene runs at stable 60fps on a standard laptop during presentation (no frame drops during Supabase subscription events)
-
-### Host UX
-
-- [ ] **HOSTUX-01**: Host panel and 3D scene share visual language — panel elements (vote tally, meter bars, round controls) styled as HUD overlays on the 3D scene background, not a separate sidebar
-- [ ] **HOSTUX-02**: Round-close reveal beat is visually distinct from normal state — a moment of anticipation before world state animates
-
-### AI Layer Hooks (Architecture Only — No Live AI Calls)
-
-- [x] **AI-01**: Player end-screen data shape includes a `debrief_context` field — structured summary of choices, frameworks used, moral conflicts detected, suitable as an LLM prompt payload
-- [x] **AI-02**: Session end data includes a `group_debrief_context` field — aggregate framework breakdown, world state final values, notable moral conflicts across the group, suitable as a discussion-prompt generation payload
-- [x] **AI-03**: Pack schema includes optional `ai_generated: true` flag and `generator_prompt` field — future AI pack generation can use this shape to inject packs at session creation
-- [x] **AI-04**: A `src/lib/ai.js` stub exists with placeholder functions: `generateDebrief(playerContext)`, `generateDiscussionPrompts(sessionContext)`, `generatePack(prompt)` — returns null, ready for implementation
+**Defined:** 2026-03-30
+**Milestone:** v1.2 — Ethical Framework Depth
+**Core Value:** Players finish the game not just seeing which frameworks they used, but understanding how their moral reasoning evolved, where it was consistent, and what philosophical traditions they unknowingly relied on — measured against a comprehensive ethical framework audit.
 
 ---
 
-## Future Requirements (v1.2+)
+## v1.2 Requirements
 
-### AI Layer (Live)
-- Live AI-generated personalized debrief narration at end screen
-- AI-generated discussion prompt suggestions for host post-game
-- AI-generated scenario pack from a theme prompt
+### Deeper Moral Baseline
 
-### Timer
-- Host round timer (30–90 sec) with pause/extend — deferred from v1.0, still pending
+- [ ] **BASELINE-01**: Moral baseline expanded from 2 stance questions to 5 — new questions test deontology vs. consequentialism ("Is it right to break a promise to prevent harm?"), virtue vs. care ("Should a person always tell the truth even if it destroys a relationship?"), and rights vs. utilitarian ("Is it okay to punish the innocent if it protects the group?") — each maps to a CONFLICT_PAIRS entry
+- [ ] **BASELINE-02**: Each new stance question wired into `findMoralConflicts()` as a secondary signal — same pattern as existing `ends_justify` and `lie_to_protect` checks but covering the new conflict dimensions
+- [ ] **BASELINE-03**: Baseline page still completes in under 60 seconds despite the additional questions — progressive disclosure (values first, then stances revealed one at a time as answered) keeps pace manageable
 
-### Social / Persistence
-- Session history — replaying your profile across multiple games
-- Anonymous aggregate data across sessions (what frameworks dominate by scenario?)
+### Moral Trajectory Tracking (Kohlberg + Virtue Arc)
 
----
+- [ ] **TRAJECTORY-01**: `choice_history` entries enriched with a `moral_weight` field derived from the scenario's `weight` property (low=1, medium=2, heavy=3) — captures that a care-ethics choice in a heavy round is qualitatively different from care-ethics in a low round
+- [ ] **TRAJECTORY-02**: `computeProfile()` returns a new `trajectory` object showing framework usage across early rounds (1-2) vs. late rounds (5+) — detects whether reasoning shifted toward more principled frameworks as scenarios escalated
+- [ ] **TRAJECTORY-03**: End screen shows a "Your Moral Arc" section: "In the early rounds you reasoned from [X]. By the final rounds, you shifted to [Y]" — only displayed when a meaningful shift is detected (dominant framework changed between halves), not when reasoning was consistent throughout
+- [ ] **TRAJECTORY-04**: A `consistency_score` (0-1) computed from how stable framework usage was across rounds — high consistency gets named ("Your reasoning was remarkably consistent — you held [X] through escalating stakes"), low consistency gets the trajectory narrative instead
 
-## Out of Scope (v1.1)
+### Conscience Cost & Moral Friction
 
-| Feature | Reason |
-|---------|--------|
-| Live AI calls | Architecture hooks this milestone; live calls are v1.2 |
-| Timer | Deferred again — pack work + Three.js is enough scope |
-| Player accounts / login | Still ephemeral; localStorage sufficient |
-| Leaderboard / score | Contradicts pedagogical intent |
-| Animated SVG phone meters | Still deferred; CSS class-based is fine |
+- [ ] **CONSCIENCE-01**: When a player's choice produces a moral conflict (value or stance), the consequence text on the ConsequenceReveal screen gets a subtle visual distinction — a soft amber border or italic prefix — indicating the game registered internal friction, not just external consequence
+- [ ] **CONSCIENCE-02**: End screen shows cumulative "moral friction" count: "Your choices conflicted with your stated values in X of Y rounds" — framed neutrally ("That tension is the point") not punitively
+
+### Deontological Constraints (Soft Blocks)
+
+- [ ] **DEONTO-01**: Players who ranked honesty #1 AND answered "no" to "Is it ever right to lie to protect someone?" see a pre-choice awareness prompt on care-tagged choices: "This choice prioritizes loyalty over truth. You declared truth matters most." — appears BEFORE the choice is locked, as a moment of self-awareness, not a hard block
+- [ ] **DEONTO-02**: The prompt is dismissible (tap to continue) and does not prevent any choice — the game reveals tension, never restricts agency — but the fact that the prompt appeared is logged in choice_history for end-screen analysis
+
+### Virtue Reputation Arc
+
+- [ ] **VIRTUE-01**: A `virtue_streak` counter tracks consecutive rounds where the player chose a virtue-tagged option — resets on non-virtue choice — visible only on end screen as "You held to character for X consecutive rounds"
+- [ ] **VIRTUE-02**: End screen "Character" subsection in the profile: shows longest virtue streak, total virtue choices, and whether virtue was the player's most consistent framework across the heaviest-weight rounds
+
+### Rights & Protections Awareness
+
+- [ ] **RIGHTS-01**: Scenarios that involve rights-based tensions (The Hollow Folk, The Edge, any scenario where a minority/individual is at risk from group benefit) tagged with an additional `rights_dimension: true` field in the pack schema
+- [ ] **RIGHTS-02**: End screen shows "Rights Awareness" line: "In X of Y rights-critical scenarios, you chose to protect individual rights over group benefit" — only shown when ≥2 rights-dimension scenarios were played
+
+### Cultural Context Indicator
+
+- [ ] **CULTURE-01**: Pack selection card on HostSetup shows a one-line "ethical lens" subtitle: Kingdom = "What does a ruler owe?", Real-World = "What do you owe the people around you?", Futures = "What do you owe the people who come after you?" — frames the cultural context before play
+- [ ] **CULTURE-02**: End screen footer shows which pack was played and its ethical lens, so the player understands their results are context-dependent: "Your choices were measured in the context of [pack ethical lens]. A different context might have drawn different reasoning."
 
 ---
 
@@ -81,36 +52,28 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| MORAL-01 | Phase 7 | Not started |
-| MORAL-02 | Phase 7 | Not started |
-| MORAL-03 | Phase 11 | Not started |
-| MORAL-04 | Phase 11 | Not started |
-| MORAL-05 | Phase 11 | Not started |
-| MORAL-06 | Phase 11 | Not started |
-| PACK-01 | Phase 8 | Not started |
-| PACK-02 | Phase 8 | Not started |
-| PACK-03 | Phase 8 | Not started |
-| PACK-04 | Phase 8 | Not started |
-| PACK-05 | Phase 8 | Not started |
-| THREE-01 | Phase 9 | Not started |
-| THREE-02 | Phase 9 | Not started |
-| THREE-03 | Phase 9 | Not started |
-| THREE-04 | Phase 10 | Not started |
-| THREE-05 | Phase 10 | Not started |
-| THREE-06 | Phase 9 | Not started |
-| THREE-07 | Phase 9 | Not started |
-| HOSTUX-01 | Phase 10 | Not started |
-| HOSTUX-02 | Phase 10 | Not started |
-| AI-01 | Phase 11 | Not started |
-| AI-02 | Phase 11 | Not started |
-| AI-03 | Phase 8 | Not started |
-| AI-04 | Phase 11 | Not started |
+| BASELINE-01 | Phase 12 | Not started |
+| BASELINE-02 | Phase 12 | Not started |
+| BASELINE-03 | Phase 12 | Not started |
+| TRAJECTORY-01 | Phase 12 | Not started |
+| TRAJECTORY-02 | Phase 12 | Not started |
+| TRAJECTORY-03 | Phase 12 | Not started |
+| TRAJECTORY-04 | Phase 12 | Not started |
+| CONSCIENCE-01 | Phase 12 | Not started |
+| CONSCIENCE-02 | Phase 12 | Not started |
+| DEONTO-01 | Phase 12 | Not started |
+| DEONTO-02 | Phase 12 | Not started |
+| VIRTUE-01 | Phase 12 | Not started |
+| VIRTUE-02 | Phase 12 | Not started |
+| RIGHTS-01 | Phase 12 | Not started |
+| RIGHTS-02 | Phase 12 | Not started |
+| CULTURE-01 | Phase 12 | Not started |
+| CULTURE-02 | Phase 12 | Not started |
 
 **Coverage:**
-- v1.1 requirements: 24 total
-- Mapped to phases: 24/24
+- v1.2 requirements: 17 total
+- Mapped to phases: 17/17
 - Unmapped: 0
 
 ---
-*Requirements defined: 2026-03-27*
-*Traceability updated: 2026-03-27 (roadmapper)*
+*Requirements defined: 2026-03-30*
