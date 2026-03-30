@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: Immersion + Moral Identity
 status: executing
-stopped_at: Phase 11 context gathered
-last_updated: "2026-03-30T03:56:25.311Z"
+stopped_at: Completed 11-01-PLAN.md
+last_updated: "2026-03-30T04:18:14.264Z"
 progress:
   total_phases: 5
   completed_phases: 4
-  total_plans: 8
-  completed_plans: 8
+  total_plans: 11
+  completed_plans: 9
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-27)
 
 **Core value:** Players finish understanding their own ethical reasoning — named, visible, connected to a philosophical tradition. In v1.1: they also see where their choices diverged from their own stated values.
-**Current focus:** Phase 09 — three-js-host-scene
+**Current focus:** Phase 11 — moral-conflict-detection-end-screen-ai-hooks
 
 ## Current Position
 
-Phase: 10
-Plan: Not started
+Phase: 11 (moral-conflict-detection-end-screen-ai-hooks) — EXECUTING
+Plan: 2 of 3
 Status: Ready to execute
 
 ```
@@ -76,6 +76,7 @@ v1.1 [                      ]   0% (0/5 phases)
 | Phase 09-three-js-host-scene P01 | 275 | 2 tasks | 9 files |
 | Phase 10-host-ux-unification-reveal-beat P01 | 165 | 2 tasks | 2 files |
 | Phase 09-three-js-host-scene P02 | 245 | 1 tasks | 1 files |
+| Phase 11-moral-conflict-detection-end-screen-ai-hooks P01 | 240s | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -141,6 +142,8 @@ Recent decisions affecting current work:
 - [Phase 09-three-js-host-scene]: Always-mounted Three.js lights (not conditional render) — refs must persist across frames for useFrame lerp to work
 - [Phase 09-three-js-host-scene]: Three separate window materials in VillageQuarter for independent staggered blackout wave via setTimeout
 - [Phase 09-three-js-host-scene]: Dawn DirectionalLight managed imperatively (scene.add/remove) in FogController — avoids R3F conditional component mount
+- [Phase 11-moral-conflict-detection-end-screen-ai-hooks]: VALUE_FRAMEWORK_MAP honesty maps to [deontology, virtue]; no-double-fire guard ensures value conflict takes priority over stance conflict per round
+- [Phase 11-moral-conflict-detection-end-screen-ai-hooks]: moralConflictIndicator uses 2200ms animation-delay — positions it as the final beat after tension section (1900ms + 350ms duration)
 
 ### Roadmap Evolution
 
@@ -158,7 +161,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T03:56:25.306Z
-Stopped at: Phase 11 context gathered
-Resume file: .planning/phases/11-moral-conflict-detection-end-screen-ai-hooks/11-CONTEXT.md
+Last session: 2026-03-30T04:18:14.258Z
+Stopped at: Completed 11-01-PLAN.md
+Resume file: None
 Next action: `/gsd:plan-phase 7`
