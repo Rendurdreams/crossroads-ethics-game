@@ -25,7 +25,7 @@ const STANCE_QUESTIONS = [
   },
   {
     key: 'ends_justify',
-    text: 'Do the ends justify the means if enough people benefit?',
+    text: 'If lying to one person would genuinely make life better for ten people, is the lie acceptable?',
     options: [
       { label: 'Yes', value: 'yes' },
       { label: 'No', value: 'no' },
@@ -34,7 +34,7 @@ const STANCE_QUESTIONS = [
   },
   {
     key: 'break_promise',
-    text: 'Is it right to break a promise to prevent harm?',
+    text: 'If you made a commitment you can no longer keep without hurting someone, is it better to break it cleanly or try to honor it partially?',
     options: [
       { label: 'Yes', value: 'yes' },
       { label: 'No', value: 'no' },
@@ -42,8 +42,8 @@ const STANCE_QUESTIONS = [
     ]
   },
   {
-    key: 'truth_over_relationship',
-    text: 'Should a person always tell the truth even if it destroys a relationship?',
+    key: 'loyalty_vs_fairness',
+    text: 'If your group made a decision that harmed outsiders, would you speak up against your own group?',
     options: [
       { label: 'Yes', value: 'yes' },
       { label: 'No', value: 'no' },
