@@ -55,7 +55,13 @@
   8. Pack selection cards show a one-line "ethical lens" subtitle — end screen footer shows the pack's ethical lens with a "context matters" note
   9. `choice_history` entries include `moral_weight` derived from scenario weight — used by trajectory detection
   10. ConsequenceReveal shows subtle visual distinction (amber border) when a moral conflict was registered for that round
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 12-01-PLAN.md — Data layer: detection.js extensions (trajectory, virtue, stance checks) + Baseline 5 questions + scenario schema (ethicalLens, rights_dimension)
+- [ ] 12-02-PLAN.md — In-game UI: ConsequenceReveal amber border + deontological awareness prompt banner
+- [ ] 12-03-PLAN.md — End screen + host wiring: endSession enrichment + FrameworkProfile 5 new sections + HostSetup ethicalLens
+
 **UI hint**: yes
 
 ---
@@ -76,4 +82,4 @@
 | 9. Three.js Host Scene | v1.1 | 2/2 | Complete | 2026-03-29 |
 | 10. Host UX Unification + Reveal Beat | v1.1 | 2/2 | Complete | 2026-03-28 |
 | 11. Moral Conflict Detection + End Screen + AI Hooks | v1.1 | 3/3 | Complete | 2026-03-30 |
-| 12. Ethical Framework Depth | v1.2 | 0/? | Not started | - |
+| 12. Ethical Framework Depth | v1.2 | 0/3 | Not started | - |
