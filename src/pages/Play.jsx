@@ -2,15 +2,18 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { supabase } from '../lib/supabase.js'
-import { getPackById, getScenarioByRound, getReflectionScenario } from '../lib/scenarios.js'
+import { getDefaultPack, getScenarioByRound, getReflectionScenario } from '../lib/scenarios.js'
+
+const pack = getDefaultPack()
 import { FRAMEWORKS } from '../lib/frameworks.js'
-import { findMoralConflicts } from '../lib/detection.js'
 import ScenarioCard from '../components/ScenarioCard.jsx'
 import ContentNote from '../components/ContentNote.jsx'
 import ConsequenceReveal from '../components/ConsequenceReveal.jsx'
 import TimerDisplay from '../components/TimerDisplay.jsx'
 import MeterBar from '../components/MeterBar.jsx'
 import FrameworkProfile from '../components/FrameworkProfile.jsx'
+import HowOthersChose from '../components/HowOthersChose.jsx'
+import WalkMechanic from '../components/WalkMechanic.jsx'
 import styles from './Play.module.css'
 
 const pageVariants = {
@@ -35,7 +38,6 @@ export default function Play() {
   // Existing state
   const [player, setPlayer] = useState(null)
   const [session, setSession] = useState(null)
-  const [pack, setPack] = useState(null)
   const [playerCount, setPlayerCount] = useState(0)
   const [loading, setLoading] = useState(true)
   const [gameStarted, setGameStarted] = useState(false)
@@ -57,9 +59,9 @@ export default function Play() {
   const [reflectionSubmitting, setReflectionSubmitting] = useState(false)
   const [reflectionError, setReflectionError] = useState(false)
 
-  // Awareness prompt tracking
-  const [promptDismissedRounds, setPromptDismissedRounds] = useState(new Set())
-  const [promptShownRounds, setPromptShownRounds] = useState(new Set())
+  // How Others Chose state
+  const [showHowOthersChose, setShowHowOthersChose] = useState(false)
+  const [roundChoicesForComparison, setRoundChoicesForComparison] = useState([])
 
   // Session restore on mount
   useEffect(() => {
@@ -88,7 +90,6 @@ export default function Play() {
               .then(({ data: sessionData }) => {
                 if (sessionData) {
                   setSession(sessionData)
-                  setPack(getPackById(sessionData.pack_id))
                   if (sessionData.status !== 'lobby') {
                     setGameStarted(true)
                   }
@@ -171,6 +172,15 @@ export default function Play() {
           if (payload.new.status === 'active') {
             setGameStarted(true)
           }
+          if (payload.new.status === 'round_complete') {
+            // Fetch choices for this round to power How Others Chose
+            supabase
+              .from('choices')
+              .select('choice_index')
+              .eq('session_id', sessionId)
+              .eq('round_number', payload.new.current_round)
+              .then(({ data }) => setRoundChoicesForComparison(data ?? []))
+          }
           if (payload.new.status === 'finished') {
             setGameFinished(true)
             // Re-fetch player row with host-computed profile data
@@ -248,41 +258,18 @@ export default function Play() {
     setPassedRound(false)
     setContentNoteAcknowledged(false)
     setSubmittedCount(0)
+    setShowHowOthersChose(false)
+    setRoundChoicesForComparison([])
   }, [session?.current_round])
 
-  // Track awareness prompt shown state for logging
-  useEffect(() => {
-    if (!session?.current_round || !player?.moral_values) return
-    const topVal = player.moral_values[0]
-    const ltp = player.moral_stances?.lie_to_protect
-    if (topVal !== 'honesty' || ltp !== 'no') return
-    const currentPack = pack
-    if (!currentPack) return
-    const scenario = getScenarioByRound(currentPack, session.current_round)
-    const hasCare = scenario?.choices?.some(c => (c.frameworks ?? []).includes('care'))
-    if (hasCare && !promptShownRounds.has(session.current_round)) {
-      setPromptShownRounds(prev => new Set(prev).add(session.current_round))
-    }
-  }, [session?.current_round, player?.moral_values, pack])
-
-  // Choice submission handler — supports re-selection (delete + re-insert)
+  // Choice submission handler
   async function handleChoice(choiceIndex) {
-    if (submitting) return
-    const previousChoice = lockedChoiceIndex
+    if (lockedChoiceIndex !== null || submitting) return
     setLockedChoiceIndex(choiceIndex)
     setSubmitting(true)
     setSubmitError(false)
 
     const currentScenario = getScenarioByRound(pack, session.current_round)
-
-    // Delete existing choice for this round if changing answer
-    if (previousChoice !== null) {
-      await supabase.from('choices').delete()
-        .eq('session_id', sessionId)
-        .eq('player_id', player.id)
-        .eq('round_number', session.current_round)
-    }
-
     const { error } = await supabase.from('choices').insert({
       session_id: sessionId,
       player_id: player.id,
@@ -294,44 +281,11 @@ export default function Play() {
 
     setSubmitting(false)
     if (error) {
-      if (error.code === '23505') {
-        // Unique violation — race condition, choice already exists
-        // Delete and retry once
-        await supabase.from('choices').delete()
-          .eq('session_id', sessionId)
-          .eq('player_id', player.id)
-          .eq('round_number', session.current_round)
-        const { error: retryError } = await supabase.from('choices').insert({
-          session_id: sessionId,
-          player_id: player.id,
-          round_number: session.current_round,
-          scenario_id: currentScenario.id,
-          choice_index: choiceIndex,
-          frameworks: currentScenario.choices[choiceIndex].frameworks
-        })
-        if (retryError) {
-          setLockedChoiceIndex(previousChoice)
-          setSubmitError(true)
-        }
-      } else {
-        setLockedChoiceIndex(previousChoice)
+      if (error.code !== '23505') {
+        // 23505 = UNIQUE violation = already submitted, keep locked
+        setLockedChoiceIndex(null)
         setSubmitError(true)
       }
-    }
-
-    // Log awareness prompt flags if applicable (non-blocking)
-    if (!error && promptShownRounds.has(session.current_round)) {
-      const wasPromptDismissed = promptDismissedRounds.has(session.current_round)
-      supabase.from('players').update({
-        awareness_log: [
-          ...(player?.awareness_log ?? []),
-          {
-            round: session.current_round,
-            awareness_prompt_shown: true,
-            awareness_prompt_dismissed: wasPromptDismissed
-          }
-        ]
-      }).eq('id', player.id).then(() => {})
     }
   }
 
@@ -378,20 +332,6 @@ export default function Play() {
     )
   }
 
-  if (!pack) {
-    return (
-      <motion.div
-        className={styles.page}
-        variants={variants}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-      >
-        <p className={styles.waiting}>Loading...</p>
-      </motion.div>
-    )
-  }
-
   // Lobby waiting view
   if (!gameStarted) {
     return (
@@ -416,7 +356,7 @@ export default function Play() {
 
   // Game finished view — FrameworkProfile + optional reflection input
   if (gameFinished || session?.status === 'finished') {
-    const showReflection = pack !== null && getReflectionScenario(pack) !== null
+    const showReflection = session?.total_rounds === 6
     const reflectionQuestion = getReflectionScenario(pack)?.text ?? ''
     const warmth = computeWarmth(session?.world_state)
 
@@ -430,7 +370,7 @@ export default function Play() {
         style={{ '--atmosphere-warmth': warmth }}
       >
         <div className={styles.profileWrapper}>
-          <FrameworkProfile player={player} pack={pack} />
+          <FrameworkProfile player={player} />
 
           {showReflection && (
             <motion.div
@@ -505,10 +445,10 @@ export default function Play() {
                   <div className={styles.metersSection}>
                     <p className={styles.metersLabel}>THE REALM</p>
                     <div className={styles.meters}>
-                      <MeterBar label="Honesty" value={session.world_state?.trust ?? 50} />
-                      <MeterBar label="Courage" value={session.world_state?.courage ?? 50} />
-                      <MeterBar label="Loyalty" value={session.world_state?.solidarity ?? 50} />
-                      <MeterBar label="Empathy" value={session.world_state?.awareness ?? 50} />
+                      <MeterBar label="Bridge of Accord" value={session.world_state?.trust ?? 50} />
+                      <MeterBar label="Citadel Beacon" value={session.world_state?.courage ?? 50} />
+                      <MeterBar label="Village Quarter" value={session.world_state?.solidarity ?? 50} />
+                      <MeterBar label="Fog of the Vale" value={session.world_state?.awareness ?? 50} />
                     </div>
                   </div>
                 </div>
@@ -522,12 +462,7 @@ export default function Play() {
     if (lockedChoiceIndex !== null) {
       const chosenOption = currentScenario.choices[lockedChoiceIndex]
       const frameworkKey = chosenOption.frameworks[0]
-      const roundMoralConflict = (() => {
-        if (!frameworkKey) return false
-        const singleHistory = [{ round: 1, frameworks: [frameworkKey] }]
-        const mc = findMoralConflicts(singleHistory, player?.moral_values ?? null, player?.moral_stances ?? null)
-        return mc.length > 0
-      })()
+      const frameworkExplanation = FRAMEWORKS[frameworkKey]?.question ?? ''
 
       return (
         <motion.div
@@ -549,12 +484,31 @@ export default function Play() {
               >
                 <ConsequenceReveal
                   consequence={chosenOption.consequence}
+                  conscienceLayer={chosenOption.conscienceLayer ?? null}
                   framework={frameworkKey}
+                  explanation={frameworkExplanation}
                   worldState={session.world_state ?? { trust: 50, courage: 50, solidarity: 50, awareness: 50 }}
                   moralValues={player?.moral_values ?? null}
                   moralStances={player?.moral_stances ?? null}
-                  hasMoralConflict={roundMoralConflict}
+                  hasMoralConflict={false}
                 />
+
+                {!showHowOthersChose && (
+                  <button
+                    className={styles.howOthersBtn}
+                    onClick={() => setShowHowOthersChose(true)}
+                  >
+                    See how others chose
+                  </button>
+                )}
+
+                {showHowOthersChose && (
+                  <HowOthersChose
+                    scenarioId={currentScenario.id}
+                    liveChoices={roundChoicesForComparison}
+                    totalPlayers={totalPlayerCount}
+                  />
+                )}
               </motion.div>
             </AnimatePresence>
           </div>
@@ -586,10 +540,10 @@ export default function Play() {
                 <div className={styles.metersSection}>
                   <p className={styles.metersLabel}>THE REALM</p>
                   <div className={styles.meters}>
-                    <MeterBar label="Honesty" value={session.world_state?.trust ?? 50} />
-                    <MeterBar label="Courage" value={session.world_state?.courage ?? 50} />
-                    <MeterBar label="Loyalty" value={session.world_state?.solidarity ?? 50} />
-                    <MeterBar label="Empathy" value={session.world_state?.awareness ?? 50} />
+                    <MeterBar label="Bridge of Accord" value={session.world_state?.trust ?? 50} />
+                    <MeterBar label="Citadel Beacon" value={session.world_state?.courage ?? 50} />
+                    <MeterBar label="Village Quarter" value={session.world_state?.solidarity ?? 50} />
+                    <MeterBar label="Fog of the Vale" value={session.world_state?.awareness ?? 50} />
                   </div>
                 </div>
               </div>
@@ -602,7 +556,10 @@ export default function Play() {
 
   // Active round view
   if (session?.status === 'active' && currentScenario) {
-    // Round 6 detection — show reflection textarea instead of ScenarioCard
+    const isTimerPressureRound = session?.current_round === 5
+    const isWalkRound = session?.current_round === 6
+
+    // Round reflection detection — show reflection textarea instead of ScenarioCard
     const isReflectionRound = currentScenario?.choices?.length === 0
 
     if (isReflectionRound) {
@@ -703,17 +660,6 @@ export default function Play() {
       )
     }
 
-    // Awareness prompt: honesty-first + lie_to_protect=no + care-tagged scenario
-    const topValue = player?.moral_values?.[0]
-    const lieToProtect = player?.moral_stances?.lie_to_protect
-    const scenarioHasCareChoice = currentScenario?.choices?.some(c =>
-      (c.frameworks ?? []).includes('care')
-    )
-    const showAwarenessPrompt = topValue === 'honesty'
-      && lieToProtect === 'no'
-      && scenarioHasCareChoice
-      && !promptDismissedRounds.has(session.current_round)
-
     // Scenario + choice view
     return (
       <motion.div
@@ -738,30 +684,27 @@ export default function Play() {
                 <span className={styles.roundLabel}>The Council Deliberates — Dilemma {session.current_round}</span>
               </div>
 
-              {showAwarenessPrompt && (
-                <div
-                  className={styles.awarenessPrompt}
-                  role="alert"
-                  onClick={() => setPromptDismissedRounds(prev => new Set(prev).add(session.current_round))}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      setPromptDismissedRounds(prev => new Set(prev).add(session.current_round))
-                    }
-                  }}
-                  tabIndex={0}
-                >
-                  This choice prioritizes loyalty over truth. You declared truth matters most.
-                </div>
+              {isWalkRound ? (
+                <>
+                  <div className={styles.card}>
+                    <h2 style={{ fontFamily: 'Georgia, serif', fontSize: '1.3rem', marginBottom: 12, color: 'var(--text-h)' }}>{currentScenario.title}</h2>
+                    <p style={{ lineHeight: 1.6, marginBottom: 0, color: 'var(--text)', fontSize: '1rem' }}>{currentScenario.text}</p>
+                  </div>
+                  <WalkMechanic
+                    onChoice={handleChoice}
+                    submitting={submitting}
+                    lockedIndex={lockedChoiceIndex}
+                  />
+                </>
+              ) : (
+                <ScenarioCard
+                  scenario={currentScenario}
+                  lockedIndex={lockedChoiceIndex}
+                  onChoice={handleChoice}
+                  submitting={submitting}
+                  submitError={submitError}
+                />
               )}
-
-              <ScenarioCard
-                scenario={currentScenario}
-                lockedIndex={lockedChoiceIndex}
-                onChoice={handleChoice}
-                submitting={submitting}
-                submitError={submitError}
-              />
 
               {lockedChoiceIndex !== null && (
                 <div className={styles.waitingSection}>
@@ -774,8 +717,11 @@ export default function Play() {
               )}
 
               {timerRemaining !== null && (
-                <div className={styles.timerSection}>
+                <div className={`${styles.timerSection} ${isTimerPressureRound ? styles.timerPressure : ''}`}>
                   <TimerDisplay remaining={timerRemaining} total={timerTotal} />
+                  {isTimerPressureRound && timerRemaining !== null && timerRemaining <= 30 && (
+                    <p className={styles.timerUrgency}>The council waits for no one.</p>
+                  )}
                 </div>
               )}
             </motion.div>

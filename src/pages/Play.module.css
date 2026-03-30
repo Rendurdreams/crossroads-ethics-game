@@ -289,21 +289,61 @@
   margin: 8px 0 0 0;
 }
 
-/* ── Awareness prompt banner ── */
+/* Timer pressure (Round 5) */
+.timerPressure {
+  animation: timerPulse 1.5s ease-in-out infinite;
+}
 
-.awarenessPrompt {
-  background: rgba(245, 158, 11, 0.06);
-  border-left: 3px solid var(--accent);
-  border-radius: 0 10px 10px 0;
-  padding: 16px;
-  margin-bottom: 16px;
+.timerUrgency {
+  color: #ef4444;
+  font-style: italic;
+  font-size: 0.85rem;
+  text-align: center;
+  margin-top: 4px;
+  animation: urgencyFade 0.8s ease-in-out infinite alternate;
+}
+
+@keyframes timerPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+@keyframes urgencyFade {
+  from { opacity: 0.6; }
+  to { opacity: 1; }
+}
+
+/* How Others Chose button */
+.howOthersBtn {
+  display: block;
+  margin: 16px auto 0;
+  padding: 10px 20px;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 8px;
+  color: var(--text-warm, #f5f0e8);
+  font-size: 0.9rem;
   font-family: var(--sans);
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text);
   cursor: pointer;
-  animation: fadeUp 300ms ease forwards;
+  transition: background 0.2s;
+}
+
+.howOthersBtn:hover {
+  background: rgba(245, 158, 11, 0.25);
+}
+
+/* Walk mechanic card wrapper */
+.card {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  max-width: 480px;
+  width: 100%;
+  margin-bottom: 16px;
 }
 
 @keyframes fadeUp {
@@ -311,18 +351,12 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
-@media (max-width: 390px) {
-  .gameContent {
-    padding: 24px 16px 48px;
+@media (prefers-reduced-motion: reduce) {
+  .timerPressure {
+    animation: none;
   }
-  .passConsequence {
-    padding: 24px 16px;
-  }
-  .page {
-    padding: 16px;
-  }
-  .reflectionQuestion,
-  .reflectionRoundQuestion {
-    font-size: clamp(17px, 5.5vw, 21px);
+  .timerUrgency {
+    animation: none;
+    opacity: 1;
   }
 }
