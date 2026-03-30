@@ -82,10 +82,10 @@ Plans:
 **Goal:** Ship revised Dilemma 1 end-to-end: bombshell final round replacing reflection, fix host score labels, player answer toggle, question on host screen, and copy polish
 **Depends on:** Phase 13
 **Requirements**: BOMB-01, BOMB-02, BOMB-03, BOMB-04, HOST-01, HOST-02, TOGGLE-01, TOGGLE-02
-**Plans:** 3 plans
+**Plans:** 1/3 plans executed
 
 Plans:
-- [ ] 13.1-01-PLAN.md — Bombshell scenario replacing reflection round + totalRounds fix
+- [x] 13.1-01-PLAN.md — Bombshell scenario replacing reflection round + totalRounds fix
 - [ ] 13.1-02-PLAN.md — Player answer toggle (delete+re-insert, ScenarioCard re-selection)
 - [ ] 13.1-03-PLAN.md — Host screen fixes: METER_LABELS, scenario text overlay, bombshell copy
 
@@ -109,4 +109,4 @@ Plans:
 | 11. Moral Conflict Detection + End Screen + AI Hooks | v1.1 | 3/3 | Complete | 2026-03-30 |
 | 12. Ethical Framework Depth | v1.2 | 3/3 | Complete |  |
 | 13. Text & Mobile Polish | v1.2 | 3/3 | Complete    | 2026-03-30 |
-| 13.1. Dilemma 1 Flow Redesign + Bug Fixes | v1.2 | 0/3 | Planning | |
+| 13.1. Dilemma 1 Flow Redesign + Bug Fixes | v1.2 | 1/3 | In Progress|  |
