@@ -1,105 +1,91 @@
-# Requirements: The Crossroads v1.2
+# Requirements: The Crossroads v2.0
 
-**Defined:** 2026-03-30
-**Milestone:** v1.2 — Ethical Framework Depth
-**Core Value:** Players finish the game not just seeing which frameworks they used, but understanding how their moral reasoning evolved, where it was consistent, and what philosophical traditions they unknowingly relied on — measured against a comprehensive ethical framework audit.
+**Defined:** 2026-03-31
+**Milestone:** v2.0 — Signal Lost
+**Core Value:** Players experience a sci-fi senator ethics simulation where dynamic personal stakes, facilitator-controlled discussion, and permanent world consequences make moral reasoning visible, named, and irreversible.
 
 ---
 
-## v1.2 Requirements
+## Scenario Pack
 
-### Deeper Moral Baseline
+- [ ] **PACK-01**: Signal Lost scenario pack with 8 rounds, framework tags, axis deltas, conscience layers, and discussion prompts defined in src/lib/scenarios/packs/signal-lost.js
+- [ ] **PACK-02**: Each of 8 scenarios has 3 choices (R7 has 4) with world impact deltas for CT/HD/SOL/ACC axes, starting at 65
+- [ ] **PACK-03**: Pack includes per-round discussion prompts (2-3 per round) and conflict spotlight pairs
+- [ ] **PACK-04**: Signal Lost is the default pack when creating a new session
 
-- [x] **BASELINE-01**: Moral baseline expanded from 2 stance questions to 5 — new questions test deontology vs. consequentialism ("Is it right to break a promise to prevent harm?"), virtue vs. care ("Should a person always tell the truth even if it destroys a relationship?"), and rights vs. utilitarian ("Is it okay to punish the innocent if it protects the group?") — each maps to a CONFLICT_PAIRS entry
-- [x] **BASELINE-02**: Each new stance question wired into `findMoralConflicts()` as a secondary signal — same pattern as existing `ends_justify` and `lie_to_protect` checks but covering the new conflict dimensions
-- [x] **BASELINE-03**: Baseline page still completes in under 60 seconds despite the additional questions — progressive disclosure (values first, then stances revealed one at a time as answered) keeps pace manageable
+## World Axes
 
-### Moral Trajectory Tracking (Kohlberg + Virtue Arc)
+- [ ] **AXIS-01**: World state uses 4 axes (Civil Trust, Human Dignity, Solidarity, Accountability) starting at 65/100 for Signal Lost pack
+- [ ] **AXIS-02**: Axis keys (CT, HD, SOL, ACC) are named constants; applyChoicesToWorld dispatches based on pack axisSet
+- [ ] **AXIS-03**: Meter bars on host and player views display the correct axis names for the active pack
 
-- [x] **TRAJECTORY-01**: `choice_history` entries enriched with a `moral_weight` field derived from the scenario's `weight` property (low=1, medium=2, heavy=3) — captures that a care-ethics choice in a heavy round is qualitatively different from care-ethics in a low round
-- [x] **TRAJECTORY-02**: `computeProfile()` returns a new `trajectory` object showing framework usage across early rounds (1-2) vs. late rounds (5+) — detects whether reasoning shifted toward more principled frameworks as scenarios escalated
-- [ ] **TRAJECTORY-03**: End screen shows a "Your Moral Arc" section: "In the early rounds you reasoned from [X]. By the final rounds, you shifted to [Y]" — only displayed when a meaningful shift is detected (dominant framework changed between halves), not when reasoning was consistent throughout
-- [x] **TRAJECTORY-04**: A `consistency_score` (0-1) computed from how stable framework usage was across rounds — high consistency gets named ("Your reasoning was remarkably consistent — you held [X] through escalating stakes"), low consistency gets the trajectory narrative instead
+## Senator Profiles
 
-### Conscience Cost & Moral Friction
+- [ ] **PROF-01**: 6 senator profiles (A-F) with name, subtitle, per-round stakes, and variable descriptions stored in lib file
+- [ ] **PROF-02**: Player is randomly assigned a profile at join time; profile_id persisted to Supabase players row
+- [ ] **PROF-03**: In classroom sessions, profile distribution is balanced (round-robin across 6 profiles)
+- [ ] **PROF-04**: Player sees their profile card (name, subtitle) and per-round "YOUR STAKE" panel before each choice
+- [ ] **PROF-05**: Profile assignment is visible to host in the player roster
 
-- [x] **CONSCIENCE-01**: When a player's choice produces a moral conflict (value or stance), the consequence text on the ConsequenceReveal screen gets a subtle visual distinction — a soft amber border or italic prefix — indicating the game registered internal friction, not just external consequence
-- [ ] **CONSCIENCE-02**: End screen shows cumulative "moral friction" count: "Your choices conflicted with your stated values in X of Y rounds" — framed neutrally ("That tension is the point") not punitively
+## Break Flags
 
-### Deontological Constraints (Soft Blocks)
+- [ ] **FLAG-01**: Break flags are permanent boolean markers on sessions.break_flags (jsonb), set when specific choices are made
+- [ ] **FLAG-02**: 7 break flag triggers defined (R1-III, R2-I, R3-II, R4-II, R5-I, R6-II, R7-IV) per spec
+- [ ] **FLAG-03**: Active break flags display as persistent visual markers on the host AnimatedMap
+- [ ] **FLAG-04**: Break flags are cited in the Round 8 scribe record text
 
-- [x] **DEONTO-01**: Players who ranked honesty #1 AND answered "no" to "Is it ever right to lie to protect someone?" see a pre-choice awareness prompt on care-tagged choices: "This choice prioritizes loyalty over truth. You declared truth matters most." — appears BEFORE the choice is locked, as a moment of self-awareness, not a hard block
-- [x] **DEONTO-02**: The prompt is dismissible (tap to continue) and does not prevent any choice — the game reveals tension, never restricts agency — but the fact that the prompt appeared is logged in choice_history for end-screen analysis
+## Discussion Mode
 
-### Virtue Reputation Arc
+- [ ] **DISC-01**: Host selects discussion or standard mode at session creation; mode stored on sessions row
+- [ ] **DISC-02**: After each round close in discussion mode, a Discussion Pause Screen appears on the host
+- [ ] **DISC-03**: Discussion Pause shows: live vote distribution, profile breakdown (which profiles chose what), and 2-3 pre-written discussion prompts
+- [ ] **DISC-04**: Conflict spotlight fires when key conflict pair profiles chose differently, surfacing both profiles' stakes
+- [ ] **DISC-05**: Only the host can advance past the Discussion Pause (Continue button); players see a waiting state
+- [ ] **DISC-06**: In standard mode (non-discussion), round flow works as it does today — no pause screens
 
-- [x] **VIRTUE-01**: A `virtue_streak` counter tracks consecutive rounds where the player chose a virtue-tagged option — resets on non-virtue choice — visible only on end screen as "You held to character for X consecutive rounds"
-- [ ] **VIRTUE-02**: End screen "Character" subsection in the profile: shows longest virtue streak, total virtue choices, and whether virtue was the player's most consistent framework across the heaviest-weight rounds
+## Grading Rubric
 
-### Rights & Protections Awareness
+- [ ] **GRADE-01**: Grading rubric page accessible from host end screen showing 4 dimensions (Moral Reasoning 30pts, Personal Stake Awareness 20pts, Consequence Tracking 25pts, Closing Reflection 25pts)
+- [ ] **GRADE-02**: Rubric displays score bands with descriptions per dimension for instructor reference
+- [ ] **GRADE-03**: Bonus section (up to 10pts) for baseline value-behavior alignment is documented on the rubric
 
-- [x] **RIGHTS-01**: Scenarios that involve rights-based tensions (The Hollow Folk, The Edge, any scenario where a minority/individual is at risk from group benefit) tagged with an additional `rights_dimension: true` field in the pack schema
-- [ ] **RIGHTS-02**: End screen shows "Rights Awareness" line: "In X of Y rights-critical scenarios, you chose to protect individual rights over group benefit" — only shown when ≥2 rights-dimension scenarios were played
+## Detection & Alerts
 
-### Cultural Context Indicator
+- [ ] **DETECT-01**: Signal Lost scenario IDs have their own STANCE_TRIGGERS in detection.js that do not collide with kingdom-arc triggers
+- [ ] **DETECT-02**: Profile-aware conflict alerts appear between rounds when a choice contradicts a baseline stance answer
+- [ ] **DETECT-03**: Conflict alerts are non-blocking — displayed briefly, do not prevent advancing
 
-- [x] **CULTURE-01**: Pack selection card on HostSetup shows a one-line "ethical lens" subtitle: Kingdom = "What does a ruler owe?", Real-World = "What do you owe the people around you?", Futures = "What do you owe the people who come after you?" — frames the cultural context before play
-- [ ] **CULTURE-02**: End screen footer shows which pack was played and its ethical lens, so the player understands their results are context-dependent: "Your choices were measured in the context of [pack ethical lens]. A different context might have drawn different reasoning."
+## Walk Mechanic (R6)
 
-### Meter Label Rework (Phase 13)
+- [ ] **WALK-01**: Round 6 uses a position-based walk mechanic — player drags/moves avatar toward or away from terminal
+- [ ] **WALK-02**: Crossing midpoint triggers Choice I; turning back triggers Choice II; stopping near terminal triggers Choice III
+- [ ] **WALK-03**: Walk choice is submitted to Supabase like any other choice with the correct choice_index
 
-- [x] **METER-01**: All player-facing and host-facing meter labels renamed from kingdom geography to moral concepts: Bridge of Accord -> Honesty, Citadel Beacon -> Courage (unchanged), Village Quarter -> Loyalty, Fog of the Vale -> Empathy — same names on both host and player screens
-- [x] **METER-02**: ConsequenceReveal ImpactMeter inline labels updated to match: Trust -> Honesty, Solidarity -> Loyalty, Awareness -> Empathy
+## Round 8 Scribe Record
 
-### Text Readability (Phase 13)
-
-- [x] **TEXT-01**: All 4 FRAMEWORKS descriptions in frameworks.js rewritten — shorter, conversational, relatable for high schoolers while preserving philosophical accuracy
-- [x] **TEXT-02**: All 12 ARC_NARRATIVES in FrameworkProfile.jsx rewritten using "introduce then define" pattern — every academic philosophy term immediately followed by a plain-language em-dash definition
-- [x] **TEXT-03**: All end-screen philosophical text (section headers, conflict descriptions, moral arc narratives) uses introduce-then-define pattern where academic terms appear
-
-### 375px Mobile Layout (Phase 13)
-
-- [x] **MOBILE-01**: All player-facing pages (Play, Baseline, FrameworkProfile, Landing) have @media (max-width: 390px) breakpoints reducing padding to maximize content width on 375px phones (343px+ content area, up from 311-327px)
-- [x] **MOBILE-02**: Scenario body text and consequence text use CSS clamp() for fluid font scaling at narrow widths
-- [x] **MOBILE-03**: SVG conflict diagram in FrameworkProfile uses viewBox + width="100%" for responsive scaling — no fixed pixel dimensions
+- [ ] **SCRIBE-01**: Round 8 generates a dynamic scribe record based on all prior choices, framework pattern, and break flags triggered
+- [ ] **SCRIBE-02**: Scribe record includes the closing question "Would you make these choices again?"
 
 ---
 
 ## Traceability
 
-| Requirement | Phase | Status |
-|-------------|-------|--------|
-| BASELINE-01 | Phase 12 | Complete |
-| BASELINE-02 | Phase 12 | Complete |
-| BASELINE-03 | Phase 12 | Complete |
-| TRAJECTORY-01 | Phase 12 | Complete |
-| TRAJECTORY-02 | Phase 12 | Complete |
-| TRAJECTORY-03 | Phase 12 | Not started |
-| TRAJECTORY-04 | Phase 12 | Complete |
-| CONSCIENCE-01 | Phase 12 | Complete |
-| CONSCIENCE-02 | Phase 12 | Not started |
-| DEONTO-01 | Phase 12 | Complete |
-| DEONTO-02 | Phase 12 | Complete |
-| VIRTUE-01 | Phase 12 | Complete |
-| VIRTUE-02 | Phase 12 | Not started |
-| RIGHTS-01 | Phase 12 | Complete |
-| RIGHTS-02 | Phase 12 | Not started |
-| CULTURE-01 | Phase 12 | Complete |
-| CULTURE-02 | Phase 12 | Not started |
-| METER-01 | Phase 13 | Not started |
-| METER-02 | Phase 13 | Not started |
-| TEXT-01 | Phase 13 | Not started |
-| TEXT-02 | Phase 13 | Not started |
-| TEXT-03 | Phase 13 | Not started |
-| MOBILE-01 | Phase 13 | Not started |
-| MOBILE-02 | Phase 13 | Not started |
-| MOBILE-03 | Phase 13 | Not started |
-
-**Coverage:**
-- v1.2 requirements: 25 total (17 Phase 12 + 8 Phase 13)
-- Mapped to phases: 25/25
-- Unmapped: 0
+| REQ ID | Phase | Status |
+|--------|-------|--------|
+| (populated by roadmapper) | | |
 
 ---
-*Requirements defined: 2026-03-30*
-*Phase 13 requirements added: 2026-03-30*
+
+## Future Requirements (v2.1+)
+
+- Solo mode (continuous play, no discussion pauses)
+- Assessment export (JSON + PDF)
+- Axis trajectory timeline chart (per-round line graph)
+- Written reflection capture for assessment use
+
+## Out of Scope
+
+- UI redesign — reuse existing components and styles
+- New animated map — reuse existing AnimatedMap with zone mapping for Signal Lost axes
+- Solo mode and assessment export — deferred to v2.1
+- Cross-session persistence — sessions remain ephemeral
