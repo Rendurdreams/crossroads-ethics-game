@@ -81,8 +81,8 @@ assert(
 )
 assert(
   Array.isArray(VALUE_FRAMEWORK_MAP.fairness) &&
-  VALUE_FRAMEWORK_MAP.fairness.includes('distributive_justice'),
-  'VALUE_FRAMEWORK_MAP.fairness includes distributive_justice'
+  VALUE_FRAMEWORK_MAP.fairness.length === 0,
+  'VALUE_FRAMEWORK_MAP.fairness is empty array (fairness uses condition triggers instead)'
 )
 assert(VALUE_FRAMEWORK_MAP.courage !== undefined, 'courage key exists')
 assert(VALUE_FRAMEWORK_MAP.compassion !== undefined, 'compassion key exists')
@@ -161,7 +161,7 @@ const mc6 = findMoralConflicts(
 )
 assert(mc6.length === 1, 'no double-fire: only 1 conflict per round even when both value and stance would match')
 
-// Test: lie_to_protect='no' + care choice -> stance conflict fires (matchFramework trigger)
+// Test: lie_to_protect='no' + round-4 choiceIndex 2 (care choice, truth suppressed) -> stance conflict fires (matchCondition trigger)
 // Use compassion as top value (maps to [care]) — aligned, so no VALUE conflict fires
 const mc7 = findMoralConflicts(
   [{ round: 4, scenarioId: 'round-4', choiceIndex: 2, frameworks: ['care'] }],
@@ -182,14 +182,16 @@ const mc8 = findMoralConflicts(
 assert(mc8.length === 0, 'empty moralValues array returns empty array')
 
 // Test: break_promise='no' + round-5 choiceIndex 0 -> condition-specific trigger fires
+// fairness now uses condition triggers (empty framework array); round-5 choiceIndex 0 doesn't match
+// any fairness condition trigger — so no value conflict fires; stance conflict fires instead
 const mc9 = findMoralConflicts(
   [{ round: 5, scenarioId: 'round-5', choiceIndex: 0, frameworks: ['care', 'consequentialism'] }],
-  ['fairness'],  // fairness maps to [distributive_justice] — no alignment with care/consequentialism, so VALUE conflict fires
+  ['fairness'],  // fairness uses condition triggers; round-5/0 doesn't match any fairness condition
   { break_promise: 'no' }
 )
-// value conflict fires for fairness + care (not aligned), so only 1 total (value takes priority)
-assert(mc9.length === 1, 'break_promise=no + round-5 choice 0: value conflict takes priority')
-assert(mc9[0].type === 'value', 'value conflict takes priority over stance')
+// no value conflict for fairness on this round; stance conflict fires
+assert(mc9.length === 1, 'break_promise=no + round-5 choice 0: 1 conflict total (stance fires, no fairness condition match)')
+assert(mc9[0].type === 'stance', 'break_promise stance conflict fires when no fairness condition match on this round')
 
 // Test break_promise trigger when no value conflict: use compassion (maps to [care]) — care is aligned
 const mc9b = findMoralConflicts(
@@ -201,6 +203,76 @@ assert(mc9b.length === 1, 'break_promise=no + round-5 choice 0 = 1 stance confli
 assert(mc9b[0].type === 'stance', 'break_promise conflict type is stance')
 assert(mc9b[0].stanceKey === 'break_promise', 'stanceKey is break_promise')
 assert(mc9b[0].message === "Your ancestors made a commitment. You just broke it cleanly.", 'break_promise trigger message matches PRD')
+
+// Test: fairness #1 + non-fairness-condition choice = NO conflict
+const mcF1 = findMoralConflicts(
+  [{ round: 2, scenarioId: 'round-2', choiceIndex: 0, frameworks: ['consequentialism'] }],
+  ['fairness'],
+  null
+)
+assert(mcF1.length === 0, 'fairness #1 + non-fairness-condition choice = NO conflict (false positive fixed)')
+
+// Test: fairness #1 + round-1 choiceIndex 1 (Protect the Core) = value conflict
+const mcF2 = findMoralConflicts(
+  [{ round: 1, scenarioId: 'round-1', choiceIndex: 1, frameworks: ['consequentialism'] }],
+  ['fairness'],
+  null
+)
+assert(mcF2.length === 1, 'fairness #1 + round-1 choiceIndex 1 = 1 conflict')
+assert(mcF2[0].type === 'value', 'fairness condition trigger type is value')
+assert(mcF2[0].valueName === 'fairness', 'fairness condition trigger valueName is fairness')
+assert(mcF2[0].message === "Fairness asks who deserves to eat. You let the math decide.", 'fairness R1-1 message matches PRD')
+
+// Test: fairness #1 + round-3 choiceIndex 1 (Deny petition) = value conflict
+const mcF3 = findMoralConflicts(
+  [{ round: 3, scenarioId: 'round-3', choiceIndex: 1, frameworks: ['consequentialism'] }],
+  ['fairness'],
+  null
+)
+assert(mcF3.length === 1, 'fairness #1 + round-3 choiceIndex 1 = 1 conflict')
+assert(mcF3[0].message === "The Hollow Folk asked for equal standing. You held the line.", 'fairness R3-1 message matches PRD')
+
+// Test: lie_to_protect='no' + round-1 choiceIndex 0 (care) = NO conflict (false positive eliminated)
+// compassion top value maps to [care] — care choice is aligned, so no value conflict
+// And round-1/choiceIndex-0 no longer matches lie_to_protect='no' matchCondition
+const mcLie1 = findMoralConflicts(
+  [{ round: 1, scenarioId: 'round-1', choiceIndex: 0, frameworks: ['care', 'consequentialism'] }],
+  ['compassion'],
+  { lie_to_protect: 'no' }
+)
+assert(mcLie1.length === 0, 'lie_to_protect=no + round-1 choiceIndex 0 (care) = NO conflict after fix')
+
+// Test: lie_to_protect='no' + round-bombshell choiceIndex 1 (Bury the record, care tag)
+// compassion top value, care is aligned so no value conflict; stance condition matches
+const mcLie2 = findMoralConflicts(
+  [{ round: 8, scenarioId: 'round-bombshell', choiceIndex: 1, frameworks: ['consequentialism', 'care'] }],
+  ['compassion'],
+  { lie_to_protect: 'no' }
+)
+assert(mcLie2.length === 1, 'lie_to_protect=no + round-bombshell choiceIndex 1 = 1 stance conflict')
+assert(mcLie2[0].type === 'stance', 'lie_to_protect=no round-bombshell type is stance')
+assert(mcLie2[0].message === "Your instinct was honesty. What changed?", 'lie_to_protect=no round-bombshell message matches')
+
+// Test: lie_to_protect='yes' + round-1 choiceIndex 2 (Triage, deontology/virtue) = NO conflict (false positive eliminated)
+// courage top value maps to [virtue] — virtue is present, so no value conflict
+// And round-1/choiceIndex-2 no longer matches lie_to_protect='yes' matchCondition
+const mcLie3 = findMoralConflicts(
+  [{ round: 1, scenarioId: 'round-1', choiceIndex: 2, frameworks: ['deontology', 'virtue'] }],
+  ['courage'],
+  { lie_to_protect: 'yes' }
+)
+assert(mcLie3.length === 0, 'lie_to_protect=yes + round-1 choiceIndex 2 (deontology/virtue) = NO conflict after fix')
+
+// Test: lie_to_protect='yes' + round-bombshell choiceIndex 0 (Publish everything, deontology/virtue)
+// courage top value, virtue is aligned so no value conflict; stance condition matches
+const mcLie4 = findMoralConflicts(
+  [{ round: 8, scenarioId: 'round-bombshell', choiceIndex: 0, frameworks: ['virtue', 'deontology'] }],
+  ['courage'],
+  { lie_to_protect: 'yes' }
+)
+assert(mcLie4.length === 1, 'lie_to_protect=yes + round-bombshell choiceIndex 0 = 1 stance conflict')
+assert(mcLie4[0].type === 'stance', 'lie_to_protect=yes round-bombshell type is stance')
+assert(mcLie4[0].message === "You said protecting people matters. Here honesty was the protection.", 'lie_to_protect=yes round-bombshell message matches')
 
 // Test: loyalty_vs_fairness='no' + round-7 choiceIndex 0 -> condition-specific trigger fires
 const mc10 = findMoralConflicts(
