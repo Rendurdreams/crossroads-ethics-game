@@ -324,7 +324,17 @@ export function findConflicts(choiceHistory) {
   CONFLICT_PAIRS.forEach(pair => {
     const [f1, f2] = pair.frameworks
     if (usedFrameworks.includes(f1) && usedFrameworks.includes(f2)) {
-      // Conflict exists: player used both frameworks across different rounds
+      // Only count as a conflict if the two frameworks appear in DIFFERENT rounds.
+      // A single choice tagged with both frameworks (e.g. ['care', 'consequentialism'])
+      // is not a cross-round tension — it's one decision, not a shift in reasoning.
+      const f1Set = new Set(frameworkRounds[f1])
+      const f2Set = new Set(frameworkRounds[f2])
+      const f1Only = [...f1Set].filter(r => !f2Set.has(r))
+      const f2Only = [...f2Set].filter(r => !f1Set.has(r))
+
+      // Need at least one round where f1 was used without f2, AND vice versa
+      if (f1Only.length === 0 || f2Only.length === 0) return
+
       const rounds = [
         ...frameworkRounds[f1],
         ...frameworkRounds[f2]
