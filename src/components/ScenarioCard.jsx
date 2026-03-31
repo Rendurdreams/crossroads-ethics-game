@@ -2,13 +2,13 @@ import styles from './ScenarioCard.module.css'
 
 const ROMAN = ['I', 'II', 'III', 'IV']
 
-export default function ScenarioCard({ scenario, lockedIndex, onChoice, submitting, submitError }) {
+export default function ScenarioCard({ scenario, selectedIndex, lockedIndex, onChoice, submitting, submitError }) {
   if (!scenario) return null
 
   const isLocked = lockedIndex !== null
 
   function handleClick(choiceIndex) {
-    if (submitting) return
+    if (submitting || isLocked) return
     onChoice(choiceIndex)
   }
 
@@ -19,6 +19,7 @@ export default function ScenarioCard({ scenario, lockedIndex, onChoice, submitti
 
       <div className={`${styles.choices} ${isLocked ? styles.choicesLocked : ''}`}>
         {scenario.choices.map((choice) => {
+          const isSelected = selectedIndex === choice.choiceIndex && !isLocked
           const isLockedChoice = lockedIndex === choice.choiceIndex
           const isDimmed = isLocked && !isLockedChoice
 
@@ -27,13 +28,12 @@ export default function ScenarioCard({ scenario, lockedIndex, onChoice, submitti
               key={choice.choiceIndex}
               className={[
                 styles.choiceBtn,
+                isSelected ? styles.choiceSelected : '',
                 isLockedChoice ? styles.choiceLocked : '',
-                isDimmed ? styles.choiceDimmed : '',
-                isLocked && isLockedChoice && submitError ? styles.choiceError : ''
+                isDimmed ? styles.choiceDimmed : ''
               ].filter(Boolean).join(' ')}
               onClick={() => handleClick(choice.choiceIndex)}
               disabled={submitting}
-              style={isLocked && isLockedChoice && submitError ? { pointerEvents: 'auto' } : undefined}
             >
               <span className={styles.choiceNumeral}>{ROMAN[choice.choiceIndex]}.</span>
               {choice.text}

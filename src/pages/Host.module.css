@@ -704,7 +704,7 @@
 .lessonBackdrop {
   position: fixed;
   inset: 0;
-  background: rgba(5, 5, 16, 0.75);
+  background: rgba(5, 5, 16, 0.97);
   z-index: 5;
 }
 
@@ -757,6 +757,13 @@
   text-align: center;
   margin: 0;
   line-height: 1.5;
+}
+
+.lessonTally {
+  width: 100%;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(245, 158, 11, 0.15);
 }
 
 /* ── THE RECORD section (end state) ── */

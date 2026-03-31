@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { AnimatePresence } from 'framer-motion'
 import Landing from './pages/Landing.jsx'
+import Create from './pages/Create.jsx'
 import HostSetup from './pages/HostSetup.jsx'
 import Host from './pages/Host.jsx'
 import Baseline from './pages/Baseline.jsx'
@@ -14,6 +15,7 @@ function AppRoutes() {
       <AnimatePresence mode="wait">
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Landing />} />
+          <Route path="/create" element={<Create />} />
           <Route path="/host-setup/:sessionId" element={<HostSetup />} />
           <Route path="/host/:sessionId" element={<Host />} />
           <Route path="/baseline/:sessionId" element={<Baseline />} />

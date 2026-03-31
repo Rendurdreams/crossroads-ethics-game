@@ -36,8 +36,8 @@ const STANCE_QUESTIONS = [
     key: 'break_promise',
     text: 'If you made a commitment you can no longer keep without hurting someone, is it better to break it cleanly or try to honor it partially?',
     options: [
-      { label: 'Yes', value: 'yes' },
-      { label: 'No', value: 'no' },
+      { label: 'Break cleanly', value: 'yes' },
+      { label: 'Honor partially', value: 'no' },
       { label: 'It depends', value: 'it_depends' }
     ]
   },

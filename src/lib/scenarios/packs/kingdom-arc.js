@@ -14,8 +14,8 @@ export const kingdomArcPack = {
       weight: 'low',
       contentNote: null,
       rights_dimension: true,
-      moralTension: 'Equality vs. efficiency — who deserves scarce resources',
-      teaches: 'Distributive justice: would you make this choice not knowing where you would land?',
+      moralTension: 'Who actually deserves to eat?',
+      teaches: 'You just decided who gets resources when there isn\'t enough for everyone. The hard part isn\'t the math — it\'s that real people are on both ends of your choice. Would you have decided differently if you didn\'t know which side you\'d be on?',
       text: "A brutal frost has killed half the kingdom's crops. Your storehouses hold enough grain to keep the capital fed through winter — but the outer villages will starve. Villagers are already arriving at the gates, gaunt and desperate. Your advisors present two paths. Everyone inside these walls is watching you.",
       choices: [
         {
@@ -52,8 +52,8 @@ export const kingdomArcPack = {
       round: 2,
       weight: 'low',
       contentNote: null,
-      moralTension: 'Freedom vs. security — how much liberty do you trade for safety?',
-      teaches: 'Social contract theory: emergency powers rarely get rescinded once granted',
+      moralTension: 'Safety and freedom pull in opposite directions — and you can\'t have all of both.',
+      teaches: 'When you gave up one to protect the other, who benefited? Who paid for it? And once that power is granted, what makes you confident it gets handed back?',
       text: "Something is moving in the Ashlands beyond your borders. Scouts report strange fires, ruined caravans, a growing darkness. Your people are afraid. Your Marshal urges immediate action. Your Elder Council urges caution. Two proposals reach your desk — and everyone is watching to see what kind of ruler you are.",
       choices: [
         {
@@ -90,8 +90,8 @@ export const kingdomArcPack = {
       weight: 'medium',
       contentNote: null,
       rights_dimension: true,
-      moralTension: 'Convenience vs. personhood — what does it cost to act on what you believe?',
-      teaches: 'Rights and dignity: every society has used economic stability to justify denying personhood',
+      moralTension: 'At what point does someone stop being a tool and start being a person?',
+      teaches: 'The Hollow Folk told you directly — they think, they feel, they remember. What you decided next says something about what you believe personhood actually requires.',
       text: "For generations, the Hollow Folk — beings shaped from stone and starlight — have built your roads, worked your mines, tended your fields. They do not eat, sleep, or tire. Your civilization's prosperity rests on their labor. Last night, a delegation appeared before your throne. They spoke. They said: \"We think. We feel. We remember. We are asking to be recognized as citizens.\" Your advisors are divided.",
       choices: [
         {
@@ -128,8 +128,8 @@ export const kingdomArcPack = {
       round: 4,
       weight: 'medium',
       contentNote: null,
-      moralTension: 'Truth vs. stability — do people have a right to know what threatens them?',
-      teaches: 'Epistemic ethics: suppressing truth is paternalism — and you become exactly the authority figure that hides things "for your own good"',
+      moralTension: 'Is it ever okay to decide what other people are ready to know?',
+      teaches: 'You had information that affected everyone in the kingdom — and you chose who got to have it. The moment that felt reasonable, you became the exact kind of authority most people say they\'d never trust.',
       text: "Your scholars have made a devastating discovery. The Hearthstone — the ancient artifact shielding your civilization from the Ashlands — is not simply protecting you. It is slowly draining life from the land itself. In roughly three generations, the soil will be dead. The power is real, but it is borrowing against the future. If you reveal this, panic may shatter the kingdom. If you stay silent, your people live in comfortable ignorance while the clock ticks.",
       choices: [
         {
@@ -165,8 +165,8 @@ export const kingdomArcPack = {
       round: 5,
       weight: 'heavy',
       contentNote: null,
-      moralTension: 'Present needs vs. future survival — what do we owe to people who do not exist yet?',
-      teaches: 'Intergenerational justice: opening the Wellspring is the same choice every generation makes when it consumes at the expense of the future',
+      moralTension: 'You made a decision for people who weren\'t in the room — and never will be.',
+      teaches: 'The people dying today had faces. The people who inherit the consequences of your choice haven\'t been born yet. That gap is where almost every major crisis in the real world lives.',
       text: "Deep beneath the mountains lies the Wellspring — the final reservoir of creation-magic left in the world. Your ancestors sealed it with a warning: \"For those who come after.\" Now the Ashlands have breached your outer defenses. Villages burn. Refugees pour inward. The Wellspring's power could end this crisis in a single burst. But it is finite. Use it now, and it is gone forever. Leave it sealed, and people die today — people with names.",
       choices: [
         {
@@ -203,8 +203,8 @@ export const kingdomArcPack = {
       weight: 'heavy',
       contentNote: "This scenario involves a being kept in sustained suffering to benefit a larger group. It engages directly with what we're willing to know — and live with — about the systems we depend on.",
       rights_dimension: true,
-      moralTension: "One being's agony vs. everyone's prosperity — can torture ever be justified by its outcomes?",
-      teaches: 'The Omelas dilemma: there is no third option. You stay, you leave, or you free the child and watch the city fall.',
+      moralTension: 'What do you do when the thing keeping everyone safe is also the thing causing the most harm?',
+      teaches: 'You couldn\'t fix the system. You could only choose whether to be part of it. That\'s not a fantasy problem — that\'s a question people face in real institutions every day.',
       text: "You have discovered the truth about the Hearthstone's power. It is not a stone at all. Deep within the palace foundations, shackled in a chamber no one was meant to find, is a living being — ancient, luminous, and in agony. Its name is Irel. Every ward, every healing spell, every season of fertile soil — all of it drawn from Irel's life force. It is conscious. It has been screaming for centuries, and your kingdom was built so that no one could hear. Irel looks at you and speaks one word: \"Please.\"",
       choices: [
         {
@@ -241,8 +241,8 @@ export const kingdomArcPack = {
       round: 7,
       weight: 'medium',
       contentNote: null,
-      moralTension: 'Retribution vs. reconciliation — can a kingdom share a future with those who betrayed it?',
-      teaches: 'Restorative vs. retributive justice: Versailles made the next war; the Truth Commission left some victims unheard. Neither option closes cleanly.',
+      moralTension: 'After something breaks, someone has to decide what justice actually looks like.',
+      teaches: 'Punishment feels right. Forgiveness feels generous. Neither one brings back what was lost. What you chose tells you something about what you think justice is actually for.',
       text: "The crisis is over. Your kingdom has survived — changed, scarred, but standing. During the darkest days, a powerful faction — the Ashward Compact — betrayed you. They hoarded resources, sealed their gates against refugees, and dealt with the darkness to protect only themselves. Because of their betrayal, hundreds died who might have lived. Now the Compact kneels before you, defeated. Their leaders beg for mercy. Among them are soldiers who followed orders, families who wanted to survive, and children who had no voice in any of it.",
       choices: [
         {
@@ -287,8 +287,8 @@ export const kingdomArcPack = {
       weight: 'heavy',
       contentNote: null,
       rights_dimension: true,
-      moralTension: 'Power vs. accountability — does a good ruler deserve to keep ruling after what it cost?',
-      teaches: 'The final test of moral reasoning: can you judge yourself by the same standards you applied to everyone else?',
+      moralTension: 'You spent seven rounds making hard calls on behalf of other people. Now someone wants to hold you accountable for them.',
+      teaches: 'How you respond to that question is the whole game. It\'s easy to demand honesty from everyone else. The harder version is deciding whether that standard applies to you.',
       text: "The kingdom stands rebuilt. The people call you wise. Statues are carved in your likeness. But you know what they do not — every choice you made had a cost someone else paid. The dead cannot testify. The exiled cannot vote. A young scribe has uncovered the full record of your reign and asks permission to publish it: every sacrifice, every calculated loss, every life traded for stability. Your advisors are unanimous — bury it. The people are happy. Why ruin that?",
       choices: [
         {

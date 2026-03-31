@@ -239,9 +239,10 @@ export default function Host() {
   function computeTally() {
     const currentScenario = getScenarioByRound(pack, session?.current_round ?? 1)
     if (!currentScenario) return []
-    const counts = [0, 0, 0]
+    const choiceCount = currentScenario.choices.length
+    const counts = new Array(choiceCount).fill(0)
     roundState.choices.forEach(c => {
-      if (c.choice_index >= 0 && c.choice_index < 3) counts[c.choice_index]++
+      if (c.choice_index >= 0 && c.choice_index < choiceCount) counts[c.choice_index]++
     })
     const total = roundState.choices.length
     return currentScenario.choices.map((choice, i) => ({
@@ -601,10 +602,12 @@ export default function Host() {
         </div>
 
         {/* ── Scenario text for presenter ── */}
-        <div className={styles.scenarioOverlay}>
-          <p className={styles.scenarioTitle}>{currentScenario?.title ?? `Dilemma ${session.current_round}`}</p>
-          <p className={styles.scenarioBody}>{currentScenario?.text}</p>
-        </div>
+        {!showLesson && (
+          <div className={styles.scenarioOverlay}>
+            <p className={styles.scenarioTitle}>{currentScenario?.title ?? `Dilemma ${session.current_round}`}</p>
+            <p className={styles.scenarioBody}>{currentScenario?.text}</p>
+          </div>
+        )}
 
         {/* ── Top-left pill: room code + round ── */}
         <div className={styles.hudPillTopLeft}>
@@ -755,9 +758,9 @@ export default function Host() {
               <motion.div
                 className={styles.lessonBackdrop}
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 0.72 }}
+                animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                transition={{ duration: 0.4 }}
+                transition={{ duration: 0.5 }}
               />
               <motion.div
                 className={styles.lessonOverlay}
@@ -775,6 +778,25 @@ export default function Host() {
                     Most chose: <strong>{FRAMEWORKS[dominantFw]?.name}</strong>
                     {' — '}{FRAMEWORKS[dominantFw]?.question}
                   </p>
+                )}
+
+                {tally.length > 0 && (
+                  <div className={styles.lessonTally}>
+                    {tally.map((t, i) => (
+                      <div key={i} className={styles.tallyRow}>
+                        <span className={styles.tallyLabel}>
+                          {t.text}
+                          <span className={styles.tallyFramework}>
+                            {' '}{t.frameworks.map(f => FRAMEWORKS[f]?.name).join(' + ')}
+                          </span>
+                        </span>
+                        <div className={styles.tallyBarTrack}>
+                          <div className={styles.tallyBarFill} style={{ width: `${t.pct}%` }} />
+                        </div>
+                        <span className={styles.tallyPct}>{t.pct}%</span>
+                      </div>
+                    ))}
+                  </div>
                 )}
 
                 <button
