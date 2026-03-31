@@ -63,9 +63,10 @@ Players finish the game understanding that ethics and morals are not the same th
 - ✓ End screen Morals vs Ethics section listing rounds where choices diverged from stated values — validated in Phase 11
 - ✓ AI data shape stubs: `debrief_context` per player, `group_debrief_context` per session, `src/lib/ai.js` with 3 null-returning stubs — validated in Phase 11
 
-### Active (v1.2 in progress — Phase 15 complete)
+### Active (v1.2 in progress — Phase 15.1 complete)
 
 - ✓ Detection rework: `loyalty_vs_fairness` key, 10 condition-specific conflict triggers, updated VALUE_FRAMEWORK_MAP — validated in Phase 15
+- ✓ Moral conflict detection audit: fixed fairness dead-tag false positive, replaced broad matchFramework stance triggers with precise matchCondition entries, wired full choice context through Play.jsx + ConsequenceReveal.jsx — validated in Phase 15.1
 - ✓ Revised baseline questions (Q2/Q3/Q4) with nuanced framing — validated in Phase 15
 - ✓ Round 7 4th choice (Cultural Tribunal, cultural_relativism framework) — validated in Phase 15
 - ✓ Conscience layer text on all 25 scenario choices — validated in Phase 15
@@ -97,7 +98,7 @@ Players finish the game understanding that ethics and morals are not the same th
 - **Session model:** No auth — player_id + session_id in localStorage; ephemeral sessions
 - **Build:** Clean at 491ms, 459 modules
 
-Last updated: 2026-03-30
+Last updated: 2026-03-31
 
 ## Constraints
 
@@ -137,4 +138,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-30 after Phase 13.1 (Dilemma 1 Flow Redesign + Bug Fixes) — bombshell finale replaces reflection round, answer toggle enabled, host screen shows scenario text + correct meter labels + bombshell-specific copy*
+*Last updated: 2026-03-31 after Phase 13.1 (Dilemma 1 Flow Redesign + Bug Fixes) — bombshell finale replaces reflection round, answer toggle enabled, host screen shows scenario text + correct meter labels + bombshell-specific copy*
