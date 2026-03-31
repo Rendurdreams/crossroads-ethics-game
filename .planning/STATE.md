@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Ethical Framework Depth
 status: executing
-stopped_at: Completed 15-divided-kingdom-phase-2 Plan 05
-last_updated: "2026-03-30T23:49:33.391Z"
+stopped_at: Completed 15.1-moral-conflict-detection-audit Plan 01
+last_updated: "2026-03-31T02:10:49.001Z"
 progress:
-  total_phases: 5
+  total_phases: 6
   completed_phases: 5
-  total_plans: 15
-  completed_plans: 15
+  total_plans: 17
+  completed_plans: 16
 ---
 
 # Project State
@@ -19,12 +19,12 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-27)
 
 **Core value:** Players finish understanding their own ethical reasoning — named, visible, connected to a philosophical tradition. In v1.1: they also see where their choices diverged from their own stated values.
-**Current focus:** Phase 15 — divided-kingdom-phase-2
+**Current focus:** Phase 15.1 — moral-conflict-detection-audit
 
 ## Current Position
 
-Phase: 15
-Plan: Not started
+Phase: 15.1 (moral-conflict-detection-audit) — EXECUTING
+Plan: 2 of 2
 Status: Ready to execute
 
 ```
@@ -90,6 +90,7 @@ v1.1 [                      ]   0% (0/5 phases)
 | Phase 15-divided-kingdom-phase-2 P01 | 512 | 3 tasks | 4 files |
 | Phase 15-divided-kingdom-phase-2 P04 | 300 | 2 tasks | 5 files |
 | Phase 15 P05 | 360 | 2 tasks | 4 files |
+| Phase 15.1-moral-conflict-detection-audit P01 | 166 | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -181,6 +182,8 @@ Recent decisions affecting current work:
 - [Phase 15]: myChoiceHistory accumulated locally in Play.jsx — avoids async DB fetch before R8 scribe record render
 - [Phase 15]: isBombshellRound checks scenario ID not round number — resilient to pack reordering
 - [Phase 15]: Homepage splitContainer: side-by-side pathCard layout for host (Convene) vs player (Enter), stacks at 520px
+- [Phase 15.1-moral-conflict-detection-audit]: VALUE_CONDITION_TRIGGERS introduced for fairness: empty array in VALUE_FRAMEWORK_MAP + condition-based triggers for R1-1 and R3-1 only
+- [Phase 15.1-moral-conflict-detection-audit]: lie_to_protect matchFramework triggers replaced with 4 matchCondition entries targeting round-4 and round-bombshell specific choices only
 
 ### Roadmap Evolution
 
@@ -203,7 +206,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-30T23:48:29.064Z
-Stopped at: Completed 15-divided-kingdom-phase-2 Plan 05
+Last session: 2026-03-31T02:10:48.995Z
+Stopped at: Completed 15.1-moral-conflict-detection-audit Plan 01
 Resume file: None
 Next action: Phase verification
