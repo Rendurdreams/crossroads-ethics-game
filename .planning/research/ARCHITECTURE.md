@@ -1,551 +1,452 @@
-# Architecture Patterns
+# Architecture Patterns — Signal Lost v2.0 Integration
 
-**Domain:** Real-time multiplayer ethics game (React + Supabase)
-**Project:** The Crossroads
-**Researched:** 2026-03-25
-**Confidence:** HIGH — architecture derived from official Supabase real-time docs, established React patterns, and the detailed spec in CLAUDE.md
+**Domain:** Multiplayer ethics game — adding senator profiles, discussion mode, break flags, grading rubric to existing React+Supabase SPA
+**Researched:** 2026-03-30
+**Confidence:** HIGH — based on full codebase read, not external research
+
+---
+
+## Existing Architecture Baseline
+
+### Current Routes (App.jsx)
+```
+/                       Landing.jsx         — host/player split
+/create                 Create.jsx          — new session creation
+/host-setup/:sessionId  HostSetup.jsx       — pack selection, QR code
+/host/:sessionId        Host.jsx            — round control, vote tally, world state
+/baseline/:sessionId    Baseline.jsx        — pre-game moral survey (5 questions)
+/play/:sessionId        Play.jsx            — player phone view
+```
+
+### Current Supabase Tables
+- `sessions` — room_code, status, current_round, total_rounds, world_state (jsonb), pack_id
+- `players` — session_id, name, avatar, framework_counts, choice_history, dominant_framework, conflicts, moral_values, moral_stances
+- `choices` — session_id, player_id, round_number, scenario_id, choice_index, frameworks
+- `reflections` — session_id, player_id, text (Round 8 free text)
+
+### Current Lib Layer
+- `scenarios.js` — pack registry, `getPackById`, `getScenarioByRound`, `getDefaultPack`
+- `detection.js` — `computeProfile`, `findConflicts`, `findMoralConflicts`, `VALUE_CONDITION_TRIGGERS`, `STANCE_TRIGGERS`
+- `worldState.js` — `applyChoicesToWorld`, `computeNarrative`
+- `scribeRecord.js` — `generateScribeRecord` (dynamic narrative from R1-R7 choices)
+- `frameworks.js` — framework definitions, CONFLICT_PAIRS
+- `howOthersChose.js` — Awad et al. reference percentages
+- `ai.js` — null-returning stubs for future AI debrief
+
+### Current Component Set
+```
+AnimatedMap.jsx       — GSAP-driven 2D zone map (host screen)
+ScenarioCard.jsx      — scenario text + choice buttons (4-choice support exists)
+ConsequenceReveal.jsx — private consequence + conscience layer post-round
+MeterBar.jsx          — 4-axis animated CSS meter bars (player phones)
+FrameworkProfile.jsx  — end screen: dominant framework, conflict map, choice log
+HowOthersChose.jsx    — post-round Awad comparison screen
+WalkMechanic.jsx      — R6 corridor walk interaction (already implemented)
+TimerDisplay.jsx      — countdown timer (already implemented)
+VoteTally.jsx         — live host vote tally bars
+WorldStatePanel.jsx   — host: 4 meters + threshold event overlay
+PlayerRoster.jsx      — host lobby: live player list
+ContentNote.jsx       — dismissible content warning banner
+```
+
+---
+
+## What Signal Lost Adds
+
+Signal Lost introduces four architectural concerns not present in the kingdom arc:
+
+1. **Senator profiles** — per-player role assignment that drives dynamic "YOUR STAKE" text per round
+2. **Discussion Mode** — host-controlled pause screens between rounds with profile breakdown, conflict spotlight, prompts
+3. **Break flags** — permanent world-state markers set by specific choices, persisting across all remaining rounds and feeding into R8
+4. **Grading rubric** — instructor-facing view of player data; not game logic, but a data export/display concern
 
 ---
 
 ## Recommended Architecture
 
-The system has two distinct client roles — Host and Player — sharing a single Supabase backend. Neither client has privileged database access beyond their role. State lives in Supabase; both clients subscribe to changes they care about and render reactively.
+### Component Boundaries
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                      SUPABASE BACKEND                        │
-│                                                              │
-│  sessions table    players table    choices table            │
-│  (game clock)      (identities)     (vote log)               │
-│                                                              │
-│  real-time subscriptions broadcast row changes to clients    │
-└──────────────────┬──────────────────┬───────────────────────┘
-                   │                  │
-         ┌─────────▼──────┐  ┌────────▼────────┐
-         │  HOST CLIENT   │  │  PLAYER CLIENT  │
-         │  (laptop/proj) │  │  (phone)        │
-         │                │  │                 │
-         │ Writes:         │  │ Writes:          │
-         │  session.status│  │  players row     │
-         │  session.round │  │  choices row     │
-         │  world_state   │  │                 │
-         │                │  │ Reads:           │
-         │ Reads:          │  │  session state  │
-         │  all choices   │  │  own consequence │
-         │  all players   │  │  world_state     │
-         └────────────────┘  └─────────────────┘
-```
-
-The Host is the game clock. Only the Host writes to `sessions`. Players are pure responders — they submit choices and react to session state changes. This one-directional write authority eliminates race conditions in round progression.
+| Component | Responsibility | New vs Modified |
+|-----------|---------------|-----------------|
+| `SenatorProfile.jsx` | Display player's assigned senator card (name, subtitle, per-round stake) | NEW |
+| `DiscussionPauseScreen.jsx` | Host-controlled pause between rounds: vote distribution, profile breakdown, conflict spotlight, prompts | NEW |
+| `BreakFlagOverlay.jsx` | Visual persistent markers on AnimatedMap when a break flag fires | NEW |
+| `AxisTimeline.jsx` | Solo mode: CT/HD/SOL/ACC trajectory as a per-round line graph | NEW |
+| `SoloReflection.jsx` | Solo mode end screen: 8-round log, axis timeline, scribe pattern, break flags, closing question | NEW |
+| `GradingExport.jsx` | Instructor view: renders rubric dimensions with player response data, exportable | NEW |
+| `ScenarioCard.jsx` | Add `senatorStake` prop — renders "YOUR STAKE" panel above choices | MODIFY |
+| `ConsequenceReveal.jsx` | Add break flag announcement when a break-flag choice is made | MODIFY |
+| `AnimatedMap.jsx` | Add break flag overlay markers (permanent visual state) | MODIFY |
+| `WorldStatePanel.jsx` | Show active break flags list in host panel | MODIFY |
+| `MeterBar.jsx` | Accept axis `label` prop from pack config instead of hardcoded names | MODIFY |
+| `FrameworkProfile.jsx` | Add senator profile card and break flag log to end screen | MODIFY |
+| `Host.jsx` | Add Discussion Mode pause gate, profile breakdown panel, facilitator controls | MODIFY |
+| `Play.jsx` | Add senator profile display, conflict alert between rounds, solo mode flow | MODIFY |
+| `Baseline.jsx` | New question set (Q1-Q5 from signal-lost spec); existing structure is fully reusable | MODIFY |
 
 ---
 
-## Session State Machine
+### Data Flow Changes
 
-The `sessions.status` column is the single source of truth for where in the game everyone is. Every UI transition on both Host and Player is driven by this field.
-
-```
-                    ┌─────────┐
-                    │  lobby  │ ← Host creates session, players join
-                    └────┬────┘
-                         │ Host clicks "Start"
-                         │ writes: status='active', current_round=1
-                         ▼
-                    ┌─────────┐
-                    │ active  │ ← Players see scenario, make choices
-                    └────┬────┘
-                         │ Host clicks "Close Round"
-                         │ writes: status='round_complete',
-                         │         world_state=<updated>
-                         ▼
-               ┌──────────────────┐
-               │  round_complete  │ ← Players see consequence + meters
-               └────────┬─────────┘
-                        │
-              ┌─────────┴──────────┐
-              │                    │
-              │ More rounds left   │ No more rounds
-              │ Host clicks Next   │ Host clicks End
-              ▼                    ▼
-         ┌─────────┐          ┌──────────┐
-         │ active  │          │ finished │ ← Profile computed, shown
-         │ (n+1)   │          └──────────┘
-         └─────────┘
-```
-
-### State Transition Ownership
-
-| Transition | Who Writes | What Changes |
-|------------|-----------|--------------|
-| lobby → active | Host | `status='active'`, `current_round=1` |
-| active → round_complete | Host | `status='round_complete'`, `world_state=<new>` |
-| round_complete → active | Host | `status='active'`, `current_round=n+1` |
-| round_complete → finished | Host | `status='finished'` |
-
-The Host never needs to poll. The Host triggers transitions manually via button clicks. Players never trigger session state changes — they only INSERT into `choices`.
-
----
-
-## Component Boundaries
-
-### What Talks to What
+#### Senator Profile Assignment
 
 ```
-App.jsx
-├── Landing.jsx          -- creates or joins session, no subscriptions
-├── Host.jsx             -- owns all host subscriptions, passes props down
-│   ├── PlayerRoster.jsx -- pure display: receives players[] prop
-│   ├── VoteTally.jsx    -- pure display: receives choices[] + scenario prop
-│   ├── WorldStatePanel.jsx -- pure display: receives worldState prop
-│   └── CityScene.jsx    -- (v2) pure display: receives worldState prop
-└── Play.jsx             -- owns player subscription, passes props down
-    ├── ScenarioCard.jsx -- pure display + user action: receives scenario, onChoice
-    ├── ConsequenceReveal.jsx -- pure display: receives choice + consequence text
-    ├── MeterBar.jsx     -- pure display: receives type + value
-    └── FrameworkProfile.jsx  -- pure display: receives profile object
+Join flow (Play.jsx on mount):
+  1. Player joins session
+  2. Fetch existing senator_profile_id values for this session
+  3. assignProfile(existingAssignments) → picks first unused slot from shuffled deck
+  4. Write senator_profile_id to players row on insert
+  5. SenatorProfile.jsx reads player.senator_profile_id + current round → renders stake text
+
+Profile data lives in:
+  /src/lib/senatorProfiles.js    — static data file, 6 profiles × 8 stakes
 ```
 
-### Component Responsibilities
+Profile assignment runs client-side in Play.jsx at join time: fetch current players for session, compute taken IDs, assign first available. There is a low-probability race condition for simultaneous joins. For classroom use (sequential joins common), this is acceptable. If collision occurs, two players share a profile — minor UX issue, not a game failure.
 
-| Component | Responsibility | Supabase Access | Emits |
-|-----------|---------------|-----------------|-------|
-| Landing.jsx | Create/join session | INSERT sessions, INSERT players | Redirects to /host or /play |
-| Host.jsx | Game clock, subscriptions | SUBSCRIBE choices, SUBSCRIBE players, UPDATE sessions | Calls lib/ functions |
-| Play.jsx | Player experience, subscription | SUBSCRIBE sessions, INSERT choices | None (self-contained) |
-| ScenarioCard.jsx | Show scenario, lock choice | None | onChoice(choiceIndex) |
-| ConsequenceReveal.jsx | Show private outcome | None | None |
-| VoteTally.jsx | Live % bars | None | None |
-| WorldStatePanel.jsx | 4 meters + scenario info | None | None |
-| PlayerRoster.jsx | Live player list | None | None |
-| FrameworkProfile.jsx | End screen profile | None | None |
-| MeterBar.jsx | Animated meter variant | None | None |
-| CityScene.jsx (v2) | Three.js city | None | None |
+#### Break Flags
 
-**Design rule:** Only Host.jsx and Play.jsx have Supabase subscriptions. All child components are pure — they receive props and render. This makes each component independently testable and avoids subscription sprawl.
-
----
-
-## Data Flow
-
-### Inbound Flow (Supabase → UI)
+Break flags are triggered by specific (round, choice_index) pairs. They are permanent once set.
 
 ```
-Supabase INSERT/UPDATE
-        │
-        ▼
-  Host.jsx or Play.jsx
-  (subscription handler)
-        │
-   setState(...)
-        │
-        ▼
-  React re-render
-        │
-   Props passed down
-        │
-        ▼
-  Child components render
+Storage: sessions.break_flags (new jsonb column)
+  Default: {}
+  Shape: { 'R1-ghost': true, 'R2-argus': true, ... }
+
+Trigger point: Host.jsx closeRound()
+  After applyChoicesToWorld():
+    newFlags = checkBreakFlags(roundChoices, roundNumber, pack)
+    mergedFlags = { ...session.break_flags, ...newFlags }
+    UPDATE sessions SET break_flags = mergedFlags
+
+Consumption:
+  AnimatedMap.jsx         — overlay visual markers when flag is set
+  WorldStatePanel.jsx     — active flags list in host panel
+  ConsequenceReveal.jsx   — announces new flag on the round it fires
+  SoloReflection.jsx      — lists all flags with round context at end screen
+  generateScribeRecord()  — reads flags to produce R8 narrative references
 ```
 
-### Outbound Flow (User Action → Supabase)
-
-```
-Player taps choice
-        │
-  ScenarioCard.jsx calls onChoice(index)
-        │
-  Play.jsx calls supabase INSERT into choices
-        │
-  Play.jsx updates local UI optimistically
-  (lock the choice button immediately, don't wait)
-        │
-  Supabase broadcasts INSERT to Host.jsx subscription
-        │
-  Host.jsx vote tally updates live
-```
-
-### World State Update Flow
-
-```
-Host clicks "Close Round"
-        │
-  Host.jsx calls applyChoicesToWorld(choices, scenario, worldState)
-        │                          (from worldState.js — pure function)
-  Returns newWorldState
-        │
-  Host.jsx calls computeAndStoreProfiles() if last round
-        │
-  Host.jsx calls supabase UPDATE sessions SET
-    status='round_complete',
-    world_state=newWorldState
-        │
-  Play.jsx subscription fires on UPDATE
-        │
-  Play.jsx shows consequence + updates meter bars
-```
-
-The world state computation happens client-side in Host.jsx before writing to Supabase. This is correct: the Host is authoritative, the computation is deterministic, and there is no need for a server function.
-
----
-
-## Supabase Channel Strategy
-
-Use the minimum number of channels required. More channels = more WebSocket connections = more failure points.
-
-### Recommended: 2 channels per client
-
-**Host.jsx — 2 channels:**
+The break flag map belongs in the pack data file. Each flagging choice carries a `breakFlag` key:
 
 ```javascript
-// Channel 1: Watch incoming choices for this session
-supabase.channel(`choices:${sessionId}`)
-  .on('postgres_changes', {
-    event: 'INSERT',
-    schema: 'public',
-    table: 'choices',
-    filter: `session_id=eq.${sessionId}`
-  }, handler)
-  .subscribe()
-
-// Channel 2: Watch players joining (roster + submitted count)
-supabase.channel(`players:${sessionId}`)
-  .on('postgres_changes', {
-    event: 'INSERT',
-    schema: 'public',
-    table: 'players',
-    filter: `session_id=eq.${sessionId}`
-  }, handler)
-  .subscribe()
+// In signal-lost pack data
+{
+  choiceIndex: 2,
+  text: 'Honor Contracts',
+  frameworks: ['consequentialism'],
+  breakFlag: 'R1-ghost',              // new field, optional
+  breakFlagLabel: 'Ghost population marker',
+  worldImpact: { CT: -20, HD: -20, SOL: -18, ACC: -10 }
+}
 ```
 
-Host does NOT need to subscribe to `sessions` — it is the writer, not the reader.
+#### World Axes: Naming Migration
 
-**Play.jsx — 1 channel:**
+The kingdom arc uses `{ trust, courage, solidarity, awareness }`. Signal Lost uses `{ CT, HD, SOL, ACC }`.
+
+`applyChoicesToWorld()` is already key-agnostic — it iterates `choice.worldImpact` entries and maps them to `newState[meter]`. Signal Lost choices using `{ CT, HD, SOL, ACC }` keys work without any changes to the function, provided `sessions.world_state` is initialized with those keys at session creation.
+
+Add `axes` and `axisStart` to the pack schema:
+```javascript
+{
+  id: 'signal-lost',
+  axes: {
+    CT:  { label: 'Civil Trust',    code: 'CT'  },
+    HD:  { label: 'Human Dignity',  code: 'HD'  },
+    SOL: { label: 'Solidarity',     code: 'SOL' },
+    ACC: { label: 'Accountability', code: 'ACC' }
+  },
+  axisStart: 65,   // signal-lost starts at 65, not 50
+  ...
+}
+```
+
+HostSetup writes `world_state` on session creation using `axisStart` and the pack's axis keys. MeterBar.jsx receives axis labels from the pack config, not hardcoded values.
+
+#### Discussion Mode
+
+Discussion Mode is set at session creation in HostSetup and stored in `sessions.mode` (new column: `'discussion' | 'solo'`).
+
+In Discussion Mode, the round lifecycle gains a new status:
+
+```
+lobby → active → round_complete → discussion_pause → active (next round)
+```
+
+`sessions.status` already handles `lobby | active | round_complete | finished`. Adding `discussion_pause` as a valid status value is the minimal change. It flows through the existing subscription model — players subscribed to session updates react to this new status by showing a "Discussion in progress" waiting screen.
+
+Host.jsx flow after `closeRound()` in Discussion Mode:
+1. World state computed, `round_complete` published
+2. Host sees `DiscussionPauseScreen` with vote breakdown + prompts + conflict spotlight
+3. Facilitator presses "Continue" → status set to `discussion_pause` briefly, then to `active` with `current_round + 1`
+
+`DiscussionPauseScreen` props:
+```javascript
+{
+  round: number,
+  scenario: PackScenario,
+  players: Player[],     // with senator_profile_id
+  choices: Choice[],     // this round's submitted choices
+  pack: Pack             // for discussion prompts + conflict spotlight data
+}
+```
+
+Discussion prompts and conflict spotlight data live in the pack file, keeping the component generic and reusable if other packs add discussion prompts later.
+
+#### Conflict Alerts (between rounds)
+
+Signal Lost requires a brief non-judgmental flag between rounds when a choice contradicts a baseline survey answer. This uses the existing `findMoralConflicts()` mechanism — the change is timing, not logic.
+
+In the kingdom arc, conflicts surface only at the end screen. In Signal Lost, they surface as an interstitial after consequence reveal but before the next round loads.
+
+Play.jsx already tracks `myChoiceHistory`. After each consequence reveal, call `findMoralConflicts()` and check if the just-submitted round produced a new conflict entry. If yes, show the conflict alert before advancing.
+
+Signal Lost's STANCE_TRIGGERS need to be added to `detection.js` — new `matchCondition` entries referencing signal-lost scenario IDs (e.g., `scenarioId === 'signal-lost-r4'`).
+
+#### Grading Rubric
+
+The rubric is instructor-facing only. It reads existing player data (choice_history, senator profile, break flags, baseline survey answers, closing reflection) and presents it against the 4 rubric dimensions.
+
+Delivery: `/grading/:sessionId` route — separate from the host flow, accessible via a link in Host.jsx's end view. Print-friendly single-page layout per player.
+
+No new Supabase tables needed. Reads from `players`, `choices`, `reflections`. Does not need real-time subscriptions — fetch once on mount.
+
+---
+
+### New Supabase Schema Changes
+
+Additive only. No existing columns removed or renamed.
+
+```sql
+-- sessions
+ALTER TABLE sessions ADD COLUMN mode text DEFAULT 'discussion';
+-- Values: 'discussion' | 'solo'
+
+ALTER TABLE sessions ADD COLUMN break_flags jsonb DEFAULT '{}';
+-- Shape: { 'R1-ghost': true, 'R4-sealed': true, ... }
+
+-- players
+ALTER TABLE players ADD COLUMN senator_profile_id text;
+-- Values: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | null (kingdom arc / packs without profiles)
+
+ALTER TABLE players ADD COLUMN axis_history jsonb DEFAULT '[]';
+-- Array of { round: number, CT: number, HD: number, SOL: number, ACC: number }
+-- Solo mode timeline graph; empty for kingdom-arc players
+
+ALTER TABLE players ADD COLUMN closing_reflection text;
+-- Solo mode: answer to "Would you make these choices again?"
+-- Feeds grading rubric dimension 4
+```
+
+No changes to `choices` or `reflections` tables.
+
+---
+
+### New Library Files
+
+```
+/src/lib/senatorProfiles.js     — 6 profile objects with per-round stakes data
+/src/lib/breakFlags.js          — BREAK_FLAG_MAP, checkBreakFlags(choices, roundNumber, pack)
+/src/lib/axisNarrative.js       — computeAxisNarrative(axisValues, breakFlags) for signal-lost end state
+```
+
+`breakFlags.js` isolates trigger logic from Host.jsx, keeping `closeRound()` readable:
 
 ```javascript
-// Single channel: watch session state changes
-supabase.channel(`session:${sessionId}`)
-  .on('postgres_changes', {
-    event: 'UPDATE',
-    schema: 'public',
-    table: 'sessions',
-    filter: `id=eq.${sessionId}`
-  }, (payload) => {
-    setSessionState(payload.new)
+// breakFlags.js
+export function checkBreakFlags(roundChoices, roundNumber, pack) {
+  const newFlags = {}
+  const scenario = pack.scenarios.find(s => s.round === roundNumber)
+  if (!scenario) return newFlags
+
+  scenario.choices.forEach(choice => {
+    if (!choice.breakFlag) return
+    const triggered = roundChoices.some(c => c.choice_index === choice.choiceIndex)
+    if (triggered) newFlags[choice.breakFlag] = true
   })
-  .subscribe()
-```
 
-Players do NOT subscribe to choices or other players. They only need to know when session state changes (status, current_round, world_state).
-
-### Why Not More Channels
-
-With 25 players each holding 1 channel, that is 25 WebSocket connections to Supabase. Well within the free tier limit (200 concurrent). Adding per-player channels for choices or players would multiply this without benefit. Filter on `session_id` is sufficient to scope each subscription.
-
-### Channel Cleanup
-
-Always clean up on component unmount. Memory leak and orphaned subscriptions are the most common Supabase real-time mistake.
-
-```javascript
-useEffect(() => {
-  const channel = supabase.channel(...)
-  // ... setup ...
-  return () => supabase.removeChannel(channel)
-}, [sessionId])
-```
-
----
-
-## localStorage Strategy
-
-Player identity must persist across page refreshes (phone sleep, accidental navigation) without login.
-
-### What to Store
-
-```javascript
-// On successful player creation in Landing.jsx
-localStorage.setItem('crossroads_player_id', player.id)
-localStorage.setItem('crossroads_session_id', session.id)
-localStorage.setItem('crossroads_room_code', roomCode)
-localStorage.setItem('crossroads_player_name', name)
-```
-
-### Recovery Pattern in Play.jsx
-
-```javascript
-// On mount, check localStorage before asking to join
-const savedPlayerId = localStorage.getItem('crossroads_player_id')
-const savedSessionId = localStorage.getItem('crossroads_session_id')
-
-if (savedPlayerId && savedSessionId) {
-  // Verify the session is still active (not 'finished')
-  // If valid: restore state, re-attach subscription
-  // If session 'finished': clear localStorage, show "Session ended"
-  // If player not found (host cleared data): clear localStorage, redirect to /
+  return newFlags
 }
 ```
 
-### What NOT to Store
+---
 
-Do not store choice history, world state, or framework counts in localStorage. These live in Supabase. localStorage is identity only — a key to look up server state.
+### New Routes
 
-### Host Identity
+```
+/grading/:sessionId     GradingExport.jsx    — instructor rubric view, print-friendly
+```
 
-The Host has no localStorage entry. The Host is identified by URL parameter or session data. If the Host refreshes, Host.jsx re-fetches session state and re-attaches subscriptions. Host state loss is recoverable because Supabase holds truth.
+App.jsx addition:
+```jsx
+<Route path="/grading/:sessionId" element={<GradingExport />} />
+```
+
+No new player-facing routes. Solo mode end screen is a state within Play.jsx (same as the existing `gameFinished` state showing `FrameworkProfile`), not a separate route.
 
 ---
 
-## lib/ Layer Architecture
+### Modified Scenario Pack Schema
 
-The lib/ functions are pure — no side effects, no Supabase calls. They transform data. This makes them independently testable before any UI is wired.
-
-```
-lib/
-  supabase.js      -- client init + typed query helpers (ONLY file with Supabase import)
-  scenarios.js     -- static data: scenario objects with framework tags + world impacts
-  frameworks.js    -- static data: framework definitions + conflict pair map
-  detection.js     -- pure functions: computeProfile(), findConflicts()
-  worldState.js    -- pure functions: applyChoicesToWorld(), thresholdCheck()
-```
-
-### Dependency Rule
-
-```
-components → lib/ functions (OK)
-lib/ functions → each other (OK: detection.js imports from frameworks.js)
-lib/ functions → Supabase (ONLY supabase.js)
-components → supabase.js directly (AVOID — prefer helpers in supabase.js)
-```
-
-This means if Supabase changes its API or you want to mock it in tests, you change one file.
-
----
-
-## Patterns to Follow
-
-### Pattern 1: Optimistic UI Lock on Choice Submission
-
-**What:** Lock the choice button immediately on tap, before the Supabase INSERT resolves.
-**When:** Any time user action triggers a database write.
+Signal Lost pack adds fields not present in kingdom-arc. All new fields are optional at the pack-schema level so existing packs continue to work unchanged.
 
 ```javascript
-// In Play.jsx
-const [submittedChoice, setSubmittedChoice] = useState(null)
-
-async function handleChoice(choiceIndex) {
-  setSubmittedChoice(choiceIndex)  // immediate lock — user sees response
-  await supabase.from('choices').insert({
-    session_id: sessionId,
-    player_id: playerId,
-    round_number: sessionState.current_round,
-    scenario_id: currentScenario.id,
-    choice_index: choiceIndex,
-    frameworks: currentScenario.choices[choiceIndex].frameworks
-  })
-  // If insert fails, you could revert — but for this app, treat as fire-and-forget
+{
+  id: 'signal-lost',
+  // ... existing required fields ...
+  axes: { CT: {...}, HD: {...}, SOL: {...}, ACC: {...} },  // new
+  axisStart: 65,           // new — default is 50 if absent
+  profiles: true,          // new — tells engine to assign senator profiles on join
+  discussionPrompts: {     // new — keyed by round number
+    1: ["...", "...", "..."],
+    2: ["...", "..."],
+    // ...
+  },
+  conflictPairs: {         // new — per-round spotlight pairs for Discussion Mode
+    1: { profiles: ['B', 'C'], why: '...' },
+    // ...
+  },
+  scenarios: [
+    {
+      // ... existing required fields ...
+      choices: [
+        {
+          choiceIndex: 0,
+          text: '...',
+          frameworks: ['care'],
+          breakFlag: 'R1-ghost',           // new — optional, only on flagging choices
+          breakFlagLabel: 'Ghost population marker',  // new — display string
+          worldImpact: { CT: +8, HD: +15, SOL: +12, ACC: -8 }
+        }
+      ]
+    }
+  ]
 }
 ```
 
-### Pattern 2: Derive Don't Duplicate
+---
 
-**What:** Compute derived state from Supabase data in-component, don't store duplicates.
-**When:** Any time you are tempted to mirror Supabase state into a second useState.
+### Component Data Flow
 
-```javascript
-// In Host.jsx — don't store "submittedCount" separately
-// Derive it from the choices array you already have
-const submittedCount = choices.filter(
-  c => c.round_number === sessionState.current_round
-).length
-const playersStillDeciding = players.length - submittedCount
 ```
+sessions.mode
+  └─ Host.jsx: show DiscussionPauseScreen after round_complete if mode === 'discussion'
+  └─ Play.jsx: solo end screen path vs wait-for-host path
 
-### Pattern 3: Status-Driven Render Switch
+sessions.break_flags
+  └─ AnimatedMap.jsx: overlay markers per active flag
+  └─ WorldStatePanel.jsx: active flag list in host panel
+  └─ ConsequenceReveal.jsx: announces new flag when it fires this round
+  └─ generateScribeRecord() + axisNarrative: reads flags for R8 record
 
-**What:** Use sessionState.status as the primary branch in Play.jsx and Host.jsx.
-**When:** Always — it is the state machine.
+players.senator_profile_id
+  └─ Play.jsx: renders SenatorProfile.jsx with per-round stake text
+  └─ DiscussionPauseScreen: profile → choice breakdown grid
+  └─ GradingExport.jsx: reports which profile each student had
 
-```javascript
-// In Play.jsx
-function renderContent() {
-  switch (sessionState.status) {
-    case 'lobby':     return <WaitingLobby players={players} />
-    case 'active':    return <RoundView ... />
-    case 'round_complete': return <ConsequenceReveal ... />
-    case 'finished':  return <FrameworkProfile profile={profile} />
-    default:          return <LoadingScreen />
-  }
-}
+players.axis_history
+  └─ AxisTimeline.jsx (solo mode end screen only)
+  └─ GradingExport.jsx: trajectory data for consequence tracking rubric dimension
+
+players.closing_reflection
+  └─ SoloReflection.jsx: captures text response at end
+  └─ GradingExport.jsx: rubric dimension 4
+
+pack.discussionPrompts + pack.conflictPairs
+  └─ DiscussionPauseScreen.jsx: reads per-round prompts + conflict spotlight pairs
 ```
-
-### Pattern 4: Compute Profiles on Finished Transition
-
-**What:** When Host writes `status='finished'`, also write `dominant_framework` and `conflicts` to each player row.
-**When:** End of last round only — not incrementally.
-
-```javascript
-// In Host.jsx, handleEndSession()
-const updates = players.map(player => ({
-  id: player.id,
-  ...computeProfile(player.choice_history)
-}))
-await Promise.all(updates.map(u =>
-  supabase.from('players').update({
-    dominant_framework: u.dominant,
-    conflicts: u.conflicts,
-    framework_counts: u.counts
-  }).eq('id', u.id)
-))
-await supabase.from('sessions').update({ status: 'finished' }).eq('id', sessionId)
-```
-
-Write player profiles before flipping status to 'finished'. Players subscribing to session status will then fetch their own profile row on 'finished' event.
 
 ---
 
-## Anti-Patterns to Avoid
+### Build Order
 
-### Anti-Pattern 1: Subscribing to Everything in Every Component
+Dependencies must be built before consumers.
 
-**What:** Putting Supabase subscriptions inside PlayerRoster, VoteTally, MeterBar, etc.
-**Why bad:** 10 components × 25 players = 250+ subscriptions. Supabase free tier limit is 200 concurrent connections. Presentation fails in the middle of class.
-**Instead:** Subscriptions only in Host.jsx and Play.jsx. Pass data down as props.
+**Wave 1 — Data foundation (no UI, no routes)**
+1. `senatorProfiles.js` — static data, no external deps
+2. Signal Lost pack file with all 8 rounds, axis deltas, break flags, discussion prompts, conflict pairs — this is the largest single deliverable
+3. `breakFlags.js` — depends on pack schema being settled
+4. `axisNarrative.js` — computeAxisNarrative for signal-lost world state end copy
+5. Supabase schema migrations: add 5 new columns across sessions + players
+6. Update `scenarios.js` pack registry — add signal-lost, set as default
 
-### Anti-Pattern 2: Polling Instead of Subscribing
+**Wave 2 — Player-facing components**
+7. `SenatorProfile.jsx` — static render, reads senatorProfiles.js
+8. Modify `ScenarioCard.jsx` — add `senatorStake` prop
+9. Modify `ConsequenceReveal.jsx` — add break flag announcement
+10. Modify `Baseline.jsx` — update to signal-lost Q1-Q5 question set
+11. Modify `detection.js` — add signal-lost STANCE_TRIGGERS
+12. Modify `Play.jsx` — senator profile assignment on join, conflict alerts between rounds, solo mode end screen routing
+13. `AxisTimeline.jsx` — CT/HD/SOL/ACC per-round line graph
+14. `SoloReflection.jsx` — solo end screen (builds on FrameworkProfile structure)
 
-**What:** Using setInterval + supabase.from('choices').select() to check for new votes.
-**Why bad:** Polling introduces latency and hammers the database. With 25 players each polling every second, that is 25 req/sec on a free-tier project.
-**Instead:** Supabase real-time subscriptions push changes instantly without polling.
+**Wave 3 — Host-facing components**
+15. `DiscussionPauseScreen.jsx` — full pause UI (requires pack prompts from Wave 1)
+16. Modify `WorldStatePanel.jsx` — add active break flags panel
+17. Modify `AnimatedMap.jsx` — add break flag overlay markers
+18. Modify `MeterBar.jsx` — accept axis label prop from pack config
+19. Modify `Host.jsx` — Discussion Mode status gate, DiscussionPauseScreen, facilitator controls
+20. Modify `HostSetup.jsx` — add mode selector (Discussion / Solo) before session creation
 
-### Anti-Pattern 3: Storing Game State in React State Alone
-
-**What:** Keeping world_state or choice_history only in React useState, not writing to Supabase.
-**Why bad:** Host refreshes mid-presentation = all state lost. Presentation fails.
-**Instead:** Every meaningful state change writes to Supabase immediately. React state is a cache of Supabase truth, not the source.
-
-### Anti-Pattern 4: Revealing Framework Before Choice
-
-**What:** Including framework labels in the rendered ScenarioCard choice buttons.
-**Why bad:** Turns the game into a philosophy quiz. Players optimize for appearing smart rather than responding authentically. Destroys the pedagogical value.
-**Instead:** Framework label rendered only in post-choice state (after submittedChoice is set).
-
-### Anti-Pattern 5: Computing Profiles Incrementally Each Round
-
-**What:** Running computeProfile() and writing results after every round.
-**Why bad:** Profile meaning comes from the complete pattern across all rounds. Partial profiles written mid-game and then overwritten creates confusion and extra writes.
-**Instead:** Compute and write profiles exactly once, when status transitions to 'finished'.
-
-### Anti-Pattern 6: Using Supabase Broadcast Instead of Postgres Changes
-
-**What:** Using Supabase Broadcast (ephemeral pub/sub) rather than Postgres Changes for game state.
-**Why bad:** Broadcast is ephemeral — if a player's phone sleeps and reconnects, they miss events. Postgres Changes are durable: reconnecting clients can refetch current state.
-**Instead:** Use `postgres_changes` for all game state. On reconnect, Play.jsx fetches current session row and player row to restore state, then re-attaches subscription.
+**Wave 4 — Grading route**
+21. `GradingExport.jsx` — read-only rubric view
+22. Add `/grading/:sessionId` route to App.jsx
+23. Add "Export Rubric" link to Host.jsx end view
 
 ---
 
-## Scalability Considerations
+### Patterns to Follow
 
-This is a 10–25 player game for a single 15-minute session. Scalability concerns are primarily about reliability under that load, not internet scale.
+#### Pack-Driven Configuration
+Signal Lost specializes behavior through pack data, not new code paths. The game engine reads `pack.profiles`, `pack.axisStart`, `pack.axes` at session creation. Kingdom arc continues to work unchanged. The pattern: `if (pack.profiles) { ... }` appears once per file, not scattered through every render.
 
-| Concern | At 10 players | At 25 players | Notes |
-|---------|--------------|--------------|-------|
-| Supabase connections | 10 (comfortable) | 25 (comfortable) | Free tier: 200 concurrent |
-| Real-time latency | <100ms | <200ms | Supabase real-time SLA |
-| Postgres writes/sec | ~3 (choices) | ~8 (choices) | Free tier: no documented limit for this load |
-| Page load time | Fast | Fast | Vite bundle, no large assets in v1 |
+#### Status Machine Extension
+The existing `sessions.status` machine handles the full round lifecycle. Add `discussion_pause` as a valid status rather than a separate column. Host.jsx's existing subscription handles the new status value with one new conditional.
 
-The main reliability risk is not load — it is network variability on student phones. The optimistic lock pattern handles this: the player sees immediate feedback even if the Supabase write takes 500ms on a slow connection.
+#### Break Flags as Session-Level State
+Break flags live on the session, not per player. They represent world events visible to everyone. The host writes them at `closeRound()`; all subscribers read them via the existing session real-time subscription. This avoids any cross-player aggregation query.
 
----
-
-## Build Order
-
-What must exist before what. Each phase has a hard dependency on the phase before it.
-
-### Phase 1 — Supabase Foundation (dependency for everything)
-- Create project, run schema SQL
-- Enable real-time on `sessions`, `players`, `choices`
-- Configure RLS: anon can INSERT players + choices scoped to their session; anon can SELECT sessions by id; no DELETE
-- Verify subscriptions fire in Supabase dashboard before touching React
-- Note: RLS misconfiguration is the #1 cause of silent failures in Supabase real-time apps
-
-### Phase 2 — lib/ Data Layer (dependency for all UI)
-- `supabase.js`: client init + helper functions (createSession, joinSession, submitChoice, updateSessionStatus)
-- `scenarios.js`: full scenario library — this is static, write it once
-- `frameworks.js`: framework definitions + conflict pair map
-- `detection.js`: computeProfile(), findConflicts() — unit test these in isolation
-- `worldState.js`: applyChoicesToWorld(), thresholdCheck() — unit test these in isolation
-
-**Gate:** detection.js and worldState.js must produce correct output before Phase 3. They are the brain; everything downstream depends on them.
-
-### Phase 3 — Landing Page (dependency for testing Phases 4+)
-- Create session flow: generate room code, insert session row, redirect to /host
-- Join session flow: enter code + name, insert player row, redirect to /play
-- localStorage writes on both flows
-- localStorage recovery check on Play.jsx mount
-
-**Gate:** You need real session IDs and player IDs to test Phase 4 and 5.
-
-### Phase 4 — Host Dashboard (no Three.js)
-- Lobby: PlayerRoster with live Supabase subscription, round count selector, Start button
-- Round: VoteTally with live choices subscription, WorldStatePanel with CSS bars, timer display, Close Round button, Next Round button
-- Round close logic: call applyChoicesToWorld(), write new world_state + status to Supabase
-- End: group framework breakdown, anonymous reflection feed, End Session button
-
-### Phase 5 — Player View
-- Session subscription: react to status changes via switch pattern
-- Scenario render from scenarios.js by current_round index
-- Choice submission with optimistic lock
-- Post-choice framework label reveal
-- Consequence reveal on round_complete
-- CSS meter bars (static values, no animation in v1)
-- FrameworkProfile on finished
-
-### Phase 6 — Three.js City (v2, after classroom test)
-- Only add if v1 is confirmed working
-- Static scene first; wire worldState props second
-- Each visualization independently testable
-
-### Phase 7 — Polish (v2)
-- Animated SVG meter bars on phones
-- Timer pressure animation
-- Mobile layout audit
-- QR code generator for room code
-- Load test: 25 concurrent subscriptions
+#### Senator Profile as Static Data + Single Column
+Profile data (2KB) lives in `senatorProfiles.js`. Supabase stores only the profile ID. This avoids bloating the players row and keeps Supabase queries simple.
 
 ---
 
-## Critical Dependency Graph
+### Anti-Patterns to Avoid
 
-```
-Supabase schema
-      │
-      ▼
-lib/supabase.js
-      │
-      ├──────────────────────┐
-      ▼                      ▼
-lib/scenarios.js        lib/frameworks.js
-lib/worldState.js            │
-      │                      ▼
-      │               lib/detection.js
-      │
-      ▼
-Landing.jsx (creates real session + player IDs)
-      │
-      ├─────────────────────┐
-      ▼                     ▼
-Host.jsx               Play.jsx
-(Phases 4)            (Phase 5)
-```
+#### Don't Add a Route for Discussion Pause
+The pause screen is a status state within `/host/:sessionId`, not a route. A separate route would require tearing down and re-establishing real-time channels across navigation.
 
-Nothing in Phase 4 or 5 can be tested with real data until Phase 3 exists. Detection and world state logic can be tested before Phase 3 using mock data.
+#### Don't Store Break Flags Per Choice Row
+Break flags belong on the session. Per-choice storage would require aggregating across all players to determine if a flag is active, adding query complexity. Session-level jsonb is the right shape.
+
+#### Don't Rename Existing Axis Keys in worldState.js
+`applyChoicesToWorld()` is already key-agnostic. Renaming its internal handling to CT/HD/SOL/ACC would break kingdom arc. Let pack `worldImpact` keys determine axis names.
+
+#### Don't Compute Profiles Mid-Game
+`computeProfile()` and `generateScribeRecord()` run at end-of-session. The only mid-game signal is the per-round conflict alert: one `findMoralConflicts()` call against the latest choice. Nothing more.
+
+#### Don't Add Grading Logic to the Game Engine
+The grading rubric reads existing data. It does not need new detection logic or Supabase writes. GradingExport.jsx is a read-only view.
+
+---
+
+## Integration Points Summary
+
+| Feature | What Changes | New Files | Modified Files |
+|---------|-------------|-----------|----------------|
+| Senator profiles | Profile ID assigned on join; per-round stake text in ScenarioCard | `senatorProfiles.js`, `SenatorProfile.jsx` | `Play.jsx`, `ScenarioCard.jsx`; Supabase: `players.senator_profile_id` |
+| Discussion Mode | New `discussion_pause` status; host sees pause screen after each round | `DiscussionPauseScreen.jsx` | `Host.jsx`, `HostSetup.jsx`, `Play.jsx`; Supabase: `sessions.mode` |
+| Break flags | Checked at round close; stored on session; rendered as map overlays | `breakFlags.js`, `BreakFlagOverlay.jsx` | `Host.jsx`, `AnimatedMap.jsx`, `ConsequenceReveal.jsx`, `WorldStatePanel.jsx`; Supabase: `sessions.break_flags` |
+| Grading rubric | New read-only route reads existing data | `GradingExport.jsx` | `App.jsx` (add route), `Host.jsx` (add link); Supabase: `players.closing_reflection` |
+| Axis names | Pack declares axes + start value; worldState.js unchanged | signal-lost pack file, `axisNarrative.js` | `MeterBar.jsx` (label prop), `HostSetup.jsx` (init world_state from pack) |
+| Solo mode end screen | Play.jsx `gameFinished` state extended | `SoloReflection.jsx`, `AxisTimeline.jsx` | `Play.jsx`; Supabase: `players.axis_history` |
+| Conflict alerts (mid-game) | findMoralConflicts called after each round in Play.jsx | none | `Play.jsx`, `detection.js` (signal-lost STANCE_TRIGGERS) |
 
 ---
 
 ## Sources
 
-- CLAUDE.md: Full architecture spec, Supabase schema, component structure, build order (HIGH confidence — authoritative project spec)
-- Supabase Realtime documentation: `postgres_changes` event model, channel lifecycle, RLS behavior with subscriptions (HIGH confidence — official docs)
-- React patterns: useState + useEffect subscription lifecycle, prop drilling vs. context tradeoffs for this scale (HIGH confidence — well-established)
-- Supabase free tier limits: 200 concurrent realtime connections (MEDIUM confidence — verify current limits at supabase.com/pricing before launch)
+- Codebase direct read: `/src/App.jsx`, `/src/pages/Host.jsx`, `/src/pages/Play.jsx`, `/src/pages/Baseline.jsx`, `/src/lib/detection.js`, `/src/lib/worldState.js`, `/src/lib/scenarios.js`, `/src/lib/scribeRecord.js`, `/src/lib/supabase.js`, `/src/components/ScenarioCard.jsx`, `/src/components/AnimatedMap.jsx` (HIGH confidence — first-party source)
+- Game spec: `/Users/jay/MoralApp/signal_lost_phase_brief.md` (HIGH confidence — authoritative spec)
+- Project context: `.planning/PROJECT.md` (HIGH confidence — current milestone definition)

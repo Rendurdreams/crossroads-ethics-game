@@ -1,166 +1,244 @@
 # Feature Landscape
 
-**Domain:** Real-time host-controlled classroom/party game with phone players
-**Project:** The Crossroads — Multiplayer Ethics Game
-**Researched:** 2026-03-25
-**Confidence note:** WebSearch and WebFetch were unavailable. This analysis draws from training knowledge of Kahoot, Mentimeter, Jackbox, and Polleverywhere (all well-documented platforms stable before knowledge cutoff). MEDIUM confidence overall on genre conventions; HIGH confidence on this project's specific requirements, which are fully specified in CLAUDE.md.
+**Domain:** Educational ethics simulation — dynamic player profiles, facilitated discussion, persistent world consequences, and instructor assessment
+**Project:** The Crossroads v2.0 — Signal Lost (Sci-Fi Senator Ethics Game)
+**Researched:** 2026-03-30
+**Scope note:** This file supersedes the v1.0 features analysis. It covers ONLY the new Signal Lost milestone features. The v1.0 platform (room code join, host round control, vote tally, framework detection, etc.) is fully built and not re-analyzed here.
+
+---
+
+## Context: What Already Exists
+
+The platform already has:
+- Multi-pack scenario system (3 packs, pack-driven total_rounds)
+- Moral baseline survey (5 questions, stored in `moral_values` + `moral_stances`)
+- Framework/conflict detection (`computeProfile()`, `findConflicts()`)
+- Host dashboard with round control, vote tally, lesson overlay, HowOthersChose
+- Player view with choice submission, consequence reveal, framework profile end screen
+- AnimatedMap with 4 reactive zones, world state meters
+- Timer pressure (R5), walk mechanic (R6), scribe record (R8)
+- ConsequenceReveal with conscience layer display
+- 4-choice ScenarioCard support
+
+The new features are additive layers on this foundation, not replacements.
 
 ---
 
 ## Table Stakes
 
-Features users expect from the genre. Missing = game doesn't feel like a real product.
+Features that users of educational ethics simulations expect. Missing = the game feels incomplete or unconvincing as a classroom tool.
 
-| Feature | Why Expected | Complexity | Notes |
-|---------|--------------|------------|-------|
-| Room code join (no login) | Kahoot/Jackbox established this as the genre norm. Any friction before joining kills classroom momentum. | Low | 4-digit numeric code. Players type it, enter name, done. Store player_id in localStorage. |
-| Live player roster in lobby | Host and players need to see who's in the room. Creates social anticipation before the game starts. | Low | Supabase real-time INSERT on players table. Emoji avatar assigned on join adds personality with zero complexity. |
-| Host-controlled round progression | Host drives the pace. Players cannot advance themselves. Critical for classroom context where presenter needs control. | Low | Session status field: lobby → active → round_complete → active... Host triggers each transition. |
-| Scenario/question visible on phone | Player's phone is their primary input device. Content must render fully and readably on mobile. | Low | Large serif text, full-screen padding, no horizontal scroll. |
-| Choice lock on tap | After selecting, player cannot change. Prevents gaming the system and creates commitment UX. | Low | Optimistic UI: button grays immediately on tap, choice written to Supabase async. |
-| Live submission counter | "X of Y have submitted" on both host and player screens. Tells the host when to close and prevents players from sitting idle. | Low | Count of choices with round_number = current_round for this session. |
-| Aggregate results reveal | After round closes, host sees breakdown of how players voted. This is the primary host feedback loop. | Low | VoteTally.jsx: percentage bars per choice. Animates as it appears. |
-| No-login persistence across page refresh | Players who refresh their phone should not lose their session. Common failure point in classroom settings. | Low | localStorage player_id + session_id. Re-fetch current session state on mount. |
-| Content visible from projection distance | Room code and key UI elements must be legible from 15–20 feet. | Low | Room code: minimum 72px font. Consider white on dark background for contrast. |
-| Mobile-first layout | 100% of players will be on phones. Broken mobile layout = broken game. | Low | Single-column, thumb-reachable buttons, no tiny tap targets. |
-| Clear "waiting" state after submitting | Players submit their choice and then wait. Dead air on their phone = confusion/disengagement. | Low | "Waiting for [X] more players..." or animated holding screen. |
-| Host can start when ready (not auto-start) | Host needs to brief the room before kicking off. Auto-start on join count would be disastrous live. | Low | Start button enabled when 2+ players joined. Host clicks manually. |
+| Feature | Why Expected | Complexity | Dependencies |
+|---------|--------------|------------|--------------|
+| Role/profile assignment at join | Role-based simulations (Reacting to the Past, PbD Simulation, political science sims) universally assign player roles. Without a personal stake, it's just a survey. Players need to know WHO they are before they decide what they do. | Low | Assigned at session join. Stored on player row. Displayed throughout play. |
+| Profile name and subtitle visible during play | Players need to remember their persona mid-round. Shown in header or side panel during scenario. Forgetting who you are breaks immersion. | Low | Requires `profileId` on player record, profile lookup in session state. |
+| Per-round personal stake shown before each choice | The stakes panel is the core differentiator of role-based ethics games. Without it, profiles are cosmetic. The stake tells the player what THIS vote costs THEM personally. | Low | Stake text keyed to `profileId` + round number, rendered above scenario text. |
+| Scenario text still readable with profile context added | Adding a "Your Stake" panel must not crowd out the scenario. Phone layouts are tight. | Low | CSS layout discipline. Profile stake in a callout, scenario text in primary area. |
+| Discussion prompts accessible to facilitator | Every ethics simulation (EthicsGame, Reacting to the Past, PbD Simulation) ships with discussion guides. The game is the starting gun; the discussion is the lesson. Facilitators need prepared prompts. | Low-Medium | Pre-written, per-round prompts. Two to three per round. Static data, no AI. |
+| Facilitator can pause between rounds | Nearpod, teacher-paced classroom tools, and every serious game designed for facilitated use gives the instructor pacing control. Auto-advance removes the ability to debrief. | Medium | Discussion Mode flag on session. After round closes, game waits on facilitator "Continue" rather than auto-loading next round. |
+| Player profile visible throughout the game | Not just at join — players should be able to see their full profile (health, money, family, politics variables) at any point. Needed for informed decision-making. | Low | Profile card accessible via tap/expand at any time during play. |
+| Session mode set at launch, not mid-game | Classroom games that allow mid-game mode switching create confusion. Mode (discussion vs. solo) is a session-level config set before players join. | Low | `mode` field on sessions table. Set at HostSetup before room code generated. |
+| Axis values visible during play | The four world-state axes (CT, HD, SOL, ACC) must be visible to players throughout. Players can't reason about consequences they can't see. | Low | Already exists as AnimatedMap + WorldStatePanel. Axis labels and values update live. |
+| End-of-game reflection that is NOT a score | Educational simulations that reveal a score at the end train players to game for points. The end screen is a mirror, not a grade. Players should see their pattern, their record, their world — not a number. | Low | Already architecturally correct (FrameworkProfile, scribe record). Signal Lost extends this, doesn't replace it. |
+| Grading rubric available to instructor (not shown to players) | Every serious educational tool with assessment claims ships instructor-facing rubrics. Without one, the game is a classroom toy rather than an assessed activity. The rubric separates "game" from "assignment." | Low | Static document/PDF, OR an in-app rubric display behind a facilitator view. Not shown to players. |
 
 ---
 
 ## Differentiators
 
-Features that make this game distinct from Kahoot/Mentimeter. Not expected by genre — but create the pedagogical and experiential value that justifies building this instead of using an existing tool.
+Features that make Signal Lost distinct from any existing ethics simulation. Not expected by the genre — but deliver the pedagogical and experiential value that justifies building this.
 
-| Feature | Value Proposition | Complexity | Notes |
-|---------|-------------------|------------|-------|
-| Framework label revealed AFTER choice | The surprise is the lesson. Players choose from gut, then learn what philosophical tradition they just enacted. No existing classroom tool does this. | Low | Store choice, then append label + 1-sentence explanation in `round_complete` state. Timing is everything: label appears when consequence does, not before. |
-| Private consequence per player | Each player gets a private narrative outcome after the round closes. Kahoot shows a leaderboard. This shows a story. Creates emotional weight the genre lacks. | Medium | ConsequenceReveal.jsx: consequence text keyed to choice_index, rendered when session status = round_complete. |
-| Collective world state (4 meters) | Aggregate choices physically change a shared environment. Players see the city they built together. Introduces systemic thinking — individual choices compound. | Medium | applyChoicesToWorld() runs after each round. Four meters update on host screen and player phones. Drives the narrative. |
-| Framework profile at end (not a score) | Kahoot ends with a leaderboard. This ends with a personalized philosophical profile. The end screen IS the lesson. | High | computeProfile() + findConflicts() must work correctly. Profile has 4 sections: dominant framework, conflict map, least-used prompt, choice log. |
-| Named conflict detection | When a player's framework shifts between rounds, the game names the tension explicitly and gives it a philosophical label. No other tool surfaces internal contradiction as content. | High | Pre-defined conflict pairs. Requires at least 2 rounds with opposing frameworks. Conflict copy is pre-written per pair. |
-| Pass option on heavy rounds | Content note + ability to skip a round without submitting. Acknowledges that some scenarios touch real life. No other classroom tool in this genre does this. | Low | Pass submits a null/abstain choice_index. Excluded from framework detection. World state calculation skips abstentions. |
-| Free-text reflection round | Round 6 is not a choice — it's a question answered in prose. Responses feed the debrief anonymously. Bridges game and discussion. | Medium | Text input + submit. Stored separately. Host end view shows scrolling anonymous feed. |
-| Anonymous group framework breakdown | Host end view shows what percentage of the group leaned toward each framework overall. Not "who chose what" — just the aggregate pattern. Invites class discussion without exposing individuals. | Medium | Sum framework_counts across all players. Pie or bar display on host end screen. |
-| World state narrative on host end screen | The final city state gets a 1–2 sentence narrative generated from meter values. "Your group built a city where trust collapsed but solidarity held." | Medium | Pre-written narrative templates keyed to meter combinations. Not AI-generated — deterministic from meter thresholds. |
-| Modular round count (3/4/5/6) | Host configures the session length before starting. Kahoot has fixed length. This adapts to available time. | Low | total_rounds field on session. Round selector in lobby view. |
-| Threshold events | When a meter crosses a critical threshold (e.g. trust < 20), a dramatic visual event triggers on the host screen. Creates memorable presentation moments. | High | Three.js only (deferred to v2). CSS placeholder for v1: full-screen overlay with threshold text. |
-| QR code for room join | Players scan projected screen instead of typing a code. Reduces friction in large rooms. | Low | qrcode.js or similar. Deferred to Phase 8. Not blocking. |
+| Feature | Value Proposition | Complexity | Dependencies |
+|---------|-------------------|------------|--------------|
+| Asymmetric personal stakes per senator profile | The same dilemma has different personal costs for each player. Profile B faces Round 6 with VANTAGE bonds; Profile F faces it with no financial stake and a brother in the displaced queue. This is NOT cosmetic. It creates genuine moral tension unique to each player. No other classroom ethics tool does per-player asymmetric stakes this precisely. | Medium | 6 profiles x 8 rounds = 48 stake strings. Stored in profile data. Rendered dynamically per `profileId` + `roundNumber`. |
+| Profile breakdown in Discussion Mode | After each round, the facilitator can see (and optionally reveal) which senator profile voted which way — anonymously by profile letter, not by player name. This surfaces the structural effect of personal interest on decision-making. "Profile B (VANTAGE bonds) chose Walk Away. Profile F (no stake) enforced. Ask why." | Medium | Requires profile-to-choice mapping in session aggregate data. Conditionally shown in discussion pause screen. |
+| Conflict spotlight (conditional, per round) | The game detects when the pre-defined conflict pair for a round chose differently and surfaces it explicitly: "Profile B and Profile C chose opposite options. This round's conflict is [X]. Ask them to explain." Fires ONLY when the pair actually split — not a generic prompt. | Medium | Conflict pair table (6 pairs). Post-round: check if conflict pair chose different options. If yes, generate spotlight text with actual choices filled in. |
+| Break flags: permanent world-state markers | When a player makes a choice that triggers a break flag (7 possible), a permanent visual marker appears on the map and STAYS visible for all remaining rounds. Early choices recontextualize later ones. In R8, the scribe record explicitly names every break flag triggered. This is "creeping complicity" as a mechanic — not just a narrative claim. | High | Break flag state in session record (7 boolean slots). AnimatedMap must render active flags alongside normal landmarks. R8 scribe record reads active flags to customize its text. |
+| Profile-aware conflict alerts between rounds | After each round, if a player's choice conflicts with their senator profile's stated interests or their own baseline survey, a brief non-judgmental alert fires: "Before Round 4: Your donor base opposes disclosure. You just published the audit. What changed?" Different from general framework conflict detection — this is profile-specific. | Medium | Cross-references `profileId` + `choiceIndex` against a conflict alert table. Extends existing moral conflict detection (Phase 15.1) with profile-context layer. |
+| Axis trajectory timeline in end screen | Solo mode shows an axis chart that plots each of the 4 axes across all 8 rounds as a timeline — not just the final value, but the arc. Players can see exactly when their world changed, and which choices drove which drops. No existing ethics simulation does longitudinal consequence visualization at this granularity. | Medium-High | `axisHistory` array (one entry per round). Timeline graph component (SVG or CSS). Significant visual work but not complex data logic. |
+| Round 5 forced choice on timer expiry | When the 90-second timer expires, the game automatically selects a choice (highlighted/default) on the player's behalf. This is not punitive — it IS the lesson (Greene et al. dual-process theory: time pressure activates System 1). The forced choice is flagged in the record and mentioned in the debrief. | Medium | Already implemented in v1.2. Signal Lost reuses this mechanic with its own round 5. Timer expiry flag stored in session record. |
+| Round 6 physical walk mechanic with 3 outcome states | The player moves an avatar in a corridor. The choice is encoded in body movement, not menu selection. Three outcomes: walked to terminal (I), turned away (II), stopped short at door (III). Midpoint crossing triggers the decision. This bypasses deliberative rationalization in a way that clicking a button does not. | High | Already implemented in v1.2 as WalkMechanic.jsx. Signal Lost reuses and configures it for the Kael corridor scenario. |
+| Dynamic scribe record reading break flags | The R8 scribe record is not just framework-based — it references specific break flags. A player who triggered R1-ghost AND R4-sealed sees different text than one who triggered neither. The record reads like an investigation of their own choices, not a generic archetype description. | High | generateScribeRecord() must accept both `frameworkPattern` and active `breakFlags`. 7 optional text insertions in the scribe templates. |
+| Grading rubric tied to game mechanics | The instructor rubric directly references game artifacts: "Student identifies how R4-II (sealed audit) interacted with their senator profile's conflict of interest." Rubric dimensions map onto specific game mechanics (consequence tracking → break flags; personal stake awareness → profile tensions). This is not a generic essay rubric retitled. | Low | Static instructor-facing document. No game logic required. |
+| Assessment export in solo mode | After R8, solo mode generates a downloadable summary: senator profile, all 8 choices with timestamps, axis trajectory, written reflection response, scribe pattern, break flags triggered. JSON + optional PDF. Designed for submission to instructor. | High | PDF generation (jsPDF or similar). JSON export is trivial. PDF layout is non-trivial. New dependency. |
 
 ---
 
 ## Anti-Features
 
-Features Kahoot/Mentimeter have that this game deliberately should not build.
+Features that would seem useful but actively undermine Signal Lost's pedagogical design.
 
 | Anti-Feature | Why Avoid | What to Do Instead |
 |--------------|-----------|-------------------|
-| Leaderboard / points / winner | Scoring ethics choices sends the wrong message. "You got +500 points for deontology" trivializes the content and creates a game about winning instead of reflection. | Framework profile: a lens, not a score. The end screen shows patterns, not rankings. |
-| Speed bonus (faster = more points) | Kahoot rewards rapid answers. For moral dilemmas requiring 30–45 seconds of reading, speed incentives are actively harmful. | Timer that indicates a round will close, but no point bonus for early submission. |
-| Player names on tally board | Showing "Alex chose B" while voting is live would compromise privacy and make players game each other rather than reason independently. | Anonymous aggregate percentages only. Choices are private until framework profile at end — and even then, never attributed publicly. |
-| Social comparison of scores | "You finished 3rd out of 22" is the Kahoot model. This game has no equivalent. | The only comparison is group vs. individual: "you leaned care ethics; the group leaned virtue ethics." Not competitive. |
-| Question bank / quiz creation UI | Mentimeter and Kahoot let users build their own questions. This game has a fixed, curated scenario library that requires careful framework tagging. Custom scenarios would require the full framework-tagging system to be exposed. | Fixed library. If customization is needed later, it's a v3 feature with significant authoring tooling required. |
-| Persistent user accounts | No login means no "your history across sessions." This is a feature, not a limitation — the ephemeral session is appropriate for a classroom game. | localStorage only. No accounts. No history. |
-| Mid-round chat / reactions | Kahoot and Jackbox have emoji reactions and live chat during rounds. For this content (abuse, suicide, pregnancy), mid-round reactions would be disruptive and potentially harmful. | Post-round debrief discussion is the host's job. The game creates material for that discussion, not a channel for it. |
-| "Correct answer" reveal | Kahoot reveals the right answer. This game has no right answers — and revealing which framework "wins" would undermine the entire pedagogy. | Private consequence per player shows what happened as a result of their choice. No "right" is ever declared. |
-| Auto-advance (timer auto-closes round) | Auto-advance removes host control. In a live classroom, the presenter needs to be able to pause, ask questions, and decide when to move on. | Timer display with optional pause/extend. Host always manually closes the round. |
-| Background music / sound effects | Kahoot uses music to signal energy. The tone of this game is contemplative, not competitive. Sound would undermine the emotional weight of the scenarios. | Silence or ambient sound (deferred). Visual design carries the tone. |
-| Advertising / upgrade prompts | Any monetization-layer friction during a live presentation is catastrophic. | Self-hosted, no accounts, no plan gates. |
+| Profile breakdown visible to players during voting | If players know which profile voted which way during the round, they will vote based on social dynamics rather than their own reasoning. The breakdown is for post-round discussion, not live influence. | Show profile breakdown ONLY after round closes, and ONLY at facilitator discretion in Discussion Mode. Players never see it. |
+| Per-player framework score visible to other players | Knowing "Profile B is a consequentialist" before the game ends shapes voting behavior. The framework reveal is a private end-screen experience, not a leaderboard. | Framework profile shown privately to each player on their own phone at game end. Aggregate group breakdown (no names, no profiles) shown on host screen. |
+| Facilitator "correct answer" indicator in Discussion Mode | Showing the facilitator which choice was "best" would sabotage the game's core principle that there are no right answers. Even in discussion, the facilitator's job is to surface tension, not resolve it. | Discussion prompts point at the tension: "Profile B chose [X] because [stake]. Did the stake make this the right call, or just the convenient one?" |
+| Mid-round profile switching | Players should not be able to change their senator profile mid-game. Asymmetric stakes only work if the player is committed to living with them. | Profile assigned at join, immutable for the session. |
+| Break flag redemption or "healing" | Once a break flag triggers, the world state marker is permanent. Giving players a way to remove it by making a later "good" choice would eliminate the creeping complicity mechanic. | Break flags are one-way. The R8 record reflects every flag triggered, with no ability to retroactively edit the record. |
+| Automatic Discussion Mode advancement | If the game auto-advances after 5 minutes of discussion, it puts the technology in control of the classroom. The entire point of Discussion Mode is facilitator pacing. | The game WAITS. No timer on the pause screen. Facilitator presses "Continue" when ready. Period. |
+| Grading rubric shown to students before reflection | If students know the rubric dimensions before writing their reflection, they will write to the rubric rather than engaging authentically. The rubric is an instructor instrument. | Rubric lives in a separate instructor view (HostSetup or a dedicated `/rubric` route, password-optional). Not exposed to players at any point. |
+| Solo mode discussion prompts | Discussion prompts are designed for social facilitation. In solo mode, they are confusing noise — "ask this person to explain" makes no sense when playing alone. | Solo mode shows a different end screen: full decision log, axis timeline, scribe record, break flag map, closing question. No discussion prompts. |
+| Assessment export in Discussion/Classroom mode | Exporting individual player data from a group session risks exposing private choices to the instructor in a context where players expected anonymity. Discussion Mode aggregate data is appropriate; individual exports are not. | Assessment export is SOLO MODE ONLY. Discussion Mode provides aggregate facilitator reports, not per-player submissions. |
 
 ---
 
 ## Feature Dependencies
 
+### Senator Profile System
+
 ```
-Room code join
-  → Player roster live update (requires player INSERT subscription)
-  → Lobby "start" button (requires player count > 1)
+Profile assigned at join
+  → Profile data (name, subtitle, health/money/family/politics) fetched from profileData.js
+  → `profileId` stored on player row in Supabase
+  → Per-round stake rendered from profile.stakes[`r${roundNumber}`]
+  → Profile card accessible during play (tap to expand)
+  → Profile-aware conflict alerts keyed to profileId + choiceIndex (between rounds)
+  → Profile breakdown in Discussion Mode post-round (profileId → choiceIndex mapping)
+  → Conflict spotlight fires if conflict pair (from conflict table) split (profileId A vs B)
+  → End screen: profile reflected in scribe record context
+```
 
-Host starts round
-  → Session status → "active" (triggers scenario render on phones)
-  → Choice lock UI (requires active status)
-  → Live submission counter (requires choices INSERT subscription)
+### Discussion Mode
 
-Host closes round (status → "round_complete")
-  → Choice lock (closes choice window)
-  → Private consequence reveal (keyed to player's choice_index)
-  → Framework label reveal (keyed to player's choice_index)
-  → World state update (applyChoicesToWorld runs)
-  → VoteTally animation (aggregate shown on host screen)
-  → Framework tally per round (shown on host screen)
+```
+mode: 'discussion' set at HostSetup
+  → Session stored with mode field
+  → After each round closes (host closes round)
+      → Discussion Pause Screen renders on host dashboard
+      → Players see "Waiting for facilitator..." hold screen (NOT next round)
+      → Pause screen sections:
+          1. This Session distribution (live vote %)
+          2. Profile Breakdown (profileId → choiceRoman, revealed at facilitator discretion)
+          3. Discussion Prompts (2-3 per round, static data)
+          4. Conflict Spotlight (conditional — only fires if conflict pair split)
+      → Facilitator controls: skip, show/hide profile breakdown, add custom prompt, timer (3/5/10 min)
+      → Facilitator presses "Continue" → next round loads for all players
+```
 
-World state update
-  → Meter bars update on player phones
-  → 3D city update on host screen (v2)
-  → Threshold event check → threshold overlay if triggered (v1: CSS; v2: Three.js)
+### Break Flags
 
-All rounds complete (host triggers end)
-  → computeProfile() runs per player
-  → findConflicts() runs per player
-  → dominant_framework + conflicts written to Supabase
-  → FrameworkProfile.jsx renders on player phones
-  → Host end view: city final + framework breakdown + reflection feed
+```
+Each choice in scenario data tagged with breakFlag: boolean + flagKey: string (optional)
+  → On choice submission: if breakFlag, set session.breakFlags[flagKey] = true
+  → AnimatedMap: reads breakFlags, renders permanent markers on correct map zones
+  → All subsequent rounds: markers remain visible (never cleared)
+  → R8 scribe generation: reads breakFlags, inserts flag-specific text into scribe narrative
+  → Solo mode end screen: Break Flags section shows visual map of triggered flags
+  → Assessment export: includes breakFlags object
+```
 
-Free-text round (Round 6)
-  → Text input instead of choice buttons (requires round type flag in scenario data)
-  → Responses stored separately, not in choices table
-  → Fed to host end view anonymous scroll
-  → Does NOT trigger framework detection or world state update
+### Grading Rubric
+
+```
+Rubric is instructor-only content
+  → Option A: PDF/static document linked from HostSetup
+  → Option B: dedicated /rubric route in the app (behind a simple passphrase)
+  → 4 dimensions: Moral Reasoning Quality (30pts), Personal Stake Awareness (20pts),
+    Consequence Tracking (25pts), Closing Reflection (25pts)
+  → Bonus dimension: Baseline alignment (10pts, only if baseline completed)
+  → NOT shown to players at any point
+  → In solo mode: assessment export JSON is the student submission artifact
+```
+
+### Assessment Export (Solo Mode only)
+
+```
+Solo mode: R8 → Reflection Screen
+  → Player completes closing question ("Would you make these choices again?")
+  → "Export My Record" button appears
+  → generateExport() compiles:
+      - profileId + profile name
+      - choices[1..8] with timestamps and axis deltas
+      - axisHistory (per-round values for all 4 axes)
+      - writtenReflection (text response)
+      - scribePattern (dominant framework text)
+      - breakFlags (which triggered, which round)
+  → Export formats:
+      - JSON: trivial, always available
+      - PDF: requires jsPDF or similar; significant layout work; Phase 2 candidate
 ```
 
 ---
 
 ## MVP Recommendation
 
-Given the days-to-build timeline, prioritize features in this order:
+Signal Lost v2.0 has two natural tiers. The first ships the core game; the second ships the assessment infrastructure.
 
-**Must ship for the game to work (v1 blocking):**
-1. Room code join + player roster (game cannot start without this)
-2. Host round progression control (game cannot run without this)
-3. Scenario render on phones with choice lock (the core input)
-4. Submission counter — "X/Y submitted" on host and player (host needs this to know when to close)
-5. Aggregate vote tally on host (host needs this for debrief)
-6. Private consequence reveal (the key emotional differentiator from Kahoot)
-7. Framework label reveal post-choice (the key pedagogical differentiator)
-8. World state update + CSS meter bars (the shared environment mechanic)
-9. computeProfile() + FrameworkProfile.jsx end screen (the culminating feature)
+### Tier 1 — Core Game (Must Ship)
 
-**Must ship for v1 but simpler implementation acceptable:**
-- Content note + pass option (simple conditional render, important for safety)
-- Anonymous group framework breakdown on host end screen (sum of counts, simple display)
-- World state narrative on host end screen (pre-written templates, deterministic)
-- Free-text reflection round (text input + anonymous feed on host)
+All of these are blocking for the game to function as designed:
 
-**Defer to v2:**
-- Animated SVG meter bars on phones (CSS placeholder acceptable for v1)
-- 3D Three.js city (CSS placeholder acceptable for v1) — explicitly deferred in PROJECT.md
-- Timer with pause/extend (display-only timer acceptable for v1)
-- Threshold event animations (CSS overlay text acceptable for v1)
-- QR code generator (typing the code is fine for v1)
+1. **Senator profile assignment + display** — Without per-round personal stakes, the game is just the existing scenario system with a cosmetic label. Profiles are the structural differentiator.
+2. **Discussion Mode pause screen** — Without facilitator-controlled pacing, the game cannot be used in a classroom. This is not optional for the classroom context.
+3. **Profile breakdown (post-round, facilitator-revealed)** — One of the two highest-value moments in Discussion Mode. The conflict spotlight is the other.
+4. **Conflict spotlight (conditional)** — Only fires when the pre-defined pair actually split. High value, low frequency.
+5. **Break flags (permanent markers on AnimatedMap)** — The "creeping complicity" mechanic. Without this, Round 8 cannot reference prior choices. The scribe record loses its specificity.
+6. **Signal Lost scenario pack (8 rounds)** — The scenario data itself, including framework tags, axis deltas, conscience layer, break flag triggers, discussion prompts, and per-profile stakes.
+7. **Profile-aware conflict alerts** — Lighter weight than full discussion mode features; fires between rounds based on profile + choice. Extends existing Phase 15.1 detection system.
 
-**Park indefinitely:**
-- Custom scenario authoring
-- Session history / persistent accounts
-- AI-generated debrief commentary
+### Tier 2 — Assessment Infrastructure (Defer if Needed)
+
+These are valuable but not blocking for the core game to run:
+
+8. **Grading rubric (instructor-facing document or route)** — Can be a PDF linked from HostSetup. No app logic required for Tier 1 MVP.
+9. **Axis trajectory timeline on end screen** — Significant visual work. Solo mode end screen can ship without it in Tier 1.
+10. **Assessment export (JSON)** — Solo mode JSON export is low complexity. Add after Tier 1 game is stable.
+11. **Assessment export (PDF)** — New dependency (jsPDF). High complexity for layout. Tier 2 or later.
+
+### Defer to Post-Milestone
+
+- PDF export with full layout
+- Custom discussion prompt input field (facilitator can add their own prompt)
+- Timer controls for discussion sessions (3/5/10 min countdown in Discussion Mode)
+- Break flag visual animations on the AnimatedMap (static markers acceptable for v2.0)
+
+---
+
+## Complexity Notes
+
+| Feature | Complexity Rating | Reasoning |
+|---------|------------------|-----------|
+| Senator profile data + per-round stakes | Low | 6 profiles, 48 stake strings. Pure data + render. No logic complexity. |
+| Profile card accessible during play | Low | Expandable panel showing static profile data. |
+| Discussion Mode mode flag + wait state | Low-Medium | `mode` field on sessions. After round close: players see hold screen, host sees pause screen. Routing logic straightforward. |
+| Discussion Pause Screen (all 4 sections) | Medium | Profile breakdown requires post-round choice aggregation by profileId. Conflict spotlight conditional logic. Otherwise static. |
+| Facilitator controls in Discussion Mode | Medium | Skip/continue is Low. Show/hide profile breakdown is Low. Custom prompt input is Medium (new UI + session update). Timer is Medium (broadcast channel). |
+| Break flags — data model | Low | Boolean flags on session record. 7 flags max. Schema change: add `break_flags jsonb` to sessions table. |
+| Break flags — AnimatedMap rendering | Medium | AnimatedMap must read active flags and render persistent markers. 7 distinct map markers needed. CSS/SVG work. |
+| Break flags — R8 scribe integration | Medium-High | `generateScribeRecord()` must conditionally insert text based on active flags. Up to 7 optional insertions. Template logic complexity. |
+| Profile-aware conflict alerts | Medium | Cross-reference table: profileId + choiceIndex → alert text. Extends detection.js. 6 profiles x ~3-4 triggering combinations = ~20 entries. |
+| Axis trajectory timeline | Medium-High | SVG or Canvas chart showing 4 axes over 8 rounds. No external charting library in stack — must be hand-built or add recharts/d3. New visual component. |
+| Grading rubric document/route | Low | Static content. Either a linked PDF or a simple read-only React page at `/rubric`. No data logic. |
+| Assessment export JSON | Low | `JSON.stringify(exportObject)` + `<a>` download trigger. Trivial. |
+| Assessment export PDF | High | jsPDF or react-pdf introduces new dependencies. Layout non-trivial. Significant testing surface. |
+| Signal Lost scenario pack (data only) | Medium | 8 rounds × (4 choices × (framework tags + axis deltas + conscience layer + break flag flag)) + per-profile stakes (6×8) + discussion prompts (3×8) = substantial but mechanical data authoring. |
 
 ---
 
 ## Sources
 
-**Confidence levels:**
-- Kahoot feature set: MEDIUM (training knowledge, stable pre-cutoff; WebFetch unavailable to verify current state)
-- Mentimeter feature set: MEDIUM (same)
-- Jackbox UX patterns: MEDIUM (same)
-- This project's specific features: HIGH (fully specified in CLAUDE.md and PROJECT.md, read directly)
+**Research basis and confidence levels:**
 
-Key genre knowledge sources consulted in training data:
-- Kahoot: kahoot.com, education technology research literature
-- Mentimeter: mentimeter.com feature pages, UX case studies
-- Jackbox: jackboxgames.com, extensive community documentation of room code pattern
-- Polleverywhere: classroom response system literature
-- Academic literature on classroom response systems (CRS) and "clicker" research
+- Role-based game design with asymmetric profiles: Based on research from Reacting to the Past (Barnard College pedagogy), the PbD Simulation (PMC/Springer), and role-play simulation literature (Cambridge Core, ScienceDirect). HIGH confidence that per-player asymmetric stakes are table stakes for role-based ethics simulations.
 
-**Anti-features rationale sources:**
-- Pedagogical anti-gaming research: Deterding et al. on gamification in education
-- Privacy concerns in classroom tech: FERPA guidance, education technology ethics literature
-- Game design: Jesse Schell, "The Art of Game Design" — on score systems and player psychology
+- Facilitator-controlled pacing as table stakes: Confirmed by MIT 2025 thesis on teacher-centered game design, Nearpod teacher-paced mode literature, and CMPG design guidelines (ScienceDirect). HIGH confidence.
+
+- Discussion mode design patterns: Multiple sources confirm facilitator-controlled pacing + post-round discussion prompts as the standard pattern for classroom ethics games (EthicsGame resource center, PbD Simulation, educational game facilitation research). MEDIUM confidence on specific UI conventions (pause screen layout, conflict spotlight).
+
+- Break flags / permanent state markers: No established academic term for this mechanic — it exists in narrative games (Telltale, Inkle Studios) and some policy simulations but is not a named pattern in educational game literature. Treated as a design original that implements "creeping complicity" (the project's own stated design principle). MEDIUM confidence in implementation approach; LOW confidence in "industry standard" framing (because there isn't one).
+
+- Grading rubric as table stakes for assessed games: Confirmed by AAC&U VALUE Rubric for Ethical Reasoning (well-established standard in college ethics education), EthicsGame resource center, and clinical simulation assessment literature (Healio). HIGH confidence.
+
+- Assessment export in solo mode: Standard in LMS-integrated games (xAPI, SCORM) and solo-play serious games. Filament Games' "big data" assessment pattern (external assessment via full decision log). MEDIUM confidence on specific export format.
+
+- Axis trajectory timeline as differentiator: No evidence of this feature in comparable ethics simulations. Confirmed as novel through negative research — searched ethics game end screens, decision log patterns, and found nothing matching this specificity of longitudinal axis visualization. HIGH confidence this is differentiating.
+
+**Key sources consulted:**
+- Reacting to the Past: https://reacting.barnard.edu/
+- PbD Simulation: https://pmc.ncbi.nlm.nih.gov/articles/PMC7755628/
+- Frontiers Information Ethics Simulation: https://www.frontiersin.org/journals/psychology/articles/10.3389/fpsyg.2022.933298/full
+- Filament Games assessment strategies: https://www.filamentgames.com/blog/5-assessment-strategies-learning-games/
+- MIT teacher-centered design thesis: https://dspace.mit.edu/bitstream/handle/1721.1/162986/luong-jkluong-meng-eecs-2025-thesis.pdf
+- AAC&U VALUE Rubric for Ethical Reasoning: https://www.aacu.org/value/rubrics/value-rubrics-ethical-reasoning
+- CMPG design guidelines: https://www.sciencedirect.com/science/article/abs/pii/S0360131511000960
+- signal_lost_phase_brief.md (project specification): HIGH confidence, directly authored

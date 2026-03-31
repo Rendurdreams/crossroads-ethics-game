@@ -1,363 +1,332 @@
-# Technology Stack
+# Technology Stack — Signal Lost v2.0 New Features
 
-**Project:** The Crossroads — Multiplayer Ethics Game
-**Researched:** 2026-03-25
-**Confidence:** MEDIUM (web tools unavailable; conclusions from training data through August 2025, all libraries in stable/mature state with high confidence in recommendations)
-
----
-
-## Recommended Stack
-
-### Core Framework
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| React | 18.x | UI component tree, state, hooks | Decided. Concurrent features (useTransition, Suspense) unnecessary for this scope — but hooks model is exactly right for Supabase subscription lifecycle management |
-| Vite | 5.x | Dev server, bundler, build | Decided. Sub-second HMR, no config overhead, `vite build` produces deploy-ready dist/ |
-
-### Routing
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| React Router | 6.x (v6.28+) | Client-side routing for Landing / Host / Play | Three routes only. RR v6 with `createBrowserRouter` is the right fit — v7 added framework-mode complexity this project doesn't need. Avoid upgrading to v7 unless you want to adopt the full framework model. TanStack Router is type-first and requires TypeScript to deliver its value; skip it. |
-
-**Route structure:**
-```javascript
-// App.jsx
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-
-const router = createBrowserRouter([
-  { path: '/', element: <Landing /> },
-  { path: '/host/:sessionId', element: <Host /> },
-  { path: '/play/:sessionId', element: <Play /> },
-])
-```
-
-**Note:** No server-side rendering needed. `createBrowserRouter` + Netlify/Vercel redirect rule (`/* -> /index.html`) is all that's required.
-
-### State Management
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| React `useState` + `useReducer` + Context | Built-in | Session state, player state, round state | This app has three distinct state domains (session, player, world state) — none of them globally shared across unrelated components. Local component state + Context passed down is sufficient. Adding Zustand or Jotai introduces a dependency for a problem that doesn't exist here. |
-
-**When to use what:**
-- `useState`: Choice lock state, timer, local UI
-- `useReducer`: Session status machine (lobby → active → round_complete → finished)
-- Context: `SessionContext` shared across Host; `PlayerContext` for Play page tree
-
-**What NOT to use:**
-- Zustand — fine library, unnecessary abstraction for 3 pages
-- Redux / RTK — absolute overkill for this scope
-- Jotai / Recoil — atomic state adds complexity with no gain here
-
-### Supabase
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| @supabase/supabase-js | 2.x (2.45+) | Database queries, real-time channels, RLS | The v2 client is a complete rewrite from v1. All real-time is channel-based. Do not use v1 patterns. |
-
-### Animation
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| CSS Transitions + Keyframes | Native | Meter bars, choice lock feedback, consequence reveal | No library needed for the v1 scope. CSS handles the animated percentage bars (width transition), choice button lock states, and fade-in/out between rounds. Framer Motion adds 40KB+ for what `transition: width 0.8s ease` handles natively. |
-| Framer Motion | 11.x | OPTIONAL: Phase transitions, end screen entrance animations | Only add if the round-to-round transitions feel abrupt during testing. If you add it, use `AnimatePresence` for page transitions only — not for meter bars. |
-
-**For v1, start CSS-only.** The editorial aesthetic (dark, stark, typographic) actually benefits from minimal animation — too much motion undermines the weight of the content.
-
-### UI Components
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| No component library | — | All UI hand-built | The design spec is specific enough ("stark editorial, dark backgrounds, warm amber/gold, serif scenario text, sans-serif UI") that a component library (shadcn, MUI, Chakra) will fight you constantly. Write the 8-10 components you need. Total HTML/CSS for this project is small. |
-
-**CSS approach:** Plain CSS modules (`Component.module.css`) per component. No Tailwind — the class-per-property model harms readability for design-heavy, bespoke work. No styled-components — the CSS-in-JS overhead is unjustified.
-
-**Typography:**
-- Scenario text: `Georgia, serif` (system font, no external load needed) or `'Playfair Display'` from Google Fonts (one import, significant upgrade)
-- UI chrome: `'Inter'` from Google Fonts or `system-ui` (fast, clean, reliable)
-
-### QR Code (Phase 8)
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| qrcode.react | 3.x | Generate QR code from room code | Zero-dependency React component that renders an SVG QR code. One line of JSX. No server needed. |
-
-```jsx
-import { QRCodeSVG } from 'qrcode.react'
-<QRCodeSVG value={`${window.location.origin}/play/${roomCode}`} size={200} />
-```
-
-### Three.js (Phase 6)
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| Three.js | r128 (CDN) | 3D city scene on host screen | Per CLAUDE.md spec: r128 via CDN. Do NOT use the npm package in this case — CDN keeps Three.js out of the React bundle, which matters because the city only renders on one screen. Load conditionally in CityScene.jsx via a script tag or dynamic import. |
-
-**Caution:** r128 is not current (current is r167+). Use r128 only if the CLAUDE.md CatmullRomCurve3 / instanced geometry patterns were tested against it. If starting fresh, use r160+ via npm and import only what you need — tree-shaking reduces bundle size substantially. This is worth validating before Phase 6.
-
-### Hosting
-
-| Technology | Version | Purpose | Why |
-|------------|---------|---------|-----|
-| Netlify | — | Static hosting | `vite build` → drag dist/ to Netlify dashboard. Add `_redirects` file for SPA routing. Free tier handles 10–25 concurrent users trivially. Vercel works identically — pick one and stay with it. |
-
-**Netlify `_redirects` file (required for React Router):**
-```
-/* /index.html 200
-```
-Place in `public/` directory so Vite copies it to `dist/` on build.
+**Project:** The Crossroads — Signal Lost v2.0 milestone
+**Researched:** 2026-03-30
+**Scope:** Stack additions and changes ONLY for new features. Existing validated stack (React 19, Vite 8, Supabase v2, Framer Motion 11, GSAP 3, CSS Modules) is not re-litigated here.
 
 ---
 
-## Supabase Real-Time Patterns
+## Existing Stack (Do Not Change)
 
-This is the most critical implementation area — getting channel management wrong causes ghost subscriptions, duplicate events, and memory leaks under presentation conditions.
+| Technology | Version | Status |
+|------------|---------|--------|
+| React | 19.2.4 | Locked |
+| Vite | 8.0.1 | Locked |
+| @supabase/supabase-js | 2.100.0 | Locked |
+| framer-motion | 11.18.2 | Locked |
+| gsap | 3.14.2 | Locked |
+| react-router-dom | 7.13.2 | Locked |
+| CSS Modules | native | Locked |
 
-### Client Initialization
+---
+
+## New Feature Analysis
+
+### 1. Senator Profile Assignment System
+
+**What it needs:** Random profile assignment on join, stored per player, per-round stakes text displayed in Play.jsx, profile breakdown in Discussion Mode.
+
+**Stack decision:** No new library. Profiles are static data (6 JSON objects with per-round stakes). Store `profile_id` as a text column on the `players` table. Assignment logic is a 3-line `Math.random()` call.
+
+**Schema change:**
+```sql
+ALTER TABLE players ADD COLUMN profile_id text;  -- 'A' through 'F'
+```
+
+**Integration:** Assign at join time in Play.jsx (or Landing.jsx), write to Supabase with the player insert. Retrieve on mount from `player.profile_id`. No new dependency.
+
+**Classroom distribution (no duplicates):** The spec pseudocode `assignClassroomProfiles()` requires knowing the current player count in the session before assigning. Pattern: fetch existing player profile_ids for session, pick the least-used profile. Pure JS, no library.
+
+---
+
+### 2. Discussion Mode — Facilitator Controls
+
+**What it needs:** A mode flag on sessions, pause screen after each round (host-controlled), profile breakdown grid, discussion prompt display, conflict spotlight, custom prompt input, facilitator timer.
+
+**Stack decision:** No new library. Discussion mode adds a new `Host` view state and a new `DiscussionPause.jsx` component. The mode flag lives in the session row.
+
+**Schema change:**
+```sql
+ALTER TABLE sessions ADD COLUMN mode text DEFAULT 'solo';  -- 'solo' | 'discussion'
+ALTER TABLE sessions ADD COLUMN discussion_paused boolean DEFAULT false;
+```
+
+**How it works:**
+- `mode` is set at session creation (HostSetup or Create page)
+- After host closes a round, if `mode = 'discussion'`, set `discussion_paused = true` on the session row
+- Play.jsx already subscribes to session updates — the pause flag causes a "waiting" state on player phones
+- Host sees DiscussionPause screen; clicking "Continue" sets `discussion_paused = false`, players unblock
+- Profile breakdown grid reads `choices` table grouped by `profile_id` — standard Supabase query, no new pattern
+- Custom prompt: local state in Host.jsx, never persisted (facilitator use only, ephemeral)
+- Facilitator discussion timer: reuse the existing broadcast channel timer pattern already validated in v1.2
+
+**Integration point:** The existing `roundReducer` in Host.jsx gains a `DISCUSSION_PAUSE` / `DISCUSSION_RESUME` action. The existing Supabase session subscription in Play.jsx reads the new `discussion_paused` column.
+
+---
+
+### 3. Walk Mechanic — Signal Lost Corridor Version (R6)
+
+**What it needs:** Avatar positioned in a corridor, movement toward or away from a terminal 30m down the hall, midpoint (0.5) triggers "forward" decision, stopping at 0.85–0.99 for 3s triggers "conditional notice" (Choice III).
+
+**What already exists:** `WalkMechanic.jsx` is a button-based zone selector (left/right/middle buttons). It correctly implements the concept for the Kingdom Arc (Free Irel / Walk away / Commission scholars) but uses click targets, not positional movement.
+
+**Stack decision:** Upgrade `WalkMechanic.jsx` to support a positional corridor mode for Signal Lost. Use **Framer Motion's `drag` prop** — already in the bundle, zero additional install cost. Framer Motion `drag="x"` with `dragConstraints` gives pointer/touch drag with position callbacks.
+
+**Why Framer Motion drag over raw pointer events:** The app already imports Framer Motion for every page transition. `motion.div drag="x"` handles both mouse and touch with a single API and includes momentum/spring damping that makes the corridor feel physical. Raw pointer event math is 40+ lines; Framer Motion's `onDrag` + `useMotionValue` is 15 lines.
+
+**Why NOT react-draggable:** Additional dependency (5.3KB gzipped) for a capability already covered by Framer Motion.
+
+**Implementation pattern:**
+```javascript
+import { motion, useMotionValue, useTransform } from 'framer-motion'
+
+// avatarX is 0 (start) to corridorWidth (terminal)
+const x = useMotionValue(0)
+
+// Map pixel position to 0-1 progress
+const progress = useTransform(x, [0, corridorWidth], [0, 1])
+
+// Midpoint crossing: subscribe to progress changes
+progress.on('change', v => {
+  if (v >= 0.5 && choice === null) lockChoice('I')  // crossed midpoint
+})
+
+// Choice III: stop-and-wait at 0.85-0.99 for 3s
+// Handled by onDragEnd + setTimeout
+```
+
+**No new library needed.** Framer Motion 11 is already installed and React 19-compatible.
+
+---
+
+### 4. Break Flags — Persistent World State Markers
+
+**What it needs:** Per-round permanent markers (boolean flags) that survive round transitions, appear on the map visualization, feed into R8 scribe record, and display in the Solo Mode reflection screen.
+
+**Stack decision:** No new library. Break flags are a `jsonb` column on the `sessions` table.
+
+**Schema change:**
+```sql
+ALTER TABLE sessions ADD COLUMN break_flags jsonb DEFAULT '{}';
+-- Example value: { "R1-ghost": true, "R4-sealed": true }
+```
+
+**Update pattern:** When host closes a round and the winning/selected choice triggers a break flag, the host performs a partial update:
 
 ```javascript
-// src/lib/supabase.js
-import { createClient } from '@supabase/supabase-js'
+// Fetch current flags, merge, update
+const { data: session } = await supabase
+  .from('sessions')
+  .select('break_flags')
+  .eq('id', sessionId)
+  .single()
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+const updatedFlags = { ...session.break_flags, [flagKey]: true }
+await supabase.from('sessions').update({ break_flags: updatedFlags }).eq('id', sessionId)
 ```
 
-**Environment variables:** Vite requires `VITE_` prefix. Store in `.env.local` (gitignored). Never use the service role key in the client bundle — it bypasses RLS entirely.
+Note: Supabase REST API does not support partial JSONB field updates natively — fetch-merge-write is the correct pattern. For a game with 8 rounds and 7 possible flags, this is not a race condition risk (host is the only writer of `break_flags`).
 
-### Channel Subscription Pattern
+**Visual rendering:** Break flag icons render in the map component (existing `AnimatedMap.jsx` or a new `SignalLostMap.jsx`). Flag state flows through the existing `worldState` prop channel. No new animation library needed — CSS class toggling on flag icons is sufficient. The "permanent crack" fracture animation on axis-at-zero uses GSAP (already installed).
 
-```javascript
-// The correct v2 pattern — channel name must be unique per subscription
-useEffect(() => {
-  const channelName = `session-${sessionId}` // unique string, not a path
+---
 
-  const channel = supabase
-    .channel(channelName)
-    .on(
-      'postgres_changes',
-      {
-        event: 'UPDATE',
-        schema: 'public',
-        table: 'sessions',
-        filter: `id=eq.${sessionId}`,
-      },
-      (payload) => {
-        setSessionState(payload.new)
-      }
-    )
-    .subscribe((status) => {
-      // status: 'SUBSCRIBED' | 'CHANNEL_ERROR' | 'TIMED_OUT' | 'CLOSED'
-      if (status === 'CHANNEL_ERROR') {
-        console.error('Realtime channel error — consider reconnect logic')
-      }
-    })
+### 5. Axis System Change — CT / HD / SOL / ACC (starting at 65)
 
-  // Cleanup on unmount or sessionId change
-  return () => {
-    supabase.removeChannel(channel)
-  }
-}, [sessionId])
+**What it needs:** Replace the current 4 axes (trust/courage/solidarity/awareness, starting at 50) with Signal Lost axes (Civil Trust / Human Dignity / Solidarity / Accountability, starting at 65). The axis history needs to be stored per-round for the Solo Mode timeline graph.
+
+**Stack decision:** No new library for state management. The existing `applyChoicesToWorld()` in `worldState.js` is refactored (new key names, new starting values). The axis history array (`axisHistory`) is added as a new column.
+
+**Schema changes:**
+```sql
+-- Add axis history for Solo Mode timeline graph
+ALTER TABLE sessions ADD COLUMN axis_history jsonb DEFAULT '[]';
+-- Each element: { round: 1, CT: 65, HD: 72, SOL: 58, ACC: 71 }
 ```
 
-**Critical rules:**
-1. Always return `() => supabase.removeChannel(channel)` — missing cleanup causes duplicate events on re-render
-2. Channel name must be unique per logical subscription — use descriptive names like `session-${id}`, `choices-${id}`, `players-${id}`
-3. Do not reuse channel references across components — each component manages its own channel lifecycle
-4. The `.subscribe()` callback receives connection status — handle `CHANNEL_ERROR` for presentation resilience
+**Important — backward compatibility:** The existing packs (kingdom-arc, real-world-modern, futures) use `{ trust, courage, solidarity, awareness }`. Signal Lost uses `{ CT, HD, SOL, ACC }`.
 
-### Multiple Subscriptions (Host.jsx)
+**Recommendation: Pack-level axis set flag.** Add `axisSet: 'signal-lost'` to the Signal Lost pack definition. `worldState.js` reads `pack.axisSet` and dispatches to the correct computation. Existing packs default to `axisSet: 'kingdom'` and continue working unchanged. This avoids migrating all existing packs mid-development.
 
-Host subscribes to three streams simultaneously: session updates, incoming choices, player joins.
+The `world_state` column is already `jsonb` — it holds whatever keys the pack uses. No column type change needed. Only the `DEFAULT` value changes for new Signal Lost sessions (written at session creation time with the pack's starting values, not via `ALTER TABLE`).
 
-```javascript
-// Pattern: three channels, three cleanup functions
-useEffect(() => {
-  const sessionChannel = supabase
-    .channel(`host-session-${sessionId}`)
-    .on('postgres_changes',
-      { event: 'UPDATE', schema: 'public', table: 'sessions', filter: `id=eq.${sessionId}` },
-      (payload) => setSession(payload.new))
-    .subscribe()
+---
 
-  const choicesChannel = supabase
-    .channel(`host-choices-${sessionId}`)
-    .on('postgres_changes',
-      { event: 'INSERT', schema: 'public', table: 'choices', filter: `session_id=eq.${sessionId}` },
-      (payload) => setChoices(prev => [...prev, payload.new]))
-    .subscribe()
+### 6. Solo Mode — Axis Timeline Graph
 
-  const playersChannel = supabase
-    .channel(`host-players-${sessionId}`)
-    .on('postgres_changes',
-      { event: 'INSERT', schema: 'public', table: 'players', filter: `session_id=eq.${sessionId}` },
-      (payload) => setPlayers(prev => [...prev, payload.new]))
-    .subscribe()
+**What it needs:** A multi-line chart showing all 4 axis values across 8 rounds. Displayed on the post-game reflection screen (Solo Mode) and optionally in the grading export.
 
-  return () => {
-    supabase.removeChannel(sessionChannel)
-    supabase.removeChannel(choicesChannel)
-    supabase.removeChannel(playersChannel)
-  }
-}, [sessionId])
-```
+**Library decision: Recharts 2.15.x**
 
-**Note on 20+ concurrent subscriptions:** Supabase free tier supports 200 concurrent realtime connections. With 25 players each subscribing to 1–2 channels + host with 3 channels, peak is ~55 connections — well within limits. No special configuration needed.
+**Why Recharts:**
+- Lightest React-native SVG chart library (builds on D3 submodules only, not full D3)
+- React 19 compatible in 2.15.x — no peer dep override needed (confirmed: GitHub issue #4558 resolved in 2.15.x)
+- `LineChart` with 4 `Line` components maps directly to the 4 axes
+- Composable: `XAxis`, `YAxis`, `Tooltip`, `Legend` are all optional React children
+- Bundle cost: ~105KB gzipped — acceptable for a one-screen use
+- The alternative (hand-rolled SVG) would be 80+ lines of coordinate math for a non-critical UI element
 
-### Filter Syntax
+**Why not Victory, Nivo, or Chart.js:**
+- Victory: 400KB+ gzipped, significant overkill
+- Nivo: 800KB+, SSR-focused, not appropriate here
+- react-chartjs-2: Canvas-based (not SVG), harder to style for dark editorial aesthetic, separate Chart.js dependency
 
-Supabase `postgres_changes` filters use PostgREST filter syntax:
+**Version to install:** `recharts@^2.15.0` — not v3.x. Recharts v3 is in active development with API changes as of early 2026; v2.15 is stable production-ready.
 
-```
-filter: `id=eq.${uuid}`          // equality
-filter: `session_id=eq.${uuid}`  // foreign key equality
-filter: `status=in.(lobby,active)` // IN clause
-```
-
-Only columns with indexes perform well as filters under load. The schema's `session_id` and `id` columns (primary keys / foreign keys) are indexed by default.
-
-### Optimistic UI for Choice Submission
-
-Players should see immediate lock feedback before the server confirms:
-
-```javascript
-async function submitChoice(choiceIndex) {
-  // 1. Optimistic: lock UI immediately
-  setChoiceLocked(choiceIndex)
-
-  // 2. Persist to Supabase
-  const { error } = await supabase
-    .from('choices')
-    .insert({
-      session_id: sessionId,
-      player_id: playerId,
-      round_number: roundNumber,
-      scenario_id: scenarioId,
-      choice_index: choiceIndex,
-      frameworks: choice.frameworks,
-    })
-
-  // 3. Handle failure — unlock and surface error
-  if (error) {
-    setChoiceLocked(null)
-    setError('Failed to submit. Tap to try again.')
-  }
+**React 19 note:** If a peer dependency warning appears at install, add to `package.json`:
+```json
+"overrides": {
+  "react-is": "^19.0.0"
 }
 ```
 
-### Querying Initial State
+**Installation:**
+```bash
+npm install recharts@^2.15.0
+```
 
-On component mount, fetch current state before subscribing — real-time only delivers changes, not the current snapshot:
+---
 
+### 7. Grading Rubric Display + Assessment Export
+
+**What it needs:** Instructor-facing rubric display (static, 4 dimensions / 100pts), and a downloadable assessment summary for Solo Mode (JSON + optional PDF containing player record, choices, reflection text, and scribe pattern).
+
+**Stack decision for JSON export:** No library. `JSON.stringify` + a `<a download>` blob URL. 5 lines of code.
+
+**Stack decision for PDF export: @react-pdf/renderer 4.3.x**
+
+**Why @react-pdf/renderer:**
+- React 19 supported since v4.1.0 (current is 4.3.2 — confirmed from npm)
+- Generates vector PDF with proper text — not a canvas screenshot
+- This is critical for an academic grading document; pixel-capture output prints poorly
+- Define PDF as React components using `<Document>`, `<Page>`, `<Text>`, `<View>` — familiar mental model
+- `PDFDownloadLink` triggers browser download with no server required
+- Produces clean, printable output appropriate for instructor submission
+
+**Why not html2canvas + jsPDF or react-to-pdf:**
+- Both use pixel capture — text becomes a rasterized bitmap
+- Result is visually acceptable on screen but prints with low quality
+- For instructor grading documentation, vector text is the correct standard
+
+**Bundle cost:** @react-pdf/renderer is ~340KB gzipped. This is significant but acceptable because:
+1. It only loads when user reaches the export action (lazy import via `React.lazy`)
+2. Solo Mode assessment export is not a live classroom flow — no latency pressure
+3. Discussion Mode (the classroom presentation path) never touches this code path
+
+**Lazy loading pattern:**
 ```javascript
-useEffect(() => {
-  async function loadSession() {
-    const { data, error } = await supabase
-      .from('sessions')
-      .select('*')
-      .eq('id', sessionId)
-      .single()
-
-    if (data) setSession(data)
-  }
-
-  loadSession()
-  // then set up subscription...
-}, [sessionId])
+// In SoloReflection.jsx — only import when user reaches end screen
+const AssessmentPDF = React.lazy(() => import('../components/AssessmentPDF.jsx'))
 ```
 
-**Always fetch-then-subscribe.** If the player joins mid-round because they're on a slow network, the subscription alone won't deliver the current session state — it only fires on future changes.
-
----
-
-## Vite Configuration
-
-```javascript
-// vite.config.js — minimal, no surprises
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-
-export default defineConfig({
-  plugins: [react()],
-})
-```
-
-No path aliases needed given the project's flat structure. Add `resolve.alias` only if imports become unwieldy. The `@vitejs/plugin-react` plugin uses Babel for Fast Refresh — fine for this project size.
-
----
-
-## Alternatives Considered
-
-| Category | Recommended | Alternative | Why Not |
-|----------|-------------|-------------|---------|
-| Routing | React Router v6 | TanStack Router | Requires TypeScript for its type-safety value; overkill for 3 routes |
-| Routing | React Router v6 | React Router v7 | v7 merges with Remix framework model — adds SSR concepts to a static SPA |
-| State | useState + Context | Zustand | No meaningful benefit at this scale; adds a dependency |
-| State | useState + Context | Redux Toolkit | Severe overkill; 3-page app doesn't need a store |
-| Animation | CSS native | Framer Motion | 40KB+ library for effects CSS handles; add only if CSS proves insufficient |
-| UI | Hand-rolled CSS | shadcn/ui | shadcn/ui requires Tailwind; both would fight the bespoke editorial design |
-| UI | Hand-rolled CSS | MUI / Chakra | Opinionated design system that requires heavy overriding for dark editorial aesthetic |
-| CSS | CSS Modules | Tailwind CSS | Tailwind's utility model clutters JSX and hurts readability for bespoke visual work |
-| CSS | CSS Modules | styled-components | CSS-in-JS runtime adds unnecessary complexity for a static-style app |
-| Three.js | CDN r128 OR npm r160+ | react-three-fiber (R3F) | R3F is React-idiomatic but abstracts Three.js significantly; per spec, direct Three.js is specified and appropriate since city scene is isolated to one component |
-
----
-
-## Installation
-
+**Installation:**
 ```bash
-# Bootstrap
-npm create vite@latest crossroads -- --template react
-cd crossroads
-npm install
-
-# Routing
-npm install react-router-dom
-
-# Supabase
-npm install @supabase/supabase-js
-
-# QR code (Phase 8 only — defer until then)
-npm install qrcode.react
-
-# Three.js (Phase 6 — consider npm over CDN for tree-shaking)
-npm install three
+npm install @react-pdf/renderer@^4.3.0
 ```
 
-**Dev dependencies (already included by Vite template):**
-- `@vitejs/plugin-react` — Fast Refresh
-- `vite` — dev server and build
-
-No test framework is listed in the build order. If you want to unit test `detection.js` and `worldState.js` (CLAUDE.md recommends this), add:
-
-```bash
-npm install -D vitest
-```
-
-Vitest runs inside Vite's module graph — zero configuration, same import aliases, fast. Use it for the two pure-function modules before wiring them to the UI.
+**Rubric display component:** `GradingRubric.jsx` — pure CSS, no library. Static 4-section table with score ranges. Accessible via a host-only or instructor-only route (e.g., `/rubric`). No auth required for classroom context.
 
 ---
 
-## Environment Setup
+### 8. Profile-Aware Conflict Alerts
 
-```bash
-# .env.local (gitignored — never commit this)
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key-here
+**What it needs:** A between-round flag that fires when a player's choice contradicts their baseline survey answer (already implemented) OR contradicts their Senator profile's implied stance (new). The existing `findMoralConflicts()` in `detection.js` extends to include profile-aware triggers.
+
+**Stack decision:** No new library. This is pure logic extending `detection.js` or a new `src/lib/senatorConflicts.js`. The alert display is a variant of the existing consequence reveal UI. CSS Modules only.
+
+---
+
+## Summary — What to Install
+
+Two packages. Everything else uses the existing stack.
+
+| Package | Version | Purpose | Install |
+|---------|---------|---------|---------|
+| `recharts` | `^2.15.0` | Axis timeline chart in Solo Mode reflection screen | `npm install recharts@^2.15.0` |
+| `@react-pdf/renderer` | `^4.3.0` | Assessment export PDF for grading rubric | `npm install @react-pdf/renderer@^4.3.0` |
+
+---
+
+## Schema Changes Summary
+
+All additive (ALTER TABLE ADD COLUMN). No existing columns are modified or dropped.
+
+```sql
+-- Senator profile assignment
+ALTER TABLE players ADD COLUMN profile_id text;
+
+-- Discussion mode controls
+ALTER TABLE sessions ADD COLUMN mode text DEFAULT 'solo';
+ALTER TABLE sessions ADD COLUMN discussion_paused boolean DEFAULT false;
+
+-- Break flags (permanent world state markers)
+ALTER TABLE sessions ADD COLUMN break_flags jsonb DEFAULT '{}';
+
+-- Axis history for Solo Mode timeline
+ALTER TABLE sessions ADD COLUMN axis_history jsonb DEFAULT '[]';
 ```
 
-The anon key is safe to ship in the client bundle because RLS policies enforce access control. The service role key is never used in the client.
+Note on `world_state`: The column is already `jsonb`. Signal Lost sessions are written with `{ CT: 65, HD: 65, SOL: 65, ACC: 65 }` at session creation. No ALTER TABLE needed — the default value is set programmatically, not at the column level.
+
+---
+
+## New Source Files
+
+No library additions required for these.
+
+```
+src/lib/scenarios/packs/signal-lost.js      -- 8 rounds with CT/HD/SOL/ACC deltas, break flag triggers, per-round stakes refs
+src/lib/profiles.js                          -- 6 senator profiles, variables, per-round stakes text
+src/lib/senatorConflicts.js                  -- profile-aware conflict detection
+src/lib/breakFlags.js                        -- flag definitions, trigger conditions, R8 citation text
+src/components/SenatorProfile.jsx            -- player profile card + current-round stake panel
+src/components/DiscussionPause.jsx           -- facilitator pause screen (profile breakdown, prompts, conflict spotlight)
+src/components/BreakFlagMarker.jsx           -- persistent flag icon for map layer
+src/components/AxisTimeline.jsx              -- Recharts LineChart wrapper (4 axes, 8 rounds)
+src/components/AssessmentPDF.jsx             -- @react-pdf/renderer document for download
+src/components/GradingRubric.jsx             -- static rubric display, instructor-facing
+src/components/ConflictAlert.jsx             -- between-round alert for baseline/profile contradictions
+```
+
+---
+
+## What NOT to Add
+
+| Rejected Addition | Why |
+|------------------|-----|
+| Zustand / Redux | Profile is a single field on player row; Supabase + localStorage is sufficient |
+| react-draggable | Framer Motion `drag` prop covers the walk mechanic; redundant dependency |
+| D3 directly | Recharts wraps the D3 submodules needed; full D3 adds ~500KB for no gain |
+| Socket.io / Pusher | Supabase Realtime handles 25 concurrent connections reliably (v1.2 validated) |
+| TypeScript | Explicitly excluded in CLAUDE.md constraints |
+| Tailwind CSS | Incompatible with existing CSS Modules editorial pattern |
+| shadcn/ui | Requires Tailwind; would fight the bespoke dark aesthetic |
+| Three.js city scene | Deferred indefinitely per PROJECT.md key decisions |
+| Victory / Nivo / Chart.js | 4-8x larger than Recharts for equivalent line chart output |
+| html2canvas + jsPDF | Pixel-capture output — wrong tool for an academic grading document |
+
+---
+
+## Confidence Assessment
+
+| Area | Confidence | Basis |
+|------|------------|-------|
+| Framer Motion drag for walk mechanic | HIGH | Already in bundle; `drag` prop + `useMotionValue` documented and React 19-compatible |
+| Recharts 2.15.x React 19 compat | HIGH | GitHub issue #4558 confirmed resolved in 2.15.x |
+| @react-pdf/renderer React 19 compat | HIGH | GitHub issue #2935 confirmed supported since v4.1.0; current 4.3.2 |
+| Supabase JSONB fetch-merge-write | HIGH | Documented Supabase limitation; single writer removes race condition risk |
+| Schema additive-only approach | HIGH | All ALTER TABLE ADD COLUMN — no destructive migrations |
+| Lazy import for PDF library | HIGH | React.lazy + Suspense is standard React 18/19 pattern; Vite handles dynamic imports |
+| Pack-level axis set flag | MEDIUM | Design decision not yet in code; requires `axisSet` field in pack schema and conditional dispatch in worldState.js |
 
 ---
 
 ## Sources
 
-- Training data through August 2025 (MEDIUM confidence)
-- CLAUDE.md project spec — stack decisions pre-validated by project author (HIGH confidence for stack constraints)
-- Supabase v2 channel API: well-established since 2022, stable through 2025 (HIGH confidence on patterns)
-- React Router v6/v7 split: v7 released late 2024 with Remix merger; v6 remains valid for SPAs (HIGH confidence)
-- Three.js r128 CDN note: current stable as of 2025 is r167+; r128 specified in CLAUDE.md likely for API stability (MEDIUM confidence — verify CatmullRomCurve3 API hasn't changed before Phase 6)
+- Recharts React 19 compatibility: [GitHub Issue #4558](https://github.com/recharts/recharts/issues/4558)
+- @react-pdf/renderer React 19 support: [GitHub Issue #2935](https://github.com/diegomura/react-pdf/issues/2935)
+- Framer Motion drag API: [motion.dev/docs/react-drag](https://motion.dev/docs/react-drag)
+- Supabase JSONB partial update limitation: [Discussion #14174](https://github.com/orgs/supabase/discussions/14174)
+- Supabase Realtime Broadcast docs: [supabase.com/docs/guides/realtime/broadcast](https://supabase.com/docs/guides/realtime/broadcast)
+- CLAUDE.md project spec — stack constraints (HIGH confidence)
+- PROJECT.md milestone context — existing validated capabilities (HIGH confidence)
