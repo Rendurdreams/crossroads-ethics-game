@@ -144,8 +144,8 @@ Plans:
 **Goal:** Audit and fix the VALUE_FRAMEWORK_MAP, stance-based conflict triggers, and per-round moral conflict detection logic so that conflicts fire accurately against the kingdom-arc scenario choices. The current detection produces false positives (e.g. flagging 'Protect the Core' as conflicting with loyalty) because the mapping between values, frameworks, and specific scenario choices is miscalibrated.
 **Requirements**: MCA-01
 **Depends on:** Phase 15
-**Plans:** 1/2 plans executed
+**Plans:** 2/2 plans complete
 
 Plans:
 - [x] 15.1-01-PLAN.md — Fix detection.js: dead fairness tag (VALUE_CONDITION_TRIGGERS) + replace 2 matchFramework triggers with 4 matchCondition entries + update tests
-- [ ] 15.1-02-PLAN.md — Fix call sites: Play.jsx + ConsequenceReveal.jsx pass full frameworks array + scenarioId/choiceIndex for condition triggers to fire at round-close
+- [x] 15.1-02-PLAN.md — Fix call sites: Play.jsx + ConsequenceReveal.jsx pass full frameworks array + scenarioId/choiceIndex for condition triggers to fire at round-close

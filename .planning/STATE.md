@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v1.2
 milestone_name: Ethical Framework Depth
-status: executing
-stopped_at: Completed 15.1-moral-conflict-detection-audit Plan 01
-last_updated: "2026-03-31T02:10:49.001Z"
+status: verifying
+stopped_at: Completed 15.1-moral-conflict-detection-audit Plan 02
+last_updated: "2026-03-31T02:13:42.009Z"
 progress:
   total_phases: 6
-  completed_phases: 5
+  completed_phases: 6
   total_plans: 17
-  completed_plans: 16
+  completed_plans: 17
 ---
 
 # Project State
@@ -25,7 +25,7 @@ See: .planning/PROJECT.md (updated 2026-03-27)
 
 Phase: 15.1 (moral-conflict-detection-audit) — EXECUTING
 Plan: 2 of 2
-Status: Ready to execute
+Status: Phase complete — ready for verification
 
 ```
 v1.0 [██████████████████████] 100% (7/7 phases)
@@ -91,6 +91,7 @@ v1.1 [                      ]   0% (0/5 phases)
 | Phase 15-divided-kingdom-phase-2 P04 | 300 | 2 tasks | 5 files |
 | Phase 15 P05 | 360 | 2 tasks | 4 files |
 | Phase 15.1-moral-conflict-detection-audit P01 | 166 | 2 tasks | 2 files |
+| Phase 15.1-moral-conflict-detection-audit P02 | 60s | 2 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -184,6 +185,8 @@ Recent decisions affecting current work:
 - [Phase 15]: Homepage splitContainer: side-by-side pathCard layout for host (Convene) vs player (Enter), stacks at 520px
 - [Phase 15.1-moral-conflict-detection-audit]: VALUE_CONDITION_TRIGGERS introduced for fairness: empty array in VALUE_FRAMEWORK_MAP + condition-based triggers for R1-1 and R3-1 only
 - [Phase 15.1-moral-conflict-detection-audit]: lie_to_protect matchFramework triggers replaced with 4 matchCondition entries targeting round-4 and round-bombshell specific choices only
+- [Phase 15.1-moral-conflict-detection-audit]: choiceFrameworks replaces frameworkKey in Play.jsx — full array passed to both singleHistory and ConsequenceReveal props
+- [Phase 15.1-moral-conflict-detection-audit]: ConsequenceReveal prop renamed from framework (string) to frameworks (array) + scenarioId, choiceIndex, round
 
 ### Roadmap Evolution
 
@@ -206,7 +209,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-31T02:10:48.995Z
-Stopped at: Completed 15.1-moral-conflict-detection-audit Plan 01
+Last session: 2026-03-31T02:13:42.003Z
+Stopped at: Completed 15.1-moral-conflict-detection-audit Plan 02
 Resume file: None
 Next action: Phase verification
