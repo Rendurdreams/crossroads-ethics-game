@@ -7,10 +7,35 @@ import { CONFLICT_PAIRS } from './frameworks.js'
 export const VALUE_FRAMEWORK_MAP = {
   loyalty:    ['virtue', 'care'],
   honesty:    ['deontology'],
-  fairness:   ['distributive_justice'],
+  fairness:   [],
   courage:    ['virtue'],
   compassion: ['care']
 }
+
+/**
+ * Condition-specific value conflict triggers for values whose conflicts
+ * cannot be expressed as a framework mapping (e.g. fairness, which maps to
+ * a framework tag that never appears in scenario choices).
+ *
+ * Each entry fires a value-type conflict when:
+ *   - The player's top value matches `value`
+ *   - The choice matches `matchCondition`
+ *
+ * No-double-fire rule still applies: these run BEFORE stance triggers
+ * but AFTER VALUE_FRAMEWORK_MAP checks.
+ */
+const VALUE_CONDITION_TRIGGERS = [
+  {
+    value: 'fairness',
+    matchCondition: (choice) => choice.scenarioId === 'round-1' && choice.choiceIndex === 1,
+    message: "Fairness asks who deserves to eat. You let the math decide."
+  },
+  {
+    value: 'fairness',
+    matchCondition: (choice) => choice.scenarioId === 'round-3' && choice.choiceIndex === 1,
+    message: "The Hollow Folk asked for equal standing. You held the line."
+  }
+]
 
 /**
  * Condition-specific stance conflict triggers.
@@ -28,13 +53,25 @@ const STANCE_TRIGGERS = [
   {
     stanceKey: 'lie_to_protect',
     stanceAnswer: 'no',
-    matchFramework: 'care',
+    matchCondition: (choice) => choice.scenarioId === 'round-4' && choice.choiceIndex === 2,
+    message: "Your instinct was honesty. What changed?"
+  },
+  {
+    stanceKey: 'lie_to_protect',
+    stanceAnswer: 'no',
+    matchCondition: (choice) => choice.scenarioId === 'round-bombshell' && choice.choiceIndex === 1,
     message: "Your instinct was honesty. What changed?"
   },
   {
     stanceKey: 'lie_to_protect',
     stanceAnswer: 'yes',
-    matchFramework: 'deontology',
+    matchCondition: (choice) => choice.scenarioId === 'round-4' && choice.choiceIndex === 0,
+    message: "You said protecting people matters. Here honesty was the protection."
+  },
+  {
+    stanceKey: 'lie_to_protect',
+    stanceAnswer: 'yes',
+    matchCondition: (choice) => choice.scenarioId === 'round-bombshell' && choice.choiceIndex === 0,
     message: "You said protecting people matters. Here honesty was the protection."
   },
   {
@@ -106,21 +143,46 @@ export function findMoralConflicts(choiceHistory, moralValues, moralStances) {
   const alignedFrameworks = VALUE_FRAMEWORK_MAP[topValue] ?? []
   const conflicts = []
 
-  // Primary: value-based conflict detection
-  choiceHistory.forEach(choice => {
-    const choiceFrameworks = choice.frameworks ?? []
-    if (choiceFrameworks.length === 0) return
-    const isAligned = choiceFrameworks.some(f => alignedFrameworks.includes(f))
-    if (!isAligned) {
-      conflicts.push({
-        round: choice.round,
-        type: 'value',
-        valueName: topValue,
-        choiceFrameworks,
-        message: `This choice conflicts with your stated value of ${topValue}.`
+  // Primary (framework-based): value conflict detection
+  // Skip for values that use condition triggers instead (e.g. fairness)
+  const usesConditionTriggers = VALUE_CONDITION_TRIGGERS.some(t => t.value === topValue)
+
+  if (!usesConditionTriggers) {
+    choiceHistory.forEach(choice => {
+      const choiceFrameworks = choice.frameworks ?? []
+      if (choiceFrameworks.length === 0) return
+      const isAligned = choiceFrameworks.some(f => alignedFrameworks.includes(f))
+      if (!isAligned) {
+        conflicts.push({
+          round: choice.round,
+          type: 'value',
+          valueName: topValue,
+          choiceFrameworks,
+          message: `This choice conflicts with your stated value of ${topValue}.`
+        })
+      }
+    })
+  }
+
+  // Primary (condition-based): value triggers for values with no framework mapping
+  // Runs before stance triggers so condition-based value conflicts block stance conflicts (no-double-fire)
+  if (usesConditionTriggers) {
+    VALUE_CONDITION_TRIGGERS.filter(t => t.value === topValue).forEach(trigger => {
+      choiceHistory.forEach(choice => {
+        // Skip if this round already has a conflict
+        if (conflicts.some(c => c.round === choice.round)) return
+        if (trigger.matchCondition(choice)) {
+          conflicts.push({
+            round: choice.round,
+            type: 'value',
+            valueName: topValue,
+            choiceFrameworks: choice.frameworks ?? [],
+            message: trigger.message
+          })
+        }
       })
-    }
-  })
+    })
+  }
 
   // Secondary: stance-based conflict detection (only fires if round not already conflicted)
   if (moralStances) {
