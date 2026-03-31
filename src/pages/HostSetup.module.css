@@ -1,11 +1,29 @@
 .page {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px 24px;
+  justify-content: center;
+  padding: 24px;
   position: relative;
   z-index: 1;
+  overflow: hidden;
+}
+
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center top, rgba(10, 10, 20, 0.4) 0%, rgba(10, 10, 20, 0.8) 100%);
 }
 
 .loading {
@@ -14,140 +32,64 @@
 }
 
 .heading {
-  font-size: 28px;
+  font-size: clamp(24px, 4vw, 32px);
   font-weight: 700;
   color: var(--text-h);
   font-family: var(--serif);
-  margin: 0 0 32px 0;
+  margin: 0 0 20px 0;
   text-align: center;
+  text-shadow: 0 0 40px rgba(245, 158, 11, 0.3), 0 0 80px rgba(245, 158, 11, 0.1);
 }
 
 .roomLabel {
-  color: var(--text-muted);
-  font-size: 0.8rem;
+  color: var(--accent);
+  font-size: 0.85rem;
   text-transform: uppercase;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.3em;
   text-align: center;
-  margin-bottom: 8px;
-  margin-top: 0;
+  margin: 0 0 8px 0;
+  opacity: 0.8;
 }
 
 .roomCode {
-  font-size: clamp(72px, 12vw, 120px);
+  font-size: clamp(80px, 16vw, 140px);
   font-weight: 700;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.2em;
   color: var(--accent);
   font-family: var(--sans);
   text-align: center;
   line-height: 1;
-  margin-bottom: 24px;
-  text-shadow: 0 0 30px rgba(245, 158, 11, 0.5), 0 0 60px rgba(245, 158, 11, 0.25), 0 0 100px rgba(245, 158, 11, 0.1);
+  margin-bottom: 20px;
+  text-shadow: 0 0 40px rgba(245, 158, 11, 0.6), 0 0 80px rgba(245, 158, 11, 0.35), 0 0 120px rgba(245, 158, 11, 0.15);
 }
 
 .qrCode {
   display: flex;
   justify-content: center;
-  margin-top: 8px;
 }
 
 .qrInstruction {
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-muted);
   text-align: center;
-  margin: 24px 0 0 0;
+  margin: 12px 0 0 0;
 }
 
 .instructions {
-  font-size: 16px;
+  font-size: 15px;
   color: var(--text-muted);
   text-align: center;
-  max-width: 400px;
-  margin: 0 auto 32px auto;
+  max-width: 380px;
+  margin: 16px auto 24px auto;
   line-height: 1.5;
-}
-
-.packRow {
-  display: flex;
-  gap: 16px;
-  max-width: 900px;
-  width: 100%;
-  margin-bottom: 24px;
-}
-
-.packCard {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--blur-glass));
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  padding: 24px;
-  flex: 1;
-  text-align: center;
-  cursor: pointer;
-  transition: border-color 0.2s, box-shadow 0.2s, opacity 0.2s;
-}
-
-.packCardSelected {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 1px var(--accent), 0 0 20px var(--glow-amber);
-}
-
-.packCardUnselected {
-  opacity: 0.65;
-}
-
-.packSetting {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: var(--text-muted);
-  margin: 4px 0 0 0;
-}
-
-.packName {
-  font-family: var(--serif);
-  font-size: 21px;
-  font-weight: 700;
-  color: var(--text-h);
-  margin: 0 0 8px;
-}
-
-.packCount {
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--accent);
-  margin: 0;
-}
-
-.packDivider {
-  height: 1px;
-  margin: 16px 0;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  opacity: 0.5;
-}
-
-.packDescription {
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 1.5;
-  color: var(--text-muted);
-  margin: 0;
-}
-
-.packLens {
-  margin-top: 8px;
-  font-family: var(--sans);
-  font-size: 14px;
-  font-style: italic;
-  color: var(--text-muted);
 }
 
 .openBtn {
   display: block;
   width: 100%;
-  max-width: 400px;
-  padding: 14px 24px;
-  background: var(--accent);
+  max-width: 360px;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
   color: #0a0a14;
   border: none;
   border-radius: 8px;
@@ -155,20 +97,17 @@
   font-weight: 700;
   cursor: pointer;
   font-family: var(--sans);
-  transition: background 0.15s;
+  transition: transform 150ms ease, box-shadow 150ms ease;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  letter-spacing: 0.02em;
 }
 
 .openBtn:hover:not(:disabled) {
-  background: var(--accent-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(245, 158, 11, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .openBtn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-}
-
-@media (max-width: 390px) {
-  .packRow {
-    flex-wrap: wrap;
-  }
 }

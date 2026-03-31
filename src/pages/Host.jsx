@@ -311,6 +311,12 @@ export default function Host() {
       setRevealPhase('revealed')
       lerpSpeedRef.current = 2
     }, 2500)
+
+    // After 3s: auto-show lesson overlay with votes + research comparison
+    setTimeout(() => {
+      setShowLesson(true)
+      setShowHowOthers(true)
+    }, 3000)
   }
 
   async function nextRound() {
@@ -796,6 +802,16 @@ export default function Host() {
                         <span className={styles.tallyPct}>{t.pct}%</span>
                       </div>
                     ))}
+                  </div>
+                )}
+
+                {showHowOthers && (
+                  <div className={styles.lessonResearch}>
+                    <HowOthersChose
+                      scenarioId={currentScenario?.id}
+                      liveChoices={roundState.choices}
+                      totalPlayers={players.length}
+                    />
                   </div>
                 )}
 

@@ -3,7 +3,8 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { QRCodeSVG } from 'qrcode.react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { supabase } from '../lib/supabase.js'
-import { packs, getPackById, getPlayableScenarios } from '../lib/scenarios.js'
+import { getDefaultPack, getPlayableScenarios } from '../lib/scenarios.js'
+import hostBg from '../assets/host_setup.png'
 import styles from './HostSetup.module.css'
 
 const pageVariants = {
@@ -21,7 +22,6 @@ export default function HostSetup() {
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(true)
   const [opening, setOpening] = useState(false)
-  const [selectedPackId, setSelectedPackId] = useState('kingdom-arc')
 
   useEffect(() => {
     if (!sessionId) {
@@ -46,11 +46,11 @@ export default function HostSetup() {
 
   async function openLobby() {
     setOpening(true)
-    const selectedPack = getPackById(selectedPackId)
-    const totalRounds = getPlayableScenarios(selectedPack).length
+    const pack = getDefaultPack()
+    const totalRounds = getPlayableScenarios(pack).length
     const { error } = await supabase
       .from('sessions')
-      .update({ pack_id: selectedPackId, total_rounds: totalRounds })
+      .update({ pack_id: pack.id, total_rounds: totalRounds })
       .eq('id', sessionId)
     if (error) {
       console.error('Failed to set pack:', error)
@@ -69,6 +69,7 @@ export default function HostSetup() {
         animate="animate"
         exit="exit"
       >
+        <div className={styles.bg} style={{ backgroundImage: `url(${hostBg})` }} />
         <p className={styles.loading}>Loading...</p>
       </motion.div>
     )
@@ -82,6 +83,8 @@ export default function HostSetup() {
       animate="animate"
       exit="exit"
     >
+      <div className={styles.bg} style={{ backgroundImage: `url(${hostBg})` }} />
+
       <h1 className={styles.heading}>The council awaits.</h1>
 
       <p className={styles.roomLabel}>CHAMBER CODE</p>
@@ -90,8 +93,8 @@ export default function HostSetup() {
       <div className={styles.qrCode}>
         <QRCodeSVG
           value={`${window.location.origin}/?code=${session.room_code}`}
-          size={180}
-          bgColor="#12121e"
+          size={220}
+          bgColor="transparent"
           fgColor="#f5f0e8"
         />
       </div>
@@ -100,26 +103,6 @@ export default function HostSetup() {
       <p className={styles.instructions}>
         Share the code. When your council is assembled, open the chamber.
       </p>
-
-      <div className={styles.packRow}>
-        {packs.map(p => (
-          <button
-            key={p.id}
-            className={`${styles.packCard} ${p.id === selectedPackId ? styles.packCardSelected : styles.packCardUnselected}`}
-            onClick={() => setSelectedPackId(p.id)}
-            type="button"
-          >
-            <h2 className={styles.packName}>{p.name}</h2>
-            <p className={styles.packCount}>{getPlayableScenarios(p).length} dilemmas</p>
-            <p className={styles.packSetting}>{p.setting}</p>
-            <div className={styles.packDivider} />
-            <p className={styles.packDescription}>{p.description}</p>
-            {p.ethicalLens && (
-              <p className={styles.packLens}>{p.ethicalLens}</p>
-            )}
-          </button>
-        ))}
-      </div>
 
       <button
         className={styles.openBtn}
