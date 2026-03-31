@@ -1,6 +1,6 @@
 import { useState, useEffect, useReducer, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { supabase } from '../lib/supabase.js'
 import { getPackById, getScenarioByRound } from '../lib/scenarios.js'
 import { applyChoicesToWorld, computeNarrative } from '../lib/worldState.js'
@@ -45,9 +45,17 @@ function roundReducer(state, action) {
 
 // ─── Host component ────────────────────────────────────────────────────────
 
+const hostVariants = {
+  initial: { opacity: 0, scale: 1.02 },
+  animate: { opacity: 1, scale: 1, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } },
+  exit:    { opacity: 0, transition: { duration: 0.4, ease: [0.4, 0, 1, 1] } }
+}
+
 export default function Host() {
   const { sessionId } = useParams()
   const navigate = useNavigate()
+  const shouldReduceMotion = useReducedMotion()
+  const motionProps = shouldReduceMotion ? {} : { variants: hostVariants, initial: 'initial', animate: 'animate', exit: 'exit' }
 
   const [session, setSession] = useState(null)
   const [pack, setPack] = useState(null)
@@ -479,17 +487,17 @@ export default function Host() {
 
   if (loading) {
     return (
-      <div className={styles.loadingOverlay}>
+      <motion.div className={styles.loadingOverlay} {...motionProps}>
         <p className={styles.loadingText}>Loading...</p>
-      </div>
+      </motion.div>
     )
   }
 
   if (!pack) {
     return (
-      <div className={styles.loadingOverlay}>
+      <motion.div className={styles.loadingOverlay} {...motionProps}>
         <p className={styles.loadingText}>Loading...</p>
-      </div>
+      </motion.div>
     )
   }
 
@@ -513,7 +521,7 @@ export default function Host() {
     const narrative = computeNarrative(worldState)
 
     return (
-      <>
+      <motion.div {...motionProps} style={{ position: 'fixed', inset: 0 }}>
         <div className={styles.canvas}>
           <AnimatedMap worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
         </div>
@@ -577,7 +585,7 @@ export default function Host() {
             </div>
           </div>
         </div>
-      </>
+      </motion.div>
     )
   }
 
@@ -602,7 +610,7 @@ export default function Host() {
     const METER_LABELS = { trust: 'Honesty', courage: 'Courage', solidarity: 'Loyalty', awareness: 'Empathy' }
 
     return (
-      <>
+      <motion.div {...motionProps} style={{ position: 'fixed', inset: 0 }}>
         <div className={styles.canvas}>
           <AnimatedMap worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
         </div>
@@ -833,14 +841,14 @@ export default function Host() {
             </>
           )}
         </AnimatePresence>
-      </>
+      </motion.div>
     )
   }
 
   // ── Lobby view ─────────────────────────────────────────────────────────
 
   return (
-    <>
+    <motion.div {...motionProps} style={{ position: 'fixed', inset: 0 }}>
       <div className={styles.canvas}>
         <AnimatedMap worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
       </div>
@@ -868,6 +876,6 @@ export default function Host() {
           )}
         </div>
       </div>
-    </>
+    </motion.div>
   )
 }
