@@ -7,6 +7,7 @@ import { generateScribeRecord } from '../lib/scribeRecord.js'
 
 const pack = getDefaultPack()
 import { FRAMEWORKS } from '../lib/frameworks.js'
+import { findMoralConflicts } from '../lib/detection.js'
 import ScenarioCard from '../components/ScenarioCard.jsx'
 import ContentNote from '../components/ContentNote.jsx'
 import ConsequenceReveal from '../components/ConsequenceReveal.jsx'
@@ -44,6 +45,7 @@ export default function Play() {
   const [gameStarted, setGameStarted] = useState(false)
 
   // Round game loop state
+  const [selectedChoiceIndex, setSelectedChoiceIndex] = useState(null)
   const [lockedChoiceIndex, setLockedChoiceIndex] = useState(null)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState(false)
@@ -256,6 +258,7 @@ export default function Play() {
 
   // Reset round state when round changes
   useEffect(() => {
+    setSelectedChoiceIndex(null)
     setLockedChoiceIndex(null)
     setSubmitting(false)
     setSubmitError(false)
@@ -267,9 +270,14 @@ export default function Play() {
   }, [session?.current_round])
 
   // Choice submission handler
-  async function handleChoice(choiceIndex) {
+  function handleChoice(choiceIndex) {
     if (lockedChoiceIndex !== null || submitting) return
-    setLockedChoiceIndex(choiceIndex)
+    setSelectedChoiceIndex(choiceIndex)
+  }
+
+  async function handleSubmitChoice() {
+    if (selectedChoiceIndex === null || lockedChoiceIndex !== null || submitting) return
+    setLockedChoiceIndex(selectedChoiceIndex)
     setSubmitting(true)
     setSubmitError(false)
 
@@ -279,26 +287,24 @@ export default function Play() {
       player_id: player.id,
       round_number: session.current_round,
       scenario_id: currentScenario.id,
-      choice_index: choiceIndex,
-      frameworks: currentScenario.choices[choiceIndex].frameworks
+      choice_index: selectedChoiceIndex,
+      frameworks: currentScenario.choices[selectedChoiceIndex].frameworks
     })
 
     setSubmitting(false)
     if (error) {
       if (error.code !== '23505') {
-        // 23505 = UNIQUE violation = already submitted, keep locked
         setLockedChoiceIndex(null)
         setSubmitError(true)
       }
     } else {
-      // Accumulate choice for scribe record (R8 bombshell mirror)
       setMyChoiceHistory(prev => [
         ...prev.filter(c => c.round !== session.current_round),
         {
           round: session.current_round,
-          choiceIndex: choiceIndex,
+          choiceIndex: selectedChoiceIndex,
           scenarioId: currentScenario.id,
-          frameworks: currentScenario.choices[choiceIndex].frameworks
+          frameworks: currentScenario.choices[selectedChoiceIndex].frameworks
         }
       ])
     }
@@ -460,10 +466,10 @@ export default function Play() {
                   <div className={styles.metersSection}>
                     <p className={styles.metersLabel}>THE REALM</p>
                     <div className={styles.meters}>
-                      <MeterBar label="Bridge of Accord" value={session.world_state?.trust ?? 50} />
-                      <MeterBar label="Citadel Beacon" value={session.world_state?.courage ?? 50} />
-                      <MeterBar label="Village Quarter" value={session.world_state?.solidarity ?? 50} />
-                      <MeterBar label="Fog of the Vale" value={session.world_state?.awareness ?? 50} />
+                      <MeterBar label="Trust" value={session.world_state?.trust ?? 50} />
+                      <MeterBar label="Courage" value={session.world_state?.courage ?? 50} />
+                      <MeterBar label="Solidarity" value={session.world_state?.solidarity ?? 50} />
+                      <MeterBar label="Awareness" value={session.world_state?.awareness ?? 50} />
                     </div>
                   </div>
                 </div>
@@ -476,8 +482,18 @@ export default function Play() {
 
     if (lockedChoiceIndex !== null) {
       const chosenOption = currentScenario.choices[lockedChoiceIndex]
-      const frameworkKey = chosenOption.frameworks[0]
-      const frameworkExplanation = FRAMEWORKS[frameworkKey]?.question ?? ''
+      const choiceFrameworks = chosenOption.frameworks ?? []
+      const roundMoralConflict = (() => {
+        if (choiceFrameworks.length === 0) return false
+        const singleHistory = [{
+          round: session.current_round,
+          scenarioId: currentScenario.id,
+          choiceIndex: lockedChoiceIndex,
+          frameworks: choiceFrameworks
+        }]
+        const mc = findMoralConflicts(singleHistory, player?.moral_values ?? null, player?.moral_stances ?? null)
+        return mc.length > 0
+      })()
 
       return (
         <motion.div
@@ -500,12 +516,14 @@ export default function Play() {
                 <ConsequenceReveal
                   consequence={chosenOption.consequence}
                   conscienceLayer={chosenOption.conscienceLayer ?? null}
-                  framework={frameworkKey}
-                  explanation={frameworkExplanation}
+                  frameworks={choiceFrameworks}
+                  scenarioId={currentScenario.id}
+                  choiceIndex={lockedChoiceIndex}
+                  round={session.current_round}
                   worldState={session.world_state ?? { trust: 50, courage: 50, solidarity: 50, awareness: 50 }}
                   moralValues={player?.moral_values ?? null}
                   moralStances={player?.moral_stances ?? null}
-                  hasMoralConflict={false}
+                  hasMoralConflict={roundMoralConflict}
                 />
 
                 {!showHowOthersChose && (
@@ -555,10 +573,10 @@ export default function Play() {
                 <div className={styles.metersSection}>
                   <p className={styles.metersLabel}>THE REALM</p>
                   <div className={styles.meters}>
-                    <MeterBar label="Bridge of Accord" value={session.world_state?.trust ?? 50} />
-                    <MeterBar label="Citadel Beacon" value={session.world_state?.courage ?? 50} />
-                    <MeterBar label="Village Quarter" value={session.world_state?.solidarity ?? 50} />
-                    <MeterBar label="Fog of the Vale" value={session.world_state?.awareness ?? 50} />
+                    <MeterBar label="Trust" value={session.world_state?.trust ?? 50} />
+                    <MeterBar label="Courage" value={session.world_state?.courage ?? 50} />
+                    <MeterBar label="Solidarity" value={session.world_state?.solidarity ?? 50} />
+                    <MeterBar label="Awareness" value={session.world_state?.awareness ?? 50} />
                   </div>
                 </div>
               </div>
@@ -720,13 +738,26 @@ export default function Play() {
                   />
                 </>
               ) : (
-                <ScenarioCard
-                  scenario={currentScenario}
-                  lockedIndex={lockedChoiceIndex}
-                  onChoice={handleChoice}
-                  submitting={submitting}
-                  submitError={submitError}
-                />
+                <>
+                  <ScenarioCard
+                    scenario={currentScenario}
+                    selectedIndex={selectedChoiceIndex}
+                    lockedIndex={lockedChoiceIndex}
+                    onChoice={handleChoice}
+                    submitting={submitting}
+                    submitError={submitError}
+                  />
+
+                  {selectedChoiceIndex !== null && lockedChoiceIndex === null && (
+                    <button
+                      className={styles.submitChoiceBtn}
+                      onClick={handleSubmitChoice}
+                      disabled={submitting}
+                    >
+                      {submitting ? 'Submitting...' : 'Seal Your Decree'}
+                    </button>
+                  )}
+                </>
               )}
 
               {lockedChoiceIndex !== null && (
