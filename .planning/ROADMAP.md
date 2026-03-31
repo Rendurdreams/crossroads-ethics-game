@@ -138,3 +138,13 @@ Plans:
 | 12. Ethical Framework Depth | v1.2 | 3/3 | Complete |  |
 | 13. Text & Mobile Polish | v1.2 | 3/3 | Complete    | 2026-03-30 |
 | 13.1. Dilemma 1 Flow Redesign + Bug Fixes | v1.2 | 1/3 | Complete    | 2026-03-30 |
+
+### Phase 15.1: Moral Conflict Detection Audit (INSERTED)
+
+**Goal:** Audit and fix the VALUE_FRAMEWORK_MAP, stance-based conflict triggers, and per-round moral conflict detection logic so that conflicts fire accurately against the kingdom-arc scenario choices. The current detection produces false positives (e.g. flagging 'Protect the Core' as conflicting with loyalty) because the mapping between values, frameworks, and specific scenario choices is miscalibrated.
+**Requirements**: MCA-01
+**Depends on:** Phase 15
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd:plan-phase 15.1 to break down)
