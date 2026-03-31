@@ -11,7 +11,22 @@ The host screen runs a Three.js 3D scene tied to world state. Three scenario pac
 **Presentation context:** College critical thinking class, ~10–25 classmates, 15 min live.
 **Session length:** Fixed by pack content (kingdom-arc = 7 rounds).
 
-## Current Milestone: v1.2 Ethical Framework Depth
+## Current Milestone: v2.0 Signal Lost
+
+**Goal:** Build the complete Signal Lost game — 8-round sci-fi senator ethics game with dynamic profiles, discussion mode, break flags, and grading rubric. Core mechanics and presentation, reusing existing UI components.
+
+**Target features:**
+- 8-round Signal Lost scenario pack (framework tags, axis deltas, conscience layers)
+- 6 dynamic senator profiles with per-round personal stakes
+- Discussion Mode (facilitator pause screens, profile breakdowns, conflict spotlights, prompts)
+- 4 world axes (Civil Trust, Human Dignity, Solidarity, Accountability) starting at 65
+- Break flags (permanent world-state markers feeding into R8 record)
+- Round 5 timer (90s), Round 6 walk mechanic
+- Profile-aware conflict alerts between rounds
+- Grading rubric (instructor-facing, 4 dimensions, 100pts)
+- Signal Lost as default pack
+
+## Completed Milestone: v1.2 Ethical Framework Depth
 
 **Goal:** Deepen the game's ethical framework detection, add condition-specific conflict triggers, conscience layer, How Others Chose comparison, R6 walk mechanic, R8 scribe record, and homepage split.
 

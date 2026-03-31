@@ -1,31 +1,32 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.2
-milestone_name: Ethical Framework Depth
-status: verifying
-stopped_at: Completed 15.1-moral-conflict-detection-audit Plan 02
-last_updated: "2026-03-31T02:24:49.859Z"
+milestone: v2.0
+milestone_name: Signal Lost
+status: defining-requirements
+stopped_at: Milestone v2.0 started
+last_updated: "2026-03-31"
 progress:
-  total_phases: 6
-  completed_phases: 6
-  total_plans: 17
-  completed_plans: 17
+  total_phases: 0
+  completed_phases: 0
+  total_plans: 0
+  completed_plans: 0
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-03-27)
+See: .planning/PROJECT.md (updated 2026-03-31)
 
-**Core value:** Players finish understanding their own ethical reasoning — named, visible, connected to a philosophical tradition. In v1.1: they also see where their choices diverged from their own stated values.
-**Current focus:** Phase 15.1 — moral-conflict-detection-audit
+**Core value:** Players finish understanding their own ethical reasoning — named, visible, connected to a philosophical tradition. In v2.0: sci-fi senator game with dynamic profiles, discussion mode, break flags, and grading rubric.
+**Current focus:** Defining requirements for v2.0 Signal Lost
 
 ## Current Position
 
-Phase: 15.1
-Plan: Not started
-Status: Phase complete — ready for verification
+Phase: Not started (defining requirements)
+Plan: —
+Status: Defining requirements
+Last activity: 2026-03-31 — Milestone v2.0 started
 
 ```
 v1.0 [██████████████████████] 100% (7/7 phases)
