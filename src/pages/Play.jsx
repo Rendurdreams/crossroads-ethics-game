@@ -557,14 +557,7 @@ export default function Play() {
               >
                 <div className={styles.passConsequence}>
                   <p className={styles.passConsequenceText}>You have abstained from this decree.</p>
-                  <div className={styles.metersSection}>
-                    <p className={styles.metersLabel}>{pack?.id === 'signal-lost' ? 'THE WORLD' : 'THE REALM'}</p>
-                    <div className={styles.meters}>
-                      {Object.entries(getAxisLabels(pack)).map(([key, label]) => (
-                        <MeterBar key={key} label={label} value={session.world_state?.[key] ?? 50} />
-                      ))}
-                    </div>
-                  </div>
+                  <WorldHealthBar worldState={session.world_state} pack={pack} />
                 </div>
               </motion.div>
             </AnimatePresence>
@@ -854,6 +847,8 @@ export default function Play() {
               </div>
             )}
 
+            <WorldHealthBar worldState={session.world_state} pack={pack} />
+
             <button className={styles.phaseAdvanceBtn} onClick={() => setRoundPhase('dilemma')}>
               Read the Dilemma
             </button>
@@ -918,6 +913,8 @@ export default function Play() {
                     {submitting ? 'SUBMITTING...' : (pack?.id === 'signal-lost' ? 'CAST YOUR VOTE' : 'Seal Your Decree')}
                   </button>
                 )}
+
+                <WorldHealthBar worldState={session.world_state} pack={pack} />
 
                 {timerRemaining !== null && (
                   <div className={`${styles.timerSection} ${isTimerPressureRound ? styles.timerPressure : ''}`}>
