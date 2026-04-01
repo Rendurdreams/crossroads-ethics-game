@@ -53,6 +53,14 @@ export default function Landing() {
       return
     }
 
+    // Secret host remote — keyword "rendur"
+    if (name.trim().toLowerCase() === 'rendur') {
+      localStorage.setItem('session_id', session.id)
+      localStorage.setItem('host_remote', 'true')
+      navigate(`/remote/${session.id}`)
+      return
+    }
+
     const avatar = AVATARS[Math.floor(Math.random() * AVATARS.length)]
 
     let senatorProfileId = null

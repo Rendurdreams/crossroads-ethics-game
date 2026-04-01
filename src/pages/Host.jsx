@@ -37,6 +37,10 @@ function roundReducer(state, action) {
       }
     case 'TICK':
       return { ...state, timerSeconds: Math.max(0, state.timerSeconds - 1) }
+    case 'EXTEND':
+      return { ...state, timerSeconds: state.timerSeconds + (action.seconds ?? 30) }
+    case 'SYNC':
+      return { ...state, timerSeconds: action.seconds }
     case 'ROUND_CLOSE':
       return { ...state, timerRunning: false, roundClosed: true }
     case 'RESET':
@@ -158,12 +162,56 @@ export default function Host() {
   useEffect(() => {
     if (!sessionId) return
     timerChannelRef.current = supabase.channel(`timer:${sessionId}`)
+      .on('broadcast', { event: 'timer' }, (payload) => {
+        // Sync with remote's timer broadcast to stay aligned
+        const remote = payload.payload?.remaining
+        if (remote !== undefined && Math.abs(remote - roundState.timerSeconds) > 2) {
+          // Only correct if drift > 2 seconds to avoid jitter
+          dispatch({ type: 'SYNC', seconds: remote })
+        }
+      })
     timerChannelRef.current.subscribe()
     return () => {
       if (timerChannelRef.current) {
         supabase.removeChannel(timerChannelRef.current)
       }
     }
+  }, [sessionId])
+
+  // ── React to remote-driven status changes ──────────────────────────────
+  useEffect(() => {
+    if (!session) return
+    if (session.status === 'active') {
+      // Remote advanced to next round — clear overlays
+      setShowLesson(false)
+      setShowTally(false)
+      setShowHowOthers(false)
+      setRevealPhase('idle')
+    }
+    if (session.status === 'round_complete' && !roundState.roundClosed) {
+      // Remote closed the round
+      dispatch({ type: 'ROUND_CLOSE' })
+      setRevealPhase('revealing')
+      lerpSpeedRef.current = 8
+      setTimeout(() => { setRevealPhase('revealed'); lerpSpeedRef.current = 2 }, 2500)
+      setTimeout(() => { setShowLesson(true); setShowHowOthers(true) }, 3000)
+    }
+  }, [session?.status, session?.current_round])
+
+  // ── Remote command listener ─────────────────────────────────────────────
+  useEffect(() => {
+    if (!sessionId) return
+    const remoteCh = supabase.channel(`remote:${sessionId}`)
+      .on('broadcast', { event: 'extend_timer' }, (payload) => {
+        const seconds = payload.payload?.seconds ?? 30
+        dispatch({ type: 'EXTEND', seconds })
+      })
+      .on('broadcast', { event: 'set_timer' }, (payload) => {
+        const duration = payload.payload?.duration ?? 60
+        setTimerDuration(duration)
+      })
+      .subscribe()
+    return () => supabase.removeChannel(remoteCh)
   }, [sessionId])
 
   // ── Timer tick ──────────────────────────────────────────────────────────
@@ -287,8 +335,13 @@ export default function Host() {
 
   // ── Round control functions ────────────────────────────────────────────
 
+  function getScenarioTimer(roundNum) {
+    const scenario = getScenarioByRound(pack, roundNum)
+    return scenario?.timerSeconds ?? timerDuration
+  }
+
   async function startGame() {
-    dispatch({ type: 'ROUND_START', duration: timerDuration })
+    dispatch({ type: 'ROUND_START', duration: getScenarioTimer(1) })
     await supabase
       .from('sessions')
       .update({ status: 'active', total_rounds: session.total_rounds, current_round: 1 })
@@ -346,7 +399,7 @@ export default function Host() {
     setShowTally(false)
     setShowLesson(false)
     setShowHowOthers(false)
-    dispatch({ type: 'ROUND_START', duration: timerDuration })
+    dispatch({ type: 'ROUND_START', duration: getScenarioTimer(session.current_round + 1) })
     await supabase.from('sessions')
       .update({ status: 'active', current_round: session.current_round + 1 })
       .eq('id', sessionId)
@@ -691,23 +744,10 @@ export default function Host() {
           )}
         </div>
 
-        {/* ── Bottom-right pill: action button ── */}
+        {/* ── Bottom-right pill: status only (controls moved to remote) ── */}
         <div className={styles.hudPillBottomRight}>
-          {revealPhase === 'idle' && !roundState.roundClosed && (
-            <button className={styles.actionBtn} onClick={closeRound}>
-              Close Round
-            </button>
-          )}
           {revealPhase === 'revealing' && (
             <span className={styles.revealingText}>...</span>
-          )}
-          {revealPhase === 'revealed' && !showLesson && (
-            <button
-              className={`${styles.actionBtn} ${styles.lessonBtn}`}
-              onClick={() => setShowLesson(true)}
-            >
-              Lesson
-            </button>
           )}
         </div>
 
@@ -848,20 +888,7 @@ export default function Host() {
                   />
                 </div>
 
-                <button
-                  className={styles.actionBtn}
-                  style={{ marginTop: 24 }}
-                  onClick={() => {
-                    setShowLesson(false)
-                    if (isLastRound) {
-                      endSession()
-                    } else {
-                      nextRound()
-                    }
-                  }}
-                >
-                  {isLastRound ? 'End Game' : 'Next Dilemma'}
-                </button>
+                {/* Controls moved to phone remote — lesson stays visible until remote advances */}
               </motion.div>
             </>
           )}
@@ -888,17 +915,9 @@ export default function Host() {
             {players.length} player{players.length !== 1 ? 's' : ''} joined
           </p>
 
-          {started ? (
-            <p style={{ color: 'var(--text-muted)', fontSize: 14 }}>Game started</p>
-          ) : (
-            <button
-              className={styles.actionBtn}
-              disabled={players.length < 1}
-              onClick={startGame}
-            >
-              Start Game ({players.length} player{players.length !== 1 ? 's' : ''})
-            </button>
-          )}
+          <p style={{ color: 'var(--text-muted)', fontSize: 14, fontFamily: 'var(--mono)' }}>
+            {started ? 'Game in progress' : 'Waiting for host to start'}
+          </p>
         </div>
       </div>
     </motion.div>

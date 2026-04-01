@@ -333,7 +333,7 @@ export const signalLostPack = {
       title: 'The Final Dataset',
       round: 5,
       weight: 'heavy',
-      contentNote: 'This scenario involves a 90-second timer. Your choice will be submitted automatically if time expires.',
+      contentNote: 'This round is timed. You have 90 seconds to decide.',
       previousRoundCallback: 'The policy debates continue. But this vote is different — the consequences are measured in generations, not quarters.',
       timerSeconds: 90,
       hostNotes: [
@@ -408,7 +408,7 @@ export const signalLostPack = {
       title: 'The Pain Engine',
       round: 6,
       weight: 'heavy',
-      contentNote: 'This scenario uses a walk mechanic instead of choice buttons.',
+      contentNote: 'This scenario uses a walk mechanic instead of choice buttons. You have 60 seconds.',
       previousRoundCallback: 'Seven months of committee votes. Policy language. Impact projections. This is not a committee vote. This is a corridor with a terminal at the end.',
       timerSeconds: 60,
       displayOrder: [2, 0, 1],

@@ -7,6 +7,7 @@ import Host from './pages/Host.jsx'
 import Baseline from './pages/Baseline.jsx'
 import Play from './pages/Play.jsx'
 import Grading from './pages/Grading.jsx'
+import HostRemote from './pages/HostRemote.jsx'
 
 function AppRoutes() {
   const location = useLocation()
@@ -22,6 +23,7 @@ function AppRoutes() {
           <Route path="/baseline/:sessionId" element={<Baseline />} />
           <Route path="/play/:sessionId" element={<Play />} />
           <Route path="/grading/:sessionId" element={<Grading />} />
+          <Route path="/remote/:sessionId" element={<HostRemote />} />
         </Routes>
       </AnimatePresence>
     </>
