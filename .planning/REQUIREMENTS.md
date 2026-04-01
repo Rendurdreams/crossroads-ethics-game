@@ -72,7 +72,39 @@
 
 | REQ ID | Phase | Status |
 |--------|-------|--------|
-| (populated by roadmapper) | | |
+| PACK-01 | Phase 16 | Pending |
+| PACK-02 | Phase 16 | Pending |
+| PACK-03 | Phase 16 | Pending |
+| PACK-04 | Phase 16 | Pending |
+| AXIS-01 | Phase 16 | Pending |
+| AXIS-02 | Phase 16 | Pending |
+| AXIS-03 | Phase 16 | Pending |
+| PROF-01 | Phase 16 | Pending |
+| FLAG-01 | Phase 16 | Pending |
+| FLAG-02 | Phase 16 | Pending |
+| PROF-02 | Phase 17 | Pending |
+| PROF-03 | Phase 17 | Pending |
+| PROF-04 | Phase 17 | Pending |
+| PROF-05 | Phase 17 | Pending |
+| FLAG-03 | Phase 17 | Pending |
+| FLAG-04 | Phase 17 | Pending |
+| DETECT-01 | Phase 17 | Pending |
+| DETECT-02 | Phase 17 | Pending |
+| DETECT-03 | Phase 17 | Pending |
+| WALK-01 | Phase 17 | Pending |
+| WALK-02 | Phase 17 | Pending |
+| WALK-03 | Phase 17 | Pending |
+| SCRIBE-01 | Phase 17 | Pending |
+| SCRIBE-02 | Phase 17 | Pending |
+| DISC-01 | Phase 18 | Pending |
+| DISC-02 | Phase 18 | Pending |
+| DISC-03 | Phase 18 | Pending |
+| DISC-04 | Phase 18 | Pending |
+| DISC-05 | Phase 18 | Pending |
+| DISC-06 | Phase 18 | Pending |
+| GRADE-01 | Phase 19 | Pending |
+| GRADE-02 | Phase 19 | Pending |
+| GRADE-03 | Phase 19 | Pending |
 
 ---
 

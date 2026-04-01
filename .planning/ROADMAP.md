@@ -4,7 +4,8 @@
 
 - ✅ **v1.0 The Crossroads MVP** — Phases 1–6 (shipped 2026-03-27) → [archive](.planning/milestones/v1.0-ROADMAP.md)
 - ✅ **v1.1 Immersion + Moral Identity** — Phases 7–11 (shipped 2026-03-30)
-- ⬜ **v1.2 Ethical Framework Depth** — Phase 12 (in progress)
+- ✅ **v1.2 Ethical Framework Depth** — Phases 12–15.1 (shipped 2026-03-31)
+- ⬜ **v2.0 Signal Lost** — Phases 16–19 (in progress)
 
 ## Phases
 
@@ -32,90 +33,77 @@
 
 </details>
 
-### v1.2 Ethical Framework Depth
+<details>
+<summary>✅ v1.2 Ethical Framework Depth (Phases 12–15.1) — SHIPPED 2026-03-31</summary>
 
-- [ ] **Phase 12: Ethical Framework Depth** — Deeper moral baseline, moral trajectory tracking, conscience cost indicators, deontological awareness prompts, virtue reputation arc, rights awareness, cultural context framing
-- [x] **Phase 13: Text & Mobile Polish** — Meter label rework, high-school-friendly text, 375px mobile optimization (completed 2026-03-30)
-- [x] **Phase 14: Animated Kingdom Map** — Replace Three.js/R3F 3D scene with GSAP-driven 2D animated map. Four reactive zones (Fire/Courage, Water/Honesty, Purple/Empathy, Compass/Loyalty). Strip mouse effects for projected host screen. Remove Three.js deps after confirmed. (completed 2026-03-30)
-- [x] **Phase 15: Divided Kingdom Phase 2** — Dynamic scribe record (R8), 90s timer pressure (R5), walk mechanic (R6), "How Others Chose" post-round screen, detection.js rework (key rename + new conflict triggers), conscience layer text, Round 7 fourth choice, visual accumulation, closing reflection screen, homepage split (host vs player) (completed 2026-03-30)
+- [x] Phase 12: Ethical Framework Depth (3/3 plans) — completed 2026-03-30
+- [x] Phase 13: Text & Mobile Polish (3/3 plans) — completed 2026-03-30
+- [x] Phase 13.1: Dilemma 1 Flow Redesign + Bug Fixes (3/3 plans) — completed 2026-03-30
+- [x] Phase 14: Animated Kingdom Map (1/1 plans) — completed 2026-03-30
+- [x] Phase 15: Divided Kingdom Phase 2 (5/5 plans) — completed 2026-03-30
+- [x] Phase 15.1: Moral Conflict Detection Audit (2/2 plans) — completed 2026-03-31
+
+</details>
+
+### v2.0 Signal Lost
+
+- [ ] **Phase 16: Data Foundation** — Signal Lost pack file, axis constants, senator profile data, break flag definitions, Supabase schema migrations, Signal Lost as default pack
+- [ ] **Phase 17: Player-Facing Integration** — Senator profile assignment and display, per-round stake panel, break flag writes and map rendering, walk mechanic R6 rewrite, scribe record, Signal Lost detection triggers
+- [ ] **Phase 18: Discussion Mode** — Host mode selector, discussion pause screen with profile breakdown and conflict spotlight, facilitator-only Continue, atomic round advance, player waiting state
+- [ ] **Phase 19: Grading Rubric** — Instructor-facing grading route with 4-dimension rubric, score bands, bonus section
 
 ---
 
 ## Phase Details
 
-### Phase 12: Ethical Framework Depth
-**Goal**: The game covers the full spectrum of ethical and moral decision-making frameworks — every player's experience is measured against Kohlberg's stages, Gilligan's relational model, utilitarian calculus, deontological constraints, virtue reputation, rights awareness, and cultural context — not just the 4 framework tags, but the deeper philosophical dimensions underneath them
-**Depends on**: Phase 11
-**Requirements**: BASELINE-01, BASELINE-02, BASELINE-03, TRAJECTORY-01, TRAJECTORY-02, TRAJECTORY-03, TRAJECTORY-04, CONSCIENCE-01, CONSCIENCE-02, DEONTO-01, DEONTO-02, VIRTUE-01, VIRTUE-02, RIGHTS-01, RIGHTS-02, CULTURE-01, CULTURE-02
+### Phase 16: Data Foundation
+**Goal**: All Signal Lost data is defined, validated, and persisted — pack scenarios, axis constants, senator profiles, break flag definitions, and schema migrations are in place so no downstream component builds against undefined shapes
+**Depends on**: Phase 15.1
+**Requirements**: PACK-01, PACK-02, PACK-03, PACK-04, AXIS-01, AXIS-02, AXIS-03, PROF-01, FLAG-01, FLAG-02
 **Success Criteria** (what must be TRUE):
-  1. Baseline page shows 5 stance questions (up from 2) — each maps to a framework conflict pair — page still completes in under 60 seconds with progressive disclosure
-  2. All 5 stance answers feed into `findMoralConflicts()` as secondary signals — a player who said "no" to breaking promises but chose consequentialistically gets flagged
-  3. End screen shows "Your Moral Arc" section when a player's dominant framework shifted between early and late rounds — names the shift and what it means philosophically
-  4. End screen shows a `consistency_score` label — high consistency is named ("You held [X] through escalating stakes"), low consistency shows the trajectory narrative instead
-  5. Players who ranked honesty #1 AND answered "no" to lying see a pre-choice awareness prompt on care-tagged choices — dismissible, never blocks, fact of dismissal logged
-  6. End screen "Character" subsection shows longest virtue streak and whether virtue was most consistent across heavy-weight rounds
-  7. Scenarios with rights-based tensions tagged with `rights_dimension: true` — end screen shows rights awareness line when ≥2 rights scenarios were played
-  8. Pack selection cards show a one-line "ethical lens" subtitle — end screen footer shows the pack's ethical lens with a "context matters" note
-  9. `choice_history` entries include `moral_weight` derived from scenario weight — used by trajectory detection
-  10. ConsequenceReveal shows subtle visual distinction (amber border) when a moral conflict was registered for that round
-**Plans**: 3 plans
-
-Plans:
-- [x] 12-01-PLAN.md — Data layer: detection.js extensions (trajectory, virtue, stance checks) + Baseline 5 questions + scenario schema (ethicalLens, rights_dimension)
-- [x] 12-02-PLAN.md — In-game UI: ConsequenceReveal amber border + deontological awareness prompt banner
-- [x] 12-03-PLAN.md — End screen + host wiring: endSession enrichment + FrameworkProfile 5 new sections + HostSetup ethicalLens
-
+  1. A new Signal Lost session writes `{ CT: 65, HD: 65, SOL: 65, ACC: 65 }` to `sessions.world_state` and Signal Lost is selected by default when creating a session
+  2. Meter bars on host and player views display "Civil Trust", "Human Dignity", "Solidarity", and "Accountability" labels when Signal Lost is the active pack
+  3. All 8 scenario round objects in signal-lost.js are fully populated: 3 choices (R7 has 4), framework tags, axis deltas keyed to `CT/HD/SOL/ACC` constants, conscience layers, discussion prompts, and per-round conflict spotlight pair
+  4. All 6 senator profile objects exist in senatorProfiles.js with name, subtitle, per-round stakes for R1–R8, and the 4 variable fields
+  5. The 7 break flag definitions exist in breakFlags.js with round trigger, choice index, and map marker type; `sessions.break_flags` jsonb column and `players.senator_profile_id` column exist in Supabase
+**Plans**: TBD
 **UI hint**: yes
 
-### Phase 13: Text & Mobile Polish
+### Phase 17: Player-Facing Integration
+**Goal**: Players experience Signal Lost as a fully differentiated senator simulation — each player is assigned a persistent profile with personal stakes visible every round, break flags are written and surfaced, the walk mechanic works for R6, the scribe record reflects actual choices, and conflict detection fires only on Signal Lost scenario IDs
+**Depends on**: Phase 16
+**Requirements**: PROF-02, PROF-03, PROF-04, PROF-05, FLAG-03, FLAG-04, DETECT-01, DETECT-02, DETECT-03, WALK-01, WALK-02, WALK-03, SCRIBE-01, SCRIBE-02
+**Success Criteria** (what must be TRUE):
+  1. Player is assigned a senator profile at join time; profile_id is persisted to Supabase so that reloading the phone mid-session shows the same profile and correct per-round stakes
+  2. Before each choice, the player sees their "YOUR STAKE" panel with the round-specific text for their profile; the host roster shows each player's assigned profile letter
+  3. Round 6 renders a corridor walk interaction (not choice buttons); crossing the midpoint toward the terminal submits Choice I, turning back submits Choice II, stopping near the terminal for 3 seconds submits Choice III — choice index is written to Supabase identically to all other rounds
+  4. When a choice triggers a break flag (R1-III, R2-I, R3-II, R4-II, R5-I, R6-II, R7-IV), the flag is written to `sessions.break_flags` and a persistent marker appears on the host AnimatedMap for all remaining rounds
+  5. The Round 8 scribe record references the specific break flags the session triggered and the player's dominant framework pattern across R1–R7; Signal Lost STANCE_TRIGGERS in detection.js use `signal-r*` scenario ID prefixes and do not fire during kingdom-arc play
+**Plans**: TBD
+**UI hint**: yes
 
-**Goal**: Every player-facing label, narrative, and UI element reads naturally for a high school audience and renders cleanly on a 375px phone screen — meter names connect to the moral reasoning the game teaches, academic jargon is eliminated, and mobile typography/spacing passes a visual audit
-**Depends on**: Phase 12
-**Requirements**: METER-01, METER-02, TEXT-01, TEXT-02, TEXT-03, MOBILE-01, MOBILE-02, MOBILE-03
-**Plans**: 3 plans
+### Phase 18: Discussion Mode
+**Goal**: The host can run Signal Lost as a facilitated classroom session — after each round closes, the game pauses for a Discussion Pause Screen that shows vote distribution, anonymous profile breakdown, and pre-written prompts; only the host can advance; players see a waiting state; the round advance is atomic
+**Depends on**: Phase 17
+**Requirements**: DISC-01, DISC-02, DISC-03, DISC-04, DISC-05, DISC-06
+**Success Criteria** (what must be TRUE):
+  1. Host setup includes a mode selector (Discussion / Standard); the choice is written to `sessions.mode` before any player joins and cannot be changed mid-session
+  2. In Discussion Mode, after the host closes a round, all player phones show a "Waiting for facilitator" state and the host sees the Discussion Pause Screen — the next round does not load until the host presses Continue
+  3. The Discussion Pause Screen shows the live vote distribution for that session, an anonymous profile breakdown grid (Profile A → Choice II, etc.), and 2–3 pre-written discussion prompts for that round
+  4. When the key conflict pair for a round chose differently, a Conflict Spotlight section appears naming both profiles' stakes and asking them to explain to each other
+  5. The Continue button is rendered only in Host.jsx; no path through Play.jsx can advance the session past the discussion pause; the round advance writes world state and increments round atomically via a single Supabase RPC
+**Plans**: TBD
+**UI hint**: yes
 
-Plans:
-- [x] 13-01-PLAN.md — Meter label rework: rename kingdom geography labels to moral concept names across all 4 files
-- [x] 13-02-PLAN.md — Text readability: rewrite FRAMEWORKS descriptions and ARC_NARRATIVES with introduce-then-define pattern
-- [x] 13-03-PLAN.md — Mobile CSS: 390px breakpoints across 7 CSS module files + responsive SVG conflict diagram
-
-### Phase 13.1: Dilemma 1 Flow Redesign + Bug Fixes (INSERTED)
-
-**Goal:** Ship revised Dilemma 1 end-to-end: bombshell final round replacing reflection, fix host score labels, player answer toggle, question on host screen, and copy polish
-**Depends on:** Phase 13
-**Requirements**: BOMB-01, BOMB-02, BOMB-03, BOMB-04, HOST-01, HOST-02, TOGGLE-01, TOGGLE-02
-**Plans:** 3/3 plans complete
-
-Plans:
-- [x] 13.1-01-PLAN.md — Bombshell scenario replacing reflection round + totalRounds fix
-- [ ] 13.1-02-PLAN.md — Player answer toggle (delete+re-insert, ScenarioCard re-selection)
-- [ ] 13.1-03-PLAN.md — Host screen fixes: METER_LABELS, scenario text overlay, bombshell copy
-
-### Phase 14: Animated Kingdom Map
-
-**Goal:** Replace the Three.js/R3F 3D kingdom scene with a GSAP-driven 2D animated map that reacts to world state meters — Fire zone (Courage), Water zone (Honesty), Purple zone (Empathy), Compass (Loyalty). Integration prototype in /integration. Remove mouse parallax/cursor effects for projected host screen. Strip Three.js dependencies after swap confirmed.
-**Requirements**: MAP-01, MAP-02, MAP-03, MAP-04
-**Depends on:** Phase 13.1
-**Canonical refs:** integration/AnimatedMap.jsx, integration/AnimatedMap.module.css, integration/INTEGRATION_PROMPT.md, integration/Map1.png
-**Plans:** 1/1 plans complete
-
-Plans:
-- [ ] 14-01-PLAN.md — Install gsap, adapt AnimatedMap from prototype, swap into Host.jsx (3 sites), delete dead code
-
-### Phase 15: Divided Kingdom Phase 2
-
-**Goal:** Bring the game to presentation-ready depth — R8 dynamic scribe record reflecting player's actual choices, R5 90-second timer for System 1 pressure, R6 physical walk mechanic, "How Others Chose" percentages after every round, detection.js rework (key rename + 10 new conflict trigger strings), conscience layer text per choice, Round 7 fourth choice (Cultural Tribunal), closing reflection screen, homepage split for host vs player entry.
-**Requirements**: DK2-01, DK2-02, DK2-03, DK2-04, DK2-05, DK2-06, DK2-07, DK2-08, DK2-09, DK2-10, DK2-11, DK2-12, DK2-13, DK2-14, DK2-15
-**Depends on:** Phase 14
-**Canonical refs:** .planning/phases/15-divided-kingdom-phase-2/15-PRD.md
-**Plans:** 5/5 plans complete
-
-Plans:
-- [x] 15-01-PLAN.md — Data layer: detection.js rework (key rename + 10 triggers + VALUE_FRAMEWORK_MAP), Baseline Q text, kingdom-arc.js R7 4th choice + conscience layer
-- [x] 15-02-PLAN.md — UI components: ScenarioCard 4-choice support, ConsequenceReveal conscience layer, How Others Chose data module
-- [x] 15-03-PLAN.md — Play.jsx wiring: How Others Chose screen, R5 timer pressure, R6 walk mechanic, conscienceLayer prop
-- [x] 15-04-PLAN.md — R8 scribe record generator, Host How Others Chose overlay, closing reflection screen
-- [x] 15-05-PLAN.md — R8 scribe wiring in Play.jsx, homepage split (host vs player entry)
+### Phase 19: Grading Rubric
+**Goal**: Instructors can access a grading rubric page from the host end screen that documents how to assess student reflection across 4 dimensions — the page requires no real-time data and is read-only
+**Depends on**: Phase 18
+**Requirements**: GRADE-01, GRADE-02, GRADE-03
+**Success Criteria** (what must be TRUE):
+  1. A "Grading Rubric" link or button appears on the host end screen and navigates to `/grading/:sessionId`
+  2. The rubric page shows all 4 dimensions (Moral Reasoning 30pts, Personal Stake Awareness 20pts, Consequence Tracking 25pts, Closing Reflection 25pts) with score bands and per-band descriptions
+  3. The bonus section (up to 10pts, baseline value-behavior alignment) is documented on the page with a note that it applies only when the baseline survey was completed
+**Plans**: TBD
 
 ---
 
@@ -135,17 +123,13 @@ Plans:
 | 9. Three.js Host Scene | v1.1 | 2/2 | Complete | 2026-03-29 |
 | 10. Host UX Unification + Reveal Beat | v1.1 | 2/2 | Complete | 2026-03-28 |
 | 11. Moral Conflict Detection + End Screen + AI Hooks | v1.1 | 3/3 | Complete | 2026-03-30 |
-| 12. Ethical Framework Depth | v1.2 | 3/3 | Complete |  |
-| 13. Text & Mobile Polish | v1.2 | 3/3 | Complete    | 2026-03-30 |
-| 13.1. Dilemma 1 Flow Redesign + Bug Fixes | v1.2 | 1/3 | Complete    | 2026-03-30 |
-
-### Phase 15.1: Moral Conflict Detection Audit (INSERTED)
-
-**Goal:** Audit and fix the VALUE_FRAMEWORK_MAP, stance-based conflict triggers, and per-round moral conflict detection logic so that conflicts fire accurately against the kingdom-arc scenario choices. The current detection produces false positives (e.g. flagging 'Protect the Core' as conflicting with loyalty) because the mapping between values, frameworks, and specific scenario choices is miscalibrated.
-**Requirements**: MCA-01
-**Depends on:** Phase 15
-**Plans:** 2/2 plans complete
-
-Plans:
-- [x] 15.1-01-PLAN.md — Fix detection.js: dead fairness tag (VALUE_CONDITION_TRIGGERS) + replace 2 matchFramework triggers with 4 matchCondition entries + update tests
-- [x] 15.1-02-PLAN.md — Fix call sites: Play.jsx + ConsequenceReveal.jsx pass full frameworks array + scenarioId/choiceIndex for condition triggers to fire at round-close
+| 12. Ethical Framework Depth | v1.2 | 3/3 | Complete | 2026-03-30 |
+| 13. Text & Mobile Polish | v1.2 | 3/3 | Complete | 2026-03-30 |
+| 13.1. Dilemma 1 Flow Redesign + Bug Fixes | v1.2 | 3/3 | Complete | 2026-03-30 |
+| 14. Animated Kingdom Map | v1.2 | 1/1 | Complete | 2026-03-30 |
+| 15. Divided Kingdom Phase 2 | v1.2 | 5/5 | Complete | 2026-03-30 |
+| 15.1. Moral Conflict Detection Audit | v1.2 | 2/2 | Complete | 2026-03-31 |
+| 16. Data Foundation | v2.0 | 0/TBD | Not started | - |
+| 17. Player-Facing Integration | v2.0 | 0/TBD | Not started | - |
+| 18. Discussion Mode | v2.0 | 0/TBD | Not started | - |
+| 19. Grading Rubric | v2.0 | 0/TBD | Not started | - |
