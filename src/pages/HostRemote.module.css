@@ -265,3 +265,80 @@
 .controlRow .primaryBtn {
   flex: 1;
 }
+
+/* ── Ready stat ── */
+
+.readyStat {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent-cyan);
+  margin: 0;
+}
+
+/* ── Host notes / discussion prompts ── */
+
+.notesBlock {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(59, 130, 246, 0.06);
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  border-radius: 8px;
+  text-align: left;
+}
+
+.notesLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgb(59, 130, 246);
+  margin: 0 0 6px 0;
+  list-style: none;
+}
+
+.notesLabel::-webkit-details-marker { display: none; }
+
+.noteItem {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-dim);
+  margin: 0 0 4px 0;
+  padding-left: 8px;
+  border-left: 2px solid rgba(59, 130, 246, 0.2);
+}
+
+/* ── End game confirmation ── */
+
+.endGameToggle {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-family: var(--mono);
+  cursor: pointer;
+  padding: 8px;
+  opacity: 0.5;
+  transition: opacity 200ms ease;
+}
+
+.endGameToggle:hover {
+  opacity: 1;
+  color: var(--accent-red);
+}
+
+.confirmBlock {
+  width: 100%;
+  padding: 12px;
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.confirmText {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent-red);
+  margin: 0 0 10px 0;
+}

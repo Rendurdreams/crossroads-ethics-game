@@ -139,6 +139,35 @@
   color: var(--text);
 }
 
+.readyBtn {
+  width: 100%;
+  margin-top: 14px;
+  padding: 10px;
+  border: 1px solid var(--accent-cyan);
+  border-radius: 8px;
+  background: rgba(6, 182, 212, 0.06);
+  color: var(--accent-cyan);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--mono);
+  cursor: pointer;
+  transition: background 200ms ease, box-shadow 200ms ease;
+}
+
+.readyBtn:hover {
+  background: rgba(6, 182, 212, 0.12);
+  box-shadow: 0 0 12px var(--accent-cyan-dim);
+}
+
+.readyConfirm {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--accent-cyan);
+  margin: 12px 0 0 0;
+  text-align: center;
+  text-shadow: 0 0 8px var(--accent-cyan-dim);
+}
+
 .dossierFooter {
   font-family: var(--mono);
   font-size: 11px;
@@ -148,7 +177,184 @@
   font-style: italic;
 }
 
-/* ── Post-lock dashboard ── */
+/* ── World health bar ── */
+
+.healthBlock {
+  width: 100%;
+}
+
+.healthBar {
+  width: 100%;
+  height: 36px;
+  position: relative;
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+  background: var(--glass-bg);
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 0 12px;
+  transition: border-color 200ms ease;
+}
+
+.healthFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  border-radius: 8px;
+  transition: width 800ms cubic-bezier(0.22, 1, 0.36, 1), background 400ms ease;
+}
+
+.healthLabel {
+  position: relative;
+  z-index: 1;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  flex: 1;
+}
+
+.healthToggle {
+  position: relative;
+  z-index: 1;
+  font-size: 10px;
+  color: var(--text-muted);
+}
+
+.healthDetail {
+  padding: 8px 4px 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* ── Phase 1: Stake view ── */
+
+.phaseStake {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+  padding: 0 16px;
+  gap: 14px;
+}
+
+.stepEyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--accent-cyan);
+  margin: 0;
+  text-shadow: 0 0 8px var(--accent-cyan-dim);
+}
+
+.stakeTitle {
+  font-family: Georgia, serif;
+  font-size: 1.3rem;
+  color: var(--text-h);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.stakeTimer {
+  margin-top: 4px;
+}
+
+.phaseAdvanceBtn {
+  min-height: 44px;
+  padding: 12px 28px;
+  border: 1px solid var(--accent-blue);
+  border-radius: 8px;
+  background: var(--glass-bg);
+  color: var(--accent-blue);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: var(--mono);
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  transition: background 200ms ease, box-shadow 200ms ease;
+  margin-top: 8px;
+}
+
+.phaseAdvanceBtn:hover {
+  background: var(--accent-blue-dim);
+  box-shadow: 0 0 16px var(--accent-blue-glow);
+}
+
+/* ── Phase 3: Dashboard view ── */
+
+.dashboardView {
+  width: 100%;
+  max-width: 420px;
+  padding: 0 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dashStatusRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.dashPanels {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dashSenatorName {
+  font-family: var(--mono);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-h);
+  margin: 0 0 2px 0;
+}
+
+.dashSenatorSub {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin: 0 0 10px 0;
+  line-height: 1.4;
+}
+
+.dashSenatorVar {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 10px;
+  border-left: 2px solid var(--accent-cyan-dim);
+  margin-bottom: 6px;
+}
+
+.dashSenatorVarLabel {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--accent-cyan);
+}
+
+.dashSenatorVarText {
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+/* ── Legacy post-lock dashboard (keep for fallback) ── */
 
 .dashboard {
   width: 100%;

@@ -48,6 +48,8 @@ export default function HostRemote() {
   const [started, setStarted] = useState(false)
   const [nextTimerDuration, setNextTimerDuration] = useState(60)
   const [endingSession, setEndingSession] = useState(false)
+  const [confirmEnd, setConfirmEnd] = useState(false)
+  const [readyPlayers, setReadyPlayers] = useState(0)
 
   const [roundState, dispatch] = useReducer(roundReducer, initialRoundState)
   const timerChannelRef = useRef(null)
@@ -127,6 +129,9 @@ export default function HostRemote() {
   useEffect(() => {
     if (!sessionId) return
     remoteChannelRef.current = supabase.channel(`remote:${sessionId}`)
+      .on('broadcast', { event: 'player_ready' }, () => {
+        setReadyPlayers(prev => prev + 1)
+      })
     remoteChannelRef.current.subscribe()
     return () => { if (remoteChannelRef.current) supabase.removeChannel(remoteChannelRef.current) }
   }, [sessionId])
@@ -349,6 +354,9 @@ export default function HostRemote() {
           <p className={styles.eyebrow}>HOST REMOTE</p>
           <p className={styles.roomCode}>{session?.room_code}</p>
           <p className={styles.stat}>{totalPlayers} player{totalPlayers !== 1 ? 's' : ''} joined</p>
+          {readyPlayers > 0 && (
+            <p className={styles.readyStat}>{readyPlayers} / {totalPlayers} viewed profile</p>
+          )}
           <button
             className={styles.primaryBtn}
             onClick={startGame}
@@ -438,19 +446,28 @@ export default function HostRemote() {
             )
           })}
 
-          <div className={styles.controlRow}>
-            {!isLastRound && (
-              <button className={styles.primaryBtn} onClick={nextRound}>NEXT ROUND</button>
-            )}
-            <button className={`${styles.primaryBtn} ${styles.dangerBtn}`} onClick={endSession} disabled={endingSession}>
-              {endingSession ? 'ENDING...' : 'END GAME'}
-            </button>
-          </div>
+          {/* Discussion prompts + host notes */}
+          {currentScenario?.hostNotes?.length > 0 && (
+            <div className={styles.notesBlock}>
+              <p className={styles.notesLabel}>HOST NOTES</p>
+              {currentScenario.hostNotes.map((note, i) => (
+                <p key={i} className={styles.noteItem}>{note}</p>
+              ))}
+            </div>
+          )}
 
+          {currentScenario?.discussionPrompts?.length > 0 && (
+            <details className={styles.notesBlock}>
+              <summary className={styles.notesLabel} style={{ cursor: 'pointer' }}>DISCUSSION PROMPTS</summary>
+              {currentScenario.discussionPrompts.map((prompt, i) => (
+                <p key={i} className={styles.noteItem}>{prompt}</p>
+              ))}
+            </details>
+          )}
+
+          {/* Controls */}
           {!isLastRound && (
-            <button className={styles.smallBtn} onClick={skipRound} style={{ marginTop: 8 }}>
-              SKIP NEXT ROUND
-            </button>
+            <button className={styles.primaryBtn} onClick={nextRound}>NEXT ROUND</button>
           )}
 
           <div className={styles.presetRow}>
@@ -467,6 +484,27 @@ export default function HostRemote() {
               ))}
             </div>
           </div>
+
+          {!isLastRound && (
+            <button className={styles.smallBtn} onClick={skipRound}>SKIP NEXT ROUND</button>
+          )}
+
+          {/* End game — tucked away with confirmation */}
+          {!confirmEnd ? (
+            <button className={styles.endGameToggle} onClick={() => setConfirmEnd(true)}>
+              End game early...
+            </button>
+          ) : (
+            <div className={styles.confirmBlock}>
+              <p className={styles.confirmText}>End session and deliver profiles?</p>
+              <div className={styles.controlRow}>
+                <button className={`${styles.primaryBtn} ${styles.dangerBtn}`} onClick={endSession} disabled={endingSession}>
+                  {endingSession ? 'ENDING...' : 'YES, END GAME'}
+                </button>
+                <button className={styles.smallBtn} onClick={() => setConfirmEnd(false)}>Cancel</button>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     )

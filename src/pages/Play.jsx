@@ -31,6 +31,40 @@ const roundTransition = {
   animate: { opacity: 1, transition: { duration: 0.4, delay: 0.35 } }
 }
 
+function computeWorldHealth(worldState, pack) {
+  if (!worldState) return 50
+  const keys = Object.keys(pack?.axisSet ?? worldState)
+  const values = keys.map(k => worldState[k] ?? 50)
+  return Math.round(values.reduce((a, b) => a + b, 0) / values.length)
+}
+
+function WorldHealthBar({ worldState, pack }) {
+  const [expanded, setExpanded] = useState(false)
+  const health = computeWorldHealth(worldState, pack)
+  const color = health >= 50 ? 'var(--accent-cyan)' : 'var(--accent-red)'
+  const bgColor = health >= 50 ? 'rgba(6, 182, 212, 0.15)' : 'rgba(239, 68, 68, 0.15)'
+  const axisLabels = getAxisLabels(pack)
+
+  return (
+    <div className={styles.healthBlock}>
+      <button className={styles.healthBar} onClick={() => setExpanded(v => !v)} style={{ borderColor: color }}>
+        <div className={styles.healthFill} style={{ width: `${health}%`, background: color, boxShadow: `0 0 12px ${bgColor}` }} />
+        <span className={styles.healthLabel} style={{ color }}>
+          {pack?.id === 'signal-lost' ? 'WORLD' : 'REALM'} {health}%
+        </span>
+        <span className={styles.healthToggle}>{expanded ? '\u25B4' : '\u25BE'}</span>
+      </button>
+      {expanded && (
+        <div className={styles.healthDetail}>
+          {Object.entries(axisLabels).map(([key, label]) => (
+            <MeterBar key={key} label={label} value={worldState?.[key] ?? 50} />
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function Play() {
   const { sessionId } = useParams()
   const navigate = useNavigate()
@@ -53,6 +87,8 @@ export default function Play() {
   const [submitError, setSubmitError] = useState(false)
   const [passedRound, setPassedRound] = useState(false)
   const [contentNoteAcknowledged, setContentNoteAcknowledged] = useState(false)
+  const [roundPhase, setRoundPhase] = useState('stake') // 'stake' | 'dilemma' | 'dashboard'
+  const [profileReady, setProfileReady] = useState(false)
   const [submittedCount, setSubmittedCount] = useState(0)
   const [totalPlayerCount, setTotalPlayerCount] = useState(0)
   const [timerRemaining, setTimerRemaining] = useState(null)
@@ -268,6 +304,7 @@ export default function Play() {
     setSubmitError(false)
     setPassedRound(false)
     setContentNoteAcknowledged(false)
+    setRoundPhase('stake')
     setSubmittedCount(0)
     setShowHowOthersChose(false)
     setRoundChoicesForComparison([])
@@ -406,6 +443,15 @@ export default function Play() {
                 )}
               </div>
               <p className={styles.dossierFooter}>Memorize your position. Every dilemma will cost you differently.</p>
+              {!profileReady && (
+                <button className={styles.readyBtn} onClick={() => {
+                  setProfileReady(true)
+                  supabase.channel(`remote:${sessionId}`).send({ type: 'broadcast', event: 'player_ready', payload: {} })
+                }}>
+                  I&apos;ve read my profile
+                </button>
+              )}
+              {profileReady && <p className={styles.readyConfirm}>Ready.</p>}
             </div>
           ) : (
             <>
@@ -413,7 +459,7 @@ export default function Play() {
               <div className={styles.name}>{player?.name}</div>
             </>
           )}
-          <p className={styles.waiting}>{lobbyProfile ? 'Waiting for the session to begin.' : 'The council assembles.'}</p>
+          <p className={styles.waiting}>{lobbyProfile ? (profileReady ? 'Waiting for the session to begin.' : 'Read your profile above.') : 'The council assembles.'}</p>
           <p className={styles.count}>{playerCount} councillor{playerCount !== 1 ? 's' : ''} present</p>
           {session?.room_code && (
             <p className={styles.roomReminder}>Chamber: {session.room_code}</p>
@@ -589,7 +635,10 @@ export default function Play() {
       )
     }
 
-    // Player didn't submit before round closed
+    // Player didn't submit before round closed — show dashboard
+    const missedProfile = pack?.id === 'signal-lost' && player?.senator_profile_id
+      ? getProfileById(player.senator_profile_id) : null
+
     return (
       <motion.div
         className={styles.page}
@@ -599,28 +648,31 @@ export default function Play() {
         exit="exit"
         style={{ '--atmosphere-warmth': warmth }}
       >
-        <div className={styles.gameContent}>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={roundKey}
-              variants={roundVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-            >
-              <div className={styles.passConsequence}>
-                <p className={styles.passConsequenceText}>The decree was sealed before your counsel arrived.</p>
-                <div className={styles.metersSection}>
-                  <p className={styles.metersLabel}>{pack?.id === 'signal-lost' ? 'THE WORLD' : 'THE REALM'}</p>
-                  <div className={styles.meters}>
-                    {Object.entries(getAxisLabels(pack)).map(([key, label]) => (
-                      <MeterBar key={key} label={label} value={session.world_state?.[key] ?? 50} />
-                    ))}
-                  </div>
-                </div>
+        <div className={styles.dashboardView}>
+          <div className={styles.dashStatus}>
+            <p className={styles.dashStatusText}>
+              {pack?.id === 'signal-lost' ? 'ROUND CLOSED — YOU DID NOT VOTE' : 'The decree was sealed before your counsel arrived.'}
+            </p>
+          </div>
+
+          <WorldHealthBar worldState={session.world_state} pack={pack} />
+
+          {missedProfile && (
+            <details className={styles.dashPanel}>
+              <summary className={styles.dashPanelHeader}>SENATOR PROFILE</summary>
+              <div className={styles.dashPanelBody}>
+                <p className={styles.dashSenatorName}>{missedProfile.name}</p>
+                <p className={styles.dashSenatorSub}>{missedProfile.subtitle}</p>
               </div>
-            </motion.div>
-          </AnimatePresence>
+            </details>
+          )}
+
+          <details className={styles.dashPanel}>
+            <summary className={styles.dashPanelHeader}>THE DILEMMA</summary>
+            <div className={styles.dashPanelBody}>
+              <p className={styles.dashScenarioText}>{currentScenario.text}</p>
+            </div>
+          </details>
         </div>
       </motion.div>
     )
@@ -743,77 +795,107 @@ export default function Play() {
       )
     }
 
-    // Scenario + choice view
-    return (
-      <motion.div
-        className={styles.page}
-        variants={variants}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-        style={{ '--atmosphere-warmth': warmth }}
-      >
-        <div className={styles.gameContent}>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={roundKey}
-              variants={roundVariants}
-              initial="initial"
-              animate="animate"
-              exit="exit"
-            >
-              <div className={styles.roundHeader}>
-                {player?.avatar && <span className={styles.headerAvatar}>{player.avatar}</span>}
-                <span className={styles.roundLabel}>
-                  {pack?.id === 'signal-lost'
-                    ? `Round ${session.current_round} of ${session.total_rounds}`
-                    : `The Council Deliberates — Dilemma ${session.current_round}`}
-                </span>
+    // ── PHASE 1: STAKE (full screen, tap to continue) ──────────────────
+    if (roundPhase === 'stake') {
+      const profile = pack?.id === 'signal-lost' && player?.senator_profile_id
+        ? getProfileById(player.senator_profile_id)
+        : null
+      let stake = profile?.stakes?.[`r${session.current_round}`]
+      const dynamicEntries = profile?.dynamicStakes?.[`r${session.current_round}`]
+      if (dynamicEntries && myChoiceHistory.length > 0) {
+        const matched = dynamicEntries.find(d => d.condition(myChoiceHistory))
+        if (matched) stake = stake ? `${stake} ${matched.text}` : matched.text
+      }
+
+      return (
+        <motion.div
+          className={styles.page}
+          variants={variants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          style={{ '--atmosphere-warmth': warmth }}
+        >
+          <div className={styles.phaseStake}>
+            <p className={styles.stepEyebrow}>
+              {pack?.id === 'signal-lost'
+                ? `ROUND ${session.current_round} OF ${session.total_rounds}`
+                : `DILEMMA ${session.current_round}`}
+            </p>
+            <h2 className={styles.stakeTitle}>{currentScenario.title}</h2>
+
+            {currentScenario.previousRoundCallback && session.current_round > 1 && (
+              <p className={styles.narrativeBridge}>{currentScenario.previousRoundCallback}</p>
+            )}
+
+            {profile && stake && (
+              <div className={styles.stakePanel}>
+                <p className={styles.stakeName}>{profile.name}</p>
+                <p className={styles.stakeText}>YOUR STAKE: {stake}</p>
               </div>
+            )}
 
-              {/* Senator profile YOUR STAKE panel (Signal Lost only) */}
-              {pack?.id === 'signal-lost' && player?.senator_profile_id && (() => {
-                const profile = getProfileById(player.senator_profile_id)
-                let stake = profile?.stakes?.[`r${session.current_round}`]
-                const dynamicEntries = profile?.dynamicStakes?.[`r${session.current_round}`]
-                if (dynamicEntries && myChoiceHistory.length > 0) {
-                  const matched = dynamicEntries.find(d => d.condition(myChoiceHistory))
-                  if (matched) stake = stake ? `${stake} ${matched.text}` : matched.text
-                }
-                return profile ? (
-                  <div className={styles.stakePanel}>
-                    <p className={styles.stakeName}>{profile.name}</p>
-                    {stake && <p className={styles.stakeText}>YOUR STAKE: {stake}</p>}
-                  </div>
-                ) : null
-              })()}
+            {!profile && (
+              <div className={styles.stakePanel}>
+                <p className={styles.stakeText} style={{ fontStyle: 'italic' }}>{currentScenario.moralTension}</p>
+              </div>
+            )}
 
-              {isBombshellRound && (
-                <div className={styles.scribeRecord}>
-                  <p className={styles.scribeLabel}>THE SCRIBE&apos;S RECORD</p>
-                  <p className={styles.scribeText}>{generateScribeRecord(myChoiceHistory, session?.break_flags ?? {})}</p>
-                </div>
-              )}
+            {isBombshellRound && (
+              <div className={styles.scribeRecord}>
+                <p className={styles.scribeLabel}>THE SCRIBE&apos;S RECORD</p>
+                <p className={styles.scribeText}>{generateScribeRecord(myChoiceHistory, session?.break_flags ?? {})}</p>
+              </div>
+            )}
 
-              {currentScenario.previousRoundCallback && session.current_round > 1 && (
-                <p className={styles.narrativeBridge}>{currentScenario.previousRoundCallback}</p>
-              )}
+            {timerRemaining !== null && (
+              <div className={styles.stakeTimer}>
+                <TimerDisplay remaining={timerRemaining} total={timerTotal} />
+              </div>
+            )}
 
-              {isWalkRound ? (
-                <>
-                  <div className={styles.card}>
-                    <h2 style={{ fontFamily: 'Georgia, serif', fontSize: '1.3rem', marginBottom: 12, color: 'var(--text-h)' }}>{currentScenario.title}</h2>
-                    <p style={{ lineHeight: 1.6, marginBottom: 0, color: 'var(--text)', fontSize: '1rem' }}>{currentScenario.text}</p>
-                  </div>
-                  <WalkMechanic
-                    onChoice={handleChoice}
-                    submitting={submitting}
-                    lockedIndex={lockedChoiceIndex}
-                    scenario={currentScenario}
-                  />
-                </>
-              ) : (
-                <>
+            <button className={styles.phaseAdvanceBtn} onClick={() => setRoundPhase('dilemma')}>
+              Read the Dilemma
+            </button>
+          </div>
+        </motion.div>
+      )
+    }
+
+    // ── PHASE 2: DILEMMA (scenario + choices, clean) ─────────────────
+    if (roundPhase === 'dilemma') {
+      return (
+        <motion.div
+          className={styles.page}
+          variants={variants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          style={{ '--atmosphere-warmth': warmth }}
+        >
+          <div className={styles.gameContent}>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={roundKey}
+                variants={roundVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
+                {isWalkRound ? (
+                  <>
+                    <div className={styles.card}>
+                      <h2 style={{ fontFamily: 'Georgia, serif', fontSize: '1.3rem', marginBottom: 12, color: 'var(--text-h)' }}>{currentScenario.title}</h2>
+                      <p style={{ lineHeight: 1.6, marginBottom: 0, color: 'var(--text)', fontSize: '1rem' }}>{currentScenario.text}</p>
+                    </div>
+                    <WalkMechanic
+                      onChoice={handleChoice}
+                      submitting={submitting}
+                      lockedIndex={lockedChoiceIndex}
+                      scenario={currentScenario}
+                    />
+                  </>
+                ) : (
                   <ScenarioCard
                     scenario={currentScenario}
                     selectedIndex={selectedChoiceIndex}
@@ -822,105 +904,122 @@ export default function Play() {
                     submitting={submitting}
                     submitError={submitError}
                   />
+                )}
 
-                  {selectedChoiceIndex !== null && lockedChoiceIndex === null && (
-                    <button
-                      className={styles.submitChoiceBtn}
-                      onClick={handleSubmitChoice}
-                      disabled={submitting}
-                    >
-                      {submitting ? 'SUBMITTING...' : (pack?.id === 'signal-lost' ? 'CAST YOUR VOTE' : 'Seal Your Decree')}
-                    </button>
-                  )}
-                </>
-              )}
+                {selectedChoiceIndex !== null && lockedChoiceIndex === null && (
+                  <button
+                    className={styles.submitChoiceBtn}
+                    onClick={() => {
+                      handleSubmitChoice()
+                      setTimeout(() => setRoundPhase('dashboard'), 500)
+                    }}
+                    disabled={submitting}
+                  >
+                    {submitting ? 'SUBMITTING...' : (pack?.id === 'signal-lost' ? 'CAST YOUR VOTE' : 'Seal Your Decree')}
+                  </button>
+                )}
 
-              {/* Pre-lock: show meters and timer inline */}
-              {lockedChoiceIndex === null && (
-                <>
-                  <div className={styles.metersSection} style={{ marginTop: 12 }}>
-                    <p className={styles.metersLabel}>{pack?.id === 'signal-lost' ? 'WORLD STATE' : 'THE REALM'}</p>
-                    <div className={styles.meters}>
-                      {Object.entries(getAxisLabels(pack)).map(([key, label]) => (
-                        <MeterBar key={key} label={label} value={session.world_state?.[key] ?? 50} />
-                      ))}
-                    </div>
-                  </div>
-                  {timerRemaining !== null && (
-                    <div className={`${styles.timerSection} ${isTimerPressureRound ? styles.timerPressure : ''}`}>
-                      <TimerDisplay remaining={timerRemaining} total={timerTotal} />
-                      {isTimerPressureRound && timerRemaining !== null && timerRemaining <= 30 && (
-                        <p className={styles.timerUrgency}>The council waits for no one.</p>
-                      )}
-                    </div>
-                  )}
-                </>
-              )}
-
-              {/* Post-lock: dashboard with collapsible panels */}
-              {lockedChoiceIndex !== null && (
-                <div className={styles.dashboard}>
-                  {/* Fixed status bar */}
-                  <div className={styles.dashStatus}>
-                    <p className={styles.dashStatusText}>
-                      {pack?.id === 'signal-lost' ? 'VOTE RECORDED' : 'DECREE SEALED'}
-                    </p>
-                    <p className={styles.submittedCounter}>
-                      <span className={styles.submittedNumber}>{submittedCount}</span>
-                      {' '}of {totalPlayerCount} submitted
-                    </p>
-                    {timerRemaining !== null && (
-                      <div className={styles.dashTimer}>
-                        <TimerDisplay remaining={timerRemaining} total={timerTotal} />
-                      </div>
+                {timerRemaining !== null && (
+                  <div className={`${styles.timerSection} ${isTimerPressureRound ? styles.timerPressure : ''}`}>
+                    <TimerDisplay remaining={timerRemaining} total={timerTotal} />
+                    {isTimerPressureRound && timerRemaining !== null && timerRemaining <= 30 && (
+                      <p className={styles.timerUrgency}>The council waits for no one.</p>
                     )}
                   </div>
+                )}
+              </motion.div>
+            </AnimatePresence>
+          </div>
+        </motion.div>
+      )
+    }
 
-                  {/* Your choice — always visible */}
-                  <div className={styles.dashChoice}>
-                    <p className={styles.dashChoiceLabel}>YOUR CHOICE</p>
-                    <p className={styles.dashChoiceText}>{currentScenario.choices[lockedChoiceIndex]?.text}</p>
-                  </div>
+    // ── PHASE 3: DASHBOARD (after vote, tabbed browsing) ─────────────
+    if (roundPhase === 'dashboard' && lockedChoiceIndex !== null) {
+      const profile = pack?.id === 'signal-lost' && player?.senator_profile_id
+        ? getProfileById(player.senator_profile_id)
+        : null
 
-                  {/* Collapsible: Why field */}
-                  <details className={styles.dashPanel}>
-                    <summary className={styles.dashPanelHeader}>REFLECTION</summary>
-                    <div className={styles.dashPanelBody}>
-                      <textarea
-                        className={styles.whyField}
-                        placeholder="In your own words, why? (optional)"
-                        maxLength={280}
-                        rows={2}
-                      />
-                    </div>
-                  </details>
+      return (
+        <motion.div
+          className={styles.page}
+          variants={variants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          style={{ '--atmosphere-warmth': warmth }}
+        >
+          <div className={styles.dashboardView}>
+            {/* Fixed status bar at top */}
+            <div className={styles.dashStatus}>
+              <p className={styles.dashStatusText}>
+                {pack?.id === 'signal-lost' ? 'VOTE RECORDED' : 'DECREE SEALED'}
+              </p>
+              <div className={styles.dashStatusRow}>
+                <span className={styles.submittedCounter}>
+                  <span className={styles.submittedNumber}>{submittedCount}</span>/{totalPlayerCount}
+                </span>
+                {timerRemaining !== null && (
+                  <TimerDisplay remaining={timerRemaining} total={timerTotal} />
+                )}
+              </div>
+            </div>
 
-                  {/* Collapsible: World State */}
-                  <details className={styles.dashPanel}>
-                    <summary className={styles.dashPanelHeader}>{pack?.id === 'signal-lost' ? 'WORLD STATE' : 'THE REALM'}</summary>
-                    <div className={styles.dashPanelBody}>
-                      <div className={styles.meters}>
-                        {Object.entries(getAxisLabels(pack)).map(([key, label]) => (
-                          <MeterBar key={key} label={label} value={session.world_state?.[key] ?? 50} />
-                        ))}
-                      </div>
-                    </div>
-                  </details>
-
-                  {/* Collapsible: Scenario text */}
-                  <details className={styles.dashPanel}>
-                    <summary className={styles.dashPanelHeader}>THE DILEMMA</summary>
-                    <div className={styles.dashPanelBody}>
-                      <p className={styles.dashScenarioText}>{currentScenario.text}</p>
-                    </div>
-                  </details>
+            {/* Collapsible panels */}
+            <div className={styles.dashPanels}>
+              {/* Your Answer — default open */}
+              <details className={styles.dashPanel} open>
+                <summary className={styles.dashPanelHeader}>YOUR ANSWER</summary>
+                <div className={styles.dashPanelBody}>
+                  <p className={styles.dashChoiceText}>{currentScenario.choices[lockedChoiceIndex]?.text}</p>
+                  <textarea
+                    className={styles.whyField}
+                    placeholder="In your own words, why? (optional)"
+                    maxLength={280}
+                    rows={2}
+                  />
                 </div>
+              </details>
+
+              {/* World State — health bar with tap-to-expand */}
+              <WorldHealthBar worldState={session.world_state} pack={pack} />
+
+              {/* Senator Profile */}
+              {profile && (
+                <details className={styles.dashPanel}>
+                  <summary className={styles.dashPanelHeader}>SENATOR PROFILE</summary>
+                  <div className={styles.dashPanelBody}>
+                    <p className={styles.dashSenatorName}>{profile.name}</p>
+                    <p className={styles.dashSenatorSub}>{profile.subtitle}</p>
+                    {Object.entries(profile.variables).map(([key, val]) => (
+                      <div key={key} className={styles.dashSenatorVar}>
+                        <span className={styles.dashSenatorVarLabel}>{key.toUpperCase()}</span>
+                        <span className={styles.dashSenatorVarText}>{val}</span>
+                      </div>
+                    ))}
+                  </div>
+                </details>
               )}
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </motion.div>
-    )
+
+              {/* The Dilemma */}
+              <details className={styles.dashPanel}>
+                <summary className={styles.dashPanelHeader}>THE DILEMMA</summary>
+                <div className={styles.dashPanelBody}>
+                  <p className={styles.dashScenarioText}>{currentScenario.text}</p>
+                </div>
+              </details>
+            </div>
+          </div>
+        </motion.div>
+      )
+    }
+
+    // Dashboard without locked choice (edge case — auto-advance)
+    if (roundPhase === 'dashboard' && lockedChoiceIndex === null) {
+      setRoundPhase('dilemma')
+    }
+
+    return null
   }
 
   // Fallback / transitional state
