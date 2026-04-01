@@ -44,6 +44,48 @@ export const HOW_OTHERS_CHOSE = {
     { choiceIndex: 0, label: 'Publish Everything', pct: 55 },
     { choiceIndex: 1, label: 'Bury', pct: 17 },
     { choiceIndex: 2, label: 'Publish After Death', pct: 28 }
+  ],
+
+  // ── Signal Lost (v6 spec research percentages) ────────────────────────
+  'signal-r1': [
+    { choiceIndex: 0, label: 'Prioritize Lives', pct: 44 },
+    { choiceIndex: 1, label: 'Save the Most', pct: 38 },
+    { choiceIndex: 2, label: 'Honor Contracts', pct: 18 }
+  ],
+  'signal-r2': [
+    { choiceIndex: 0, label: 'Deploy ARGUS', pct: 43 },
+    { choiceIndex: 1, label: 'Reject ARGUS', pct: 22 },
+    { choiceIndex: 2, label: 'Pilot Program', pct: 35 }
+  ],
+  'signal-r3': [
+    { choiceIndex: 0, label: 'Grant Sentience', pct: 40 },
+    { choiceIndex: 1, label: 'Deny Petition', pct: 19 },
+    { choiceIndex: 2, label: 'Tribunal Deferral', pct: 41 }
+  ],
+  'signal-r4': [
+    { choiceIndex: 0, label: 'Publish Audit', pct: 38 },
+    { choiceIndex: 1, label: 'Seal Report', pct: 25 },
+    { choiceIndex: 2, label: 'Brief Judiciary', pct: 37 }
+  ],
+  'signal-r5': [
+    { choiceIndex: 0, label: 'Authorize Extraction', pct: 52 },
+    { choiceIndex: 1, label: 'Refuse', pct: 15 },
+    { choiceIndex: 2, label: 'Two-Year Window', pct: 33 }
+  ],
+  'signal-r6': [
+    { choiceIndex: 0, label: 'Walk to Terminal', pct: 45 },
+    { choiceIndex: 1, label: 'Walk Away', pct: 14 },
+    { choiceIndex: 2, label: 'Conditional Notice', pct: 41 }
+  ],
+  'signal-r7': [
+    { choiceIndex: 0, label: 'Universal Basic Livelihood', pct: 40 },
+    { choiceIndex: 1, label: 'Retraining Only', pct: 22 },
+    { choiceIndex: 2, label: 'Hybrid', pct: 38 }
+  ],
+  'signal-r8': [
+    { choiceIndex: 0, label: 'Publish Everything', pct: 53 },
+    { choiceIndex: 1, label: 'Fight Publication', pct: 18 },
+    { choiceIndex: 2, label: 'Negotiate', pct: 29 }
   ]
 }
 

@@ -13,6 +13,9 @@ export default function PlayerRoster({ players }) {
         <li key={player.id} className={styles.playerCard}>
           <span className={styles.avatar}>{player.avatar}</span>
           <span className={styles.name}>{player.name}</span>
+          {player.senator_profile_id && (
+            <span className={styles.profileBadge}>{player.senator_profile_id}</span>
+          )}
         </li>
       ))}
     </ul>

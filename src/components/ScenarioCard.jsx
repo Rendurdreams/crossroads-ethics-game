@@ -18,7 +18,10 @@ export default function ScenarioCard({ scenario, selectedIndex, lockedIndex, onC
       <p className={styles.body}>{scenario.text}</p>
 
       <div className={`${styles.choices} ${isLocked ? styles.choicesLocked : ''}`}>
-        {scenario.choices.map((choice) => {
+        {(scenario.displayOrder
+          ? scenario.displayOrder.map(i => scenario.choices[i])
+          : scenario.choices
+        ).map((choice, displayIdx) => {
           const isSelected = selectedIndex === choice.choiceIndex && !isLocked
           const isLockedChoice = lockedIndex === choice.choiceIndex
           const isDimmed = isLocked && !isLockedChoice
@@ -35,7 +38,7 @@ export default function ScenarioCard({ scenario, selectedIndex, lockedIndex, onC
               onClick={() => handleClick(choice.choiceIndex)}
               disabled={submitting}
             >
-              <span className={styles.choiceNumeral}>{ROMAN[choice.choiceIndex]}.</span>
+              <span className={styles.choiceNumeral}>{ROMAN[displayIdx]}.</span>
               {choice.text}
             </button>
           )

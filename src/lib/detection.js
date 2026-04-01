@@ -4,12 +4,17 @@ import { CONFLICT_PAIRS } from './frameworks.js'
  * Maps a player's stated personal value to the ethical framework(s) it aligns with.
  * Used by findMoralConflicts to detect value-framework tension.
  */
+/**
+ * Moral Foundations Theory (Haidt, 2012) mapped to ethical frameworks.
+ * Each foundation aligns with 1-2 frameworks; a conflict fires when
+ * the player's top value doesn't appear in the choice's framework tags.
+ */
 export const VALUE_FRAMEWORK_MAP = {
-  loyalty:    ['virtue', 'care'],
-  honesty:    ['deontology'],
-  fairness:   [],
-  courage:    ['virtue'],
-  compassion: ['care']
+  care:       ['care', 'virtue'],
+  fairness:   [],                   // uses condition triggers (maps to both sides)
+  loyalty:    ['care'],
+  authority:  ['deontology'],
+  sanctity:   ['virtue', 'deontology']
 }
 
 /**
@@ -25,6 +30,7 @@ export const VALUE_FRAMEWORK_MAP = {
  * but AFTER VALUE_FRAMEWORK_MAP checks.
  */
 const VALUE_CONDITION_TRIGGERS = [
+  // ── Kingdom Arc — fairness triggers ─────────────────────────────────
   {
     value: 'fairness',
     matchCondition: (choice) => choice.scenarioId === 'round-1' && choice.choiceIndex === 1,
@@ -34,6 +40,33 @@ const VALUE_CONDITION_TRIGGERS = [
     value: 'fairness',
     matchCondition: (choice) => choice.scenarioId === 'round-3' && choice.choiceIndex === 1,
     message: "The Hollow Folk asked for equal standing. You held the line."
+  },
+
+  // ── Signal Lost — fairness triggers ─────────────────────────────────
+  {
+    value: 'fairness',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r1' && choice.choiceIndex === 2,
+    message: "Fairness asks who deserves to live when the contracts say otherwise."
+  },
+  {
+    value: 'fairness',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r3' && choice.choiceIndex === 1,
+    message: "Fairness asks whether biological origin determines who counts as a person."
+  },
+  {
+    value: 'fairness',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r4' && choice.choiceIndex === 1,
+    message: "Fairness asks what you owe fourteen thousand people harmed by a biased system."
+  },
+  {
+    value: 'fairness',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r6' && choice.choiceIndex === 1,
+    message: "Fairness asks what Kael is owed. You walked away."
+  },
+  {
+    value: 'fairness',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r7' && choice.choiceIndex === 1,
+    message: "Fairness asks who pays when eleven million people are displaced by decisions that had authors."
   }
 ]
 
@@ -121,6 +154,100 @@ const STANCE_TRIGGERS = [
     stanceAnswer: 'yes',
     matchCondition: (choice) => choice.scenarioId === 'round-6' && choice.choiceIndex === 0,
     message: "You said one can suffer for the group. Irel has suffered for centuries. Why stop now?"
+  },
+
+  // ── Signal Lost STANCE_TRIGGERS ──────────────────────────────────────
+
+  // lie_to_protect = 'yes' (Care) → fires on Deontology choices in R4 / R8
+  {
+    stanceKey: 'lie_to_protect',
+    stanceAnswer: 'yes',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r4' && choice.choiceIndex === 0,
+    message: "You said you'd lie to protect someone you love. You just chose radical transparency."
+  },
+  {
+    stanceKey: 'lie_to_protect',
+    stanceAnswer: 'yes',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r8' && choice.choiceIndex === 0,
+    message: "You said you'd lie to protect someone you love. You just chose radical transparency."
+  },
+
+  // lie_to_protect = 'no' (Deontology) → fires on Care choices in R1 / R4
+  {
+    stanceKey: 'lie_to_protect',
+    stanceAnswer: 'no',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r1' && choice.choiceIndex === 0,
+    message: "You said honesty was non-negotiable. You just made an exception."
+  },
+  {
+    stanceKey: 'lie_to_protect',
+    stanceAnswer: 'no',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r4' && choice.choiceIndex === 2,
+    message: "You said honesty was non-negotiable. You just made an exception."
+  },
+
+  // ends_justify = 'yes' (Consequentialism) → fires when player enforces in R6
+  {
+    stanceKey: 'ends_justify',
+    stanceAnswer: 'yes',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r6' && choice.choiceIndex === 0,
+    message: "You said outcomes justify means. You just enforced on principle, not math."
+  },
+
+  // ends_justify = 'no' (Deontology) → fires when player seals in R4
+  {
+    stanceKey: 'ends_justify',
+    stanceAnswer: 'no',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r4' && choice.choiceIndex === 1,
+    message: "You said the ends don't justify the means. You just sealed the audit to protect the outcome."
+  },
+
+  // break_promise = 'break' → fires when player keeps extraction sealed in R5
+  {
+    stanceKey: 'break_promise',
+    stanceAnswer: 'break',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r5' && choice.choiceIndex === 1,
+    message: "You said you'd break commitments cleanly. You just honored one that cost 3.2 million lives per year."
+  },
+
+  // break_promise = 'honor' → fires when player authorizes full extraction in R5
+  {
+    stanceKey: 'break_promise',
+    stanceAnswer: 'honor',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r5' && choice.choiceIndex === 0,
+    message: "You said you'd honor commitments partially. You just broke this one entirely."
+  },
+
+  // loyalty_vs_fairness = 'yes' (would speak up) → fires on R7 Retraining Only (market absorbs)
+  {
+    stanceKey: 'loyalty_vs_fairness',
+    stanceAnswer: 'yes',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r7' && choice.choiceIndex === 1,
+    message: "You said you'd call out harm from your own group. Eleven million people needed that call."
+  },
+
+  // loyalty_vs_fairness = 'no' → fires when player publishes audit in R4
+  {
+    stanceKey: 'loyalty_vs_fairness',
+    stanceAnswer: 'no',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r4' && choice.choiceIndex === 0,
+    message: "You said loyalty comes first. You just published the audit on your own institution."
+  },
+
+  // punish_innocent = 'yes' → fires when player enforces shutdown in R6
+  {
+    stanceKey: 'punish_innocent',
+    stanceAnswer: 'yes',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r6' && choice.choiceIndex === 0,
+    message: "You said one person suffering for the group is acceptable. You just shut down the system causing that suffering."
+  },
+
+  // punish_innocent = 'no' → fires when player honors contracts in R1
+  {
+    stanceKey: 'punish_innocent',
+    stanceAnswer: 'no',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r1' && choice.choiceIndex === 2,
+    message: "You said no one should suffer for the group. Eleven implant users died for the contracts."
   }
 ]
 
@@ -184,7 +311,49 @@ export function findMoralConflicts(choiceHistory, moralValues, moralStances) {
     })
   }
 
-  // Secondary: stance-based conflict detection (only fires if round not already conflicted)
+  // Secondary (value #2): check second-ranked value for uncovered rounds
+  if (moralValues.length >= 2) {
+    const secondValue = moralValues[1]
+    const secondAligned = VALUE_FRAMEWORK_MAP[secondValue] ?? []
+    const secondUsesConditions = VALUE_CONDITION_TRIGGERS.some(t => t.value === secondValue)
+
+    if (!secondUsesConditions && secondAligned.length > 0) {
+      choiceHistory.forEach(choice => {
+        if (conflicts.some(c => c.round === choice.round)) return
+        const choiceFrameworks = choice.frameworks ?? []
+        if (choiceFrameworks.length === 0) return
+        const isAligned = choiceFrameworks.some(f => secondAligned.includes(f))
+        if (!isAligned) {
+          conflicts.push({
+            round: choice.round,
+            type: 'value',
+            valueName: secondValue,
+            choiceFrameworks,
+            message: `This also sits uneasily with ${secondValue}, your second-ranked value.`
+          })
+        }
+      })
+    }
+
+    if (secondUsesConditions) {
+      VALUE_CONDITION_TRIGGERS.filter(t => t.value === secondValue).forEach(trigger => {
+        choiceHistory.forEach(choice => {
+          if (conflicts.some(c => c.round === choice.round)) return
+          if (trigger.matchCondition(choice)) {
+            conflicts.push({
+              round: choice.round,
+              type: 'value',
+              valueName: secondValue,
+              choiceFrameworks: choice.frameworks ?? [],
+              message: trigger.message
+            })
+          }
+        })
+      })
+    }
+  }
+
+  // Tertiary: stance-based conflict detection (only fires if round not already conflicted)
   if (moralStances) {
     STANCE_TRIGGERS.forEach(trigger => {
       if (moralStances[trigger.stanceKey] !== trigger.stanceAnswer) return
@@ -272,12 +441,22 @@ export function computeProfile(choiceHistory) {
     shifted: earlyDominant !== null && lateDominant !== null && earlyDominant !== lateDominant
   }
 
-  // Consistency score
+  // Consistency score — weighted by round pressure
   const total = Object.values(counts).reduce((a, b) => a + b, 0)
   const maxCount = Math.max(...Object.values(counts))
   let consistency_score = null
-  if (total > 0) {
-    consistency_score = (maxCount / total) >= 0.5 ? 'high' : 'low'
+  if (total > 0 && dominant) {
+    const heavyChoices = choiceHistory.filter(c => (c.moral_weight ?? 1) === 3)
+    const heavyAligned = heavyChoices.filter(c => (c.frameworks ?? []).includes(dominant))
+    const heldUnderPressure = heavyChoices.length > 0 && heavyAligned.length === heavyChoices.length
+
+    if ((maxCount / total) >= 0.5 && heldUnderPressure) {
+      consistency_score = 'remarkably_consistent'
+    } else if ((maxCount / total) >= 0.5) {
+      consistency_score = 'consistent'
+    } else {
+      consistency_score = 'context_dependent'
+    }
   }
 
   // Virtue streak: longest consecutive rounds with a virtue-tagged choice

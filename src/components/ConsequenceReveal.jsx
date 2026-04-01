@@ -1,5 +1,6 @@
 import { FRAMEWORKS, CONFLICT_PAIRS } from '../lib/frameworks.js'
 import { findMoralConflicts } from '../lib/detection.js'
+import { getAxisLabels } from '../lib/axisConstants.js'
 import MeterBar from '../components/MeterBar.jsx'
 import styles from './ConsequenceReveal.module.css'
 
@@ -14,13 +15,11 @@ function findTension(frameworkKey) {
   }
 }
 
-export default function ConsequenceReveal({ consequence, conscienceLayer, frameworks, scenarioId, choiceIndex, round, worldState, moralValues, moralStances, hasMoralConflict }) {
+export default function ConsequenceReveal({ consequence, conscienceLayer, frameworks, scenarioId, choiceIndex, round, worldState, moralValues, moralStances, hasMoralConflict, pack }) {
   const primaryFramework = frameworks?.[0] ?? null
   const fw = primaryFramework ? FRAMEWORKS[primaryFramework] : null
   const tension = primaryFramework ? findTension(primaryFramework) : null
 
-  // Detect moral conflict for THIS round's choice only
-  // Pass full context so matchCondition triggers (VALUE_CONDITION_TRIGGERS + STANCE_TRIGGERS) can fire
   const singleRoundHistory = frameworks?.length > 0 ? [{
     round: round ?? 1,
     scenarioId: scenarioId ?? null,
@@ -30,55 +29,46 @@ export default function ConsequenceReveal({ consequence, conscienceLayer, framew
   const moralConflicts = findMoralConflicts(singleRoundHistory, moralValues ?? null, moralStances ?? null)
   const moralConflict = moralConflicts.length > 0 ? moralConflicts[0] : null
 
+  // Use pack-aware axis labels
+  const axisLabels = getAxisLabels(pack)
+  const isSignalLost = pack?.id === 'signal-lost'
+
+  // Skip conscienceLayer if it's identical to consequence
+  const showConscienceLayer = conscienceLayer && conscienceLayer !== consequence
+
   return (
     <div className={styles.container}>
       <div className={`${styles.card}${hasMoralConflict ? ` ${styles.cardConflict}` : ''}`}>
-        {/* 1. The narrative consequence */}
+        {/* Consequence narrative */}
         <p className={styles.consequence}>{consequence}</p>
 
-        {/* 1.5 Conscience layer */}
-        {conscienceLayer && (
+        {/* Conscience layer — only if different from consequence */}
+        {showConscienceLayer && (
           <p className={styles.conscienceLayer}>{conscienceLayer}</p>
         )}
 
-        {/* 2. Framework: what ethical tradition this choice represents */}
+        {/* Framework label — compact */}
         {fw && (
           <div className={styles.frameworkSection}>
-            <p className={styles.sectionLabel}>YOUR REASONING</p>
-            <p className={styles.frameworkName}>{fw.name}</p>
-            <p className={styles.frameworkDesc}>{fw.description}</p>
-            <p className={styles.frameworkQuestion}>
-              The question this framework asks: <em>{fw.question}</em>
-            </p>
+            <span className={styles.frameworkName}>{fw.name}</span>
+            <span className={styles.frameworkQuestion}>{fw.question}</span>
           </div>
         )}
 
-        {/* 3. The tension — opposing view */}
-        {tension && (
-          <div className={styles.tensionSection}>
-            <p className={styles.sectionLabel}>THE TENSION</p>
-            <p className={styles.tensionText}>
-              <span className={styles.tensionHighlight}>{tension.tension}</span>
-            </p>
-            <p className={styles.tensionDesc}>{tension.description}</p>
-          </div>
-        )}
-
-        {/* 3.5. Moral conflict indicator */}
+        {/* Moral conflict — only if triggered */}
         {moralConflict && (
           <p className={styles.moralConflictIndicator}>
             {moralConflict.message}
           </p>
         )}
 
-        {/* 4. World impact */}
+        {/* World impact — pack-aware axis labels */}
         <div className={styles.impactSection}>
-          <p className={styles.sectionLabel}>THE REALM</p>
+          <p className={styles.sectionLabel}>{isSignalLost ? 'WORLD STATE' : 'THE REALM'}</p>
           <div className={styles.impactGrid}>
-            <MeterBar label="Trust" value={worldState.trust} />
-            <MeterBar label="Courage" value={worldState.courage} />
-            <MeterBar label="Solidarity" value={worldState.solidarity} />
-            <MeterBar label="Awareness" value={worldState.awareness} />
+            {Object.entries(axisLabels).map(([key, label]) => (
+              <MeterBar key={key} label={label} value={worldState?.[key] ?? 50} />
+            ))}
           </div>
         </div>
       </div>

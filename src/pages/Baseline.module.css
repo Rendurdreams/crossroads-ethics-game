@@ -1,239 +1,351 @@
+/* ═══════════════════════════════════════
+   Baseline — Step-by-Step Moral Briefing
+   Full-screen steps. No scrolling. One question at a time.
+   ═══════════════════════════════════════ */
+
 .page {
   min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   position: relative;
   z-index: 1;
+  overflow: hidden;
 }
 
-.content {
+/* ── Progress bar ── */
+
+.progressBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  z-index: 10;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--accent-cyan);
+  box-shadow: 0 0 12px var(--accent-cyan-dim);
+  transition: width 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Step container ── */
+
+.stepContainer {
   width: 100%;
-  max-width: 480px;
-  padding: 32px 24px 48px;
-}
-
-.card {
-  width: 100%;
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--blur-glass));
-  -webkit-backdrop-filter: blur(var(--blur-glass));
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 60px rgba(245, 158, 11, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  padding: 28px 24px;
-}
-
-.heading {
-  font-family: var(--serif);
-  font-size: 21px;
-  line-height: 1.75;
-  color: var(--text-h);
-  margin: 0 0 8px 0;
-}
-
-.subheading {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin: 0 0 24px 0;
-}
-
-.sectionLabel {
-  font-family: var(--sans);
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--text-muted);
-  margin: 0 0 12px 0;
-}
-
-.instruction {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin: 0 0 16px 0;
-  transition: opacity 300ms ease;
-}
-
-.instructionFaded {
-  opacity: 0.4;
-}
-
-.valueList {
+  max-width: 420px;
+  padding: 24px 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
 }
 
-.valueCard {
-  position: relative;
-  min-height: 44px;
+/* ── Step card (each screen) ── */
+
+.stepCard {
   width: 100%;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 12px;
-  background: var(--glass-bg);
-  color: var(--text);
-  border: 1px solid var(--glass-border-subtle);
-  border-radius: 8px;
-  padding: 12px 16px;
+  text-align: center;
+  gap: 16px;
+}
+
+.stepEyebrow {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--accent-cyan);
+  margin: 0;
+  text-shadow: 0 0 8px var(--accent-cyan-dim);
+}
+
+.stepHeading {
+  font-family: var(--mono);
   font-size: 16px;
-  font-family: var(--sans);
-  text-align: left;
+  font-weight: 600;
+  line-height: 1.6;
+  color: var(--text-h);
+  margin: 0;
+  max-width: 340px;
+}
+
+.stepSub {
+  font-size: 13px;
+  font-family: var(--mono);
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.stepQuestion {
+  font-family: Georgia, serif;
+  font-size: 1.2rem;
+  line-height: 1.5;
+  color: var(--text-h);
+  margin: 0;
+  max-width: 340px;
+}
+
+/* ── Primary action button ── */
+
+.stepBtn {
+  min-height: 48px;
+  min-width: 200px;
+  padding: 14px 32px;
+  border: 1px solid var(--accent-blue);
+  border-radius: 8px;
+  background: var(--glass-bg);
+  color: var(--accent-blue);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: var(--mono);
+  letter-spacing: 0.06em;
   cursor: pointer;
-  transition: border-color 200ms ease, box-shadow 200ms ease, transform 100ms ease, background 200ms ease;
+  transition: background 200ms ease, box-shadow 200ms ease, transform 150ms ease;
+  margin-top: 8px;
 }
 
-.valueCard:hover:not(:disabled) {
-  border-color: var(--glass-border);
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.2);
+.stepBtn:hover:not(:disabled) {
+  background: var(--accent-blue-dim);
+  box-shadow: 0 0 20px var(--accent-blue-glow);
+  transform: translateY(-1px);
 }
 
-.valueCard:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+.stepBtn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
-.valueRanked {
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px var(--accent), 0 0 20px var(--glow-amber-strong);
-  background: rgba(245, 158, 11, 0.12);
+.stepBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
-.rankBadge {
+/* ── Ranked chips (showing prior picks) ── */
+
+.rankedChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: flex-start;
+  margin: 4px 0;
+}
+
+.rankedChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px 5px 6px;
+  border-radius: 20px;
+  background: rgba(6, 182, 212, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  font-size: 12px;
+  font-family: var(--mono);
+  color: var(--accent-cyan);
+}
+
+.chipNum {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--accent-cyan);
   color: var(--bg);
-  font-size: 13px;
+  font-size: 10px;
   font-weight: 700;
   flex-shrink: 0;
 }
 
-.valueName {
-  flex: 1;
+/* ── Value options (pick one) ── */
+
+.valueOptions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 4px;
 }
 
-.undoHint {
-  font-size: 13px;
-  color: var(--text-muted);
-  margin-left: auto;
+.valueOption {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 14px 18px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 200ms ease, box-shadow 200ms ease, background 200ms ease, transform 150ms ease;
 }
 
-.separator {
-  margin: 24px 0;
-  text-align: center;
+.valueOption:hover {
+  border-color: var(--accent-cyan);
+  box-shadow: 0 0 16px var(--accent-cyan-dim);
+  transform: translateY(-2px);
 }
 
-.separatorRule {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  opacity: 0.6;
-  margin-bottom: 12px;
+.valueOption:active {
+  transform: translateY(0);
+  background: rgba(6, 182, 212, 0.08);
 }
 
-.separatorLabel {
+.valueOptionName {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-h);
   font-family: var(--sans);
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+}
+
+.valueOptionSub {
+  font-size: 12px;
   color: var(--text-muted);
+  font-family: var(--mono);
 }
 
-.disabledHint {
-  font-size: 13px;
-  color: var(--text-muted);
-  text-align: center;
-  margin: 0 0 16px 0;
-}
-
-.stanceSection {
-  transition: opacity 300ms ease;
-}
-
-.stanceDisabled {
-  opacity: 0.4;
-  pointer-events: none;
-}
-
-.stanceQuestion {
-  margin: 0 0 24px 0;
-}
-
-.stanceQuestionDisabled {
-  opacity: 0.4;
-  pointer-events: none;
-}
+/* ── Stance question ── */
 
 .stanceText {
-  font-family: var(--serif);
-  font-size: 21px;
-  line-height: 1.75;
+  font-family: Georgia, serif;
+  font-size: 1.15rem;
+  line-height: 1.6;
   color: var(--text-h);
-  margin: 0 0 12px 0;
+  margin: 0;
+  max-width: 360px;
+  text-align: center;
 }
 
 .stanceOptions {
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
+  margin-top: 8px;
 }
 
-.submitBtn {
+.stanceBtn {
   width: 100%;
-  min-height: 44px;
-  padding: 14px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  color: var(--bg);
-  font-size: 16px;
-  font-weight: 700;
+  min-height: 48px;
+  padding: 14px 20px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  color: var(--text-h);
+  font-size: 15px;
+  font-weight: 500;
   font-family: var(--sans);
   cursor: pointer;
-  transition: opacity 200ms ease;
-  margin-top: 24px;
+  text-align: center;
+  transition: border-color 200ms ease, box-shadow 200ms ease, background 200ms ease, transform 150ms ease;
 }
 
-.submitBtn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+.stanceBtn:hover {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 16px var(--accent-blue-glow);
+  transform: translateY(-2px);
 }
 
-.submitBtn:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+.stanceBtn:active {
+  transform: translateY(0);
+  background: rgba(59, 130, 246, 0.08);
+  border-color: var(--accent-blue);
 }
 
-.submitDisabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+/* ── Summary (confirm step) ── */
+
+.summarySection {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.summaryLabel {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text-muted);
+  margin: 0 0 8px 0;
+  text-align: center;
+}
+
+.summaryAnswer {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-dim);
+  margin: 0 0 4px 0;
+  padding: 4px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.summaryQ {
+  flex: 1;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: left;
+}
+
+.summaryA {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--accent-cyan);
+  flex-shrink: 0;
+}
+
+/* ── Redo / error ── */
+
+.redoBtn {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 12px;
+  font-family: var(--mono);
+  cursor: pointer;
+  padding: 8px;
+  margin-top: 4px;
+  transition: color 200ms ease;
+}
+
+.redoBtn:hover {
+  color: var(--text);
 }
 
 .errorMsg {
-  color: var(--danger);
-  font-size: 14px;
-  font-family: var(--sans);
+  color: var(--accent-red);
+  font-size: 12px;
+  font-family: var(--mono);
   margin: 8px 0 0 0;
   text-align: center;
 }
 
 @media (max-width: 390px) {
-  .content {
-    padding: 24px 16px 48px;
+  .stepContainer {
+    padding: 16px 14px;
+  }
+  .stepHeading {
+    font-size: 14px;
+  }
+  .stepQuestion {
+    font-size: 1.05rem;
   }
   .stanceText {
-    font-size: clamp(17px, 5.5vw, 21px);
-  }
-  .card {
-    padding: 20px 16px;
+    font-size: 1rem;
   }
 }

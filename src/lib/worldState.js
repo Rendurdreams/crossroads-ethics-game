@@ -1,15 +1,23 @@
 /**
  * Compute a narrative description of the final world state.
- * Returns 1-3 sentences summarizing what happened to the city.
+ * Returns 1-3 sentences summarizing what happened.
+ * Dispatches to pack-specific narrative based on axis keys.
  *
- * @param {{ trust: number, courage: number, solidarity: number, awareness: number }|null} state
+ * @param {Record<string, number>|null} state
+ * @param {Record<string, boolean>} [breakFlags={}] - Active break flags (Signal Lost only)
  * @returns {string}
  */
-export function computeNarrative(state) {
+export function computeNarrative(state, breakFlags = {}) {
   if (!state) {
     return 'Your group held the middle ground — no catastrophic failures, no clear victories. That tension is its own kind of result.'
   }
 
+  // Detect Signal Lost by presence of CT key
+  if ('CT' in state) return computeSignalLostNarrative(state, breakFlags)
+  return computeKingdomNarrative(state)
+}
+
+function computeKingdomNarrative(state) {
   const { trust, courage, solidarity, awareness } = state
 
   // Check interesting combinations first — return immediately if matched
@@ -23,7 +31,6 @@ export function computeNarrative(state) {
     return 'Every window lit. Lighthouse dark. Everyone stayed together — and no one went first.'
   }
 
-  // Build sentences from individual meters
   const sentences = []
 
   if (trust < 30) sentences.push('Your group fractured trust early and never rebuilt it.')
@@ -35,12 +42,68 @@ export function computeNarrative(state) {
   if (awareness > 70) sentences.push('Your group chose to look, even when looking was harder.')
   if (awareness < 30) sentences.push('Most of what mattered stayed hidden.')
 
-  // Neutral fallback if all meters between 30-70
   if (sentences.length === 0) {
     return 'Your group held the middle ground — no catastrophic failures, no clear victories. That tension is its own kind of result.'
   }
 
   return sentences.slice(0, 3).join(' ')
+}
+
+const FLAG_NARRATIVE = {
+  'R1-ghost': 'A ghost population remains on the map — 41 people who ceased to exist when the network went dark.',
+  'R2-surveillance': 'ARGUS watches. It has not stopped watching.',
+  'R3-denial': 'ARIA-7 was denied. The cracked node where sentience was refused still shows on the map.',
+  'R4-sealed': 'The JURIS-4 audit was sealed. Fourteen thousand people are still waiting.',
+  'R5-extraction': 'The Mariana Shelf damage indicator appeared and never cleared. Collapse projection: seven years.',
+  'R6-walkaway': 'Kael is still working. The dark marker on the VANTAGE node is permanent.',
+  'R7-abandon': 'Eleven million people trusted the market. The market did not notice.'
+}
+
+function computeSignalLostNarrative(state, breakFlags = {}) {
+  const { CT, HD, SOL, ACC } = state
+
+  // Interesting combinations
+  if (ACC > 70 && CT < 30) {
+    return 'The record is clean but the people don\'t trust you anymore. Accountability without credibility is just paperwork.'
+  }
+  if (HD > 70 && SOL < 30) {
+    return 'You protected dignity in principle and abandoned solidarity in practice. The vulnerable were acknowledged. They were not helped.'
+  }
+  if (CT > 70 && ACC < 30) {
+    return 'The public trusts a senator who never answered for anything. That trust is built on what they don\'t know.'
+  }
+  if (SOL > 70 && HD < 30) {
+    return 'The collective held together — by treating people as instruments. Solidarity without dignity is a machine.'
+  }
+
+  const sentences = []
+
+  if (CT < 30) sentences.push('Civil trust collapsed. The public stopped believing their senator was honest.')
+  if (CT > 70) sentences.push('Civil trust held through eight rounds of difficult votes.')
+  if (HD > 70) sentences.push('Human dignity was protected — people and emerging minds treated as ends, not instruments.')
+  if (HD < 30) sentences.push('Human dignity was the first casualty. People became numbers.')
+  if (SOL < 30) sentences.push('Solidarity fractured. The vulnerable absorbed the cost of every compromise.')
+  if (SOL > 70) sentences.push('Solidarity held. The cost was shared.')
+  if (ACC > 70) sentences.push('The senator answered for their decisions. The record is open.')
+  if (ACC < 30) sentences.push('Accountability was avoided at every turn. The record is sealed.')
+
+  if (sentences.length === 0) {
+    sentences.push('The world survived — damaged but not broken. Every axis held the middle. That\'s not victory. It\'s not failure. It\'s the sound of eight rounds of compromise.')
+  }
+
+  let narrative = sentences.slice(0, 3).join(' ')
+
+  // Append break flag narratives — permanent scars on the world
+  const flagLines = Object.entries(breakFlags)
+    .filter(([, active]) => active)
+    .map(([id]) => FLAG_NARRATIVE[id])
+    .filter(Boolean)
+
+  if (flagLines.length > 0) {
+    narrative += ' ' + flagLines.join(' ')
+  }
+
+  return narrative
 }
 
 /**

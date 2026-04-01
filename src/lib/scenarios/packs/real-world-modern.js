@@ -1,3 +1,5 @@
+import { KINGDOM_ARC_AXES } from '../../axisConstants.js'
+
 export const realWorldModernPack = {
   id: 'real-world-modern',
   name: 'Common Ground',
@@ -6,6 +8,8 @@ export const realWorldModernPack = {
   ai_generated: false,
   generator_prompt: null,
   ethicalLens: 'What do you owe the people around you?',
+  axisSet: KINGDOM_ARC_AXES,
+  defaultWorldState: { trust: 50, courage: 50, solidarity: 50, awareness: 50 },
   scenarios: [
     {
       id: 'rw-round-1',

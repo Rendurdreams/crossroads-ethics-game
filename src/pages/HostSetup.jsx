@@ -4,7 +4,6 @@ import { QRCodeSVG } from 'qrcode.react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { supabase } from '../lib/supabase.js'
 import { getDefaultPack, getPlayableScenarios } from '../lib/scenarios.js'
-import hostBg from '../assets/host_setup.png'
 import styles from './HostSetup.module.css'
 
 const pageVariants = {
@@ -22,6 +21,7 @@ export default function HostSetup() {
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(true)
   const [opening, setOpening] = useState(false)
+  const [mode, setMode] = useState('discussion')
 
   useEffect(() => {
     if (!sessionId) {
@@ -48,9 +48,10 @@ export default function HostSetup() {
     setOpening(true)
     const pack = getDefaultPack()
     const totalRounds = getPlayableScenarios(pack).length
+    const defaultWorld = pack.defaultWorldState ?? { trust: 50, courage: 50, solidarity: 50, awareness: 50 }
     const { error } = await supabase
       .from('sessions')
-      .update({ pack_id: pack.id, total_rounds: totalRounds })
+      .update({ pack_id: pack.id, total_rounds: totalRounds, world_state: defaultWorld, mode })
       .eq('id', sessionId)
     if (error) {
       console.error('Failed to set pack:', error)
@@ -69,7 +70,6 @@ export default function HostSetup() {
         animate="animate"
         exit="exit"
       >
-        <div className={styles.bg} style={{ backgroundImage: `url(${hostBg})` }} />
         <p className={styles.loading}>Loading...</p>
       </motion.div>
     )
@@ -83,11 +83,9 @@ export default function HostSetup() {
       animate="animate"
       exit="exit"
     >
-      <div className={styles.bg} style={{ backgroundImage: `url(${hostBg})` }} />
+      <h1 className={styles.heading}>SIGNAL LOST &middot; COMMAND CENTER</h1>
 
-      <h1 className={styles.heading}>The council awaits.</h1>
-
-      <p className={styles.roomLabel}>CHAMBER CODE</p>
+      <p className={styles.roomLabel}>ACCESS CODE</p>
       <div className={styles.roomCode}>{session?.room_code}</div>
 
       <div className={styles.qrCode}>
@@ -95,21 +93,44 @@ export default function HostSetup() {
           value={`${window.location.origin}/?code=${session.room_code}`}
           size={220}
           bgColor="transparent"
-          fgColor="#f5f0e8"
+          fgColor="#3b82f6"
         />
       </div>
       <p className={styles.qrInstruction}>Scan to join on your phone</p>
 
       <p className={styles.instructions}>
-        Share the code. When your council is assembled, open the chamber.
+        Share the access code. Initialize when your senators are connected.
       </p>
+
+      <div className={styles.modeSelector}>
+        <p className={styles.modeLabel}>SESSION MODE</p>
+        <div className={styles.modeToggle}>
+          <button
+            className={`${styles.modeBtn} ${mode === 'discussion' ? styles.modeBtnActive : ''}`}
+            onClick={() => setMode('discussion')}
+          >
+            Discussion
+          </button>
+          <button
+            className={`${styles.modeBtn} ${mode === 'standard' ? styles.modeBtnActive : ''}`}
+            onClick={() => setMode('standard')}
+          >
+            Standard
+          </button>
+        </div>
+        <p className={styles.modeHint}>
+          {mode === 'discussion'
+            ? 'Facilitator-paced. Discussion pause between rounds.'
+            : 'Continuous play. No pauses.'}
+        </p>
+      </div>
 
       <button
         className={styles.openBtn}
         onClick={openLobby}
         disabled={opening}
       >
-        {opening ? 'Opening...' : 'Open the Gates'}
+        {opening ? 'INITIALIZING...' : 'INITIALIZE SESSION'}
       </button>
     </motion.div>
   )

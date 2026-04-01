@@ -1,6 +1,7 @@
 import { kingdomArcPack } from './scenarios/packs/kingdom-arc.js'
 import { realWorldModernPack } from './scenarios/packs/real-world-modern.js'
 import { futuresPack } from './scenarios/packs/futures.js'
+import { signalLostPack } from './scenarios/packs/signal-lost.js'
 
 // ── Pack registry ────────────────────────────────────────────────────────────
 // Add new packs here. The first entry is the default.
@@ -11,7 +12,8 @@ import { futuresPack } from './scenarios/packs/futures.js'
  * @property {string} text - Button label
  * @property {string[]} frameworks - 1-2 of: 'care'|'deontology'|'consequentialism'|'virtue'
  * @property {string} consequence - Private outcome text shown after round closes
- * @property {{trust: number, courage: number, solidarity: number, awareness: number}} worldImpact
+ * @property {Record<string, number>} worldImpact - Axis deltas keyed to pack's axis set
+ * @property {string} [conscienceLayer] - Internal monologue text after choosing
  * @property {boolean} [rights_protective] - True when this choice protects individual rights over group benefit
  *
  * @typedef {Object} PackScenario
@@ -34,10 +36,12 @@ import { futuresPack } from './scenarios/packs/futures.js'
  * @property {boolean} ai_generated - True only for AI-generated packs
  * @property {string|null} generator_prompt - LLM prompt used to generate pack, if ai_generated
  * @property {string} ethicalLens - One-line ethical framing question for this pack's context
+ * @property {Record<string, string>} [axisSet] - Maps axis keys to display labels
+ * @property {Record<string, number>} [defaultWorldState] - Starting world state values
  * @property {PackScenario[]} scenarios
  */
 
-export const packs = [kingdomArcPack, realWorldModernPack, futuresPack]
+export const packs = [signalLostPack, kingdomArcPack, realWorldModernPack, futuresPack]
 
 export function getPackById(id) {
   return packs.find(p => p.id === id) ?? packs[0]

@@ -23,7 +23,7 @@ import s from "./AnimatedMap.module.css";
 
 function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
 
-export default function AnimatedMap({ worldState, lerpSpeedRef }) {
+export default function AnimatedMap({ worldState, lerpSpeedRef, breakFlags }) {
   const sceneRef       = useRef(null);
   const layerRefs      = useRef({});
 
@@ -85,7 +85,16 @@ export default function AnimatedMap({ worldState, lerpSpeedRef }) {
     driftTimeout.current = setTimeout(() => { driftActive.current = true; }, 3000);
 
     const target = { ...meterState.current };
-    const next = {
+
+    // Support both kingdom-arc (trust/courage/solidarity/awareness) and
+    // Signal Lost (CT/HD/SOL/ACC) axis keys
+    const isSignalLost = 'CT' in worldState;
+    const next = isSignalLost ? {
+      Honesty: worldState.CT ?? target.Honesty,
+      Courage: worldState.HD ?? target.Courage,
+      Loyalty: worldState.SOL ?? target.Loyalty,
+      Empathy: worldState.ACC ?? target.Empathy,
+    } : {
       Honesty: worldState.trust ?? target.Honesty,
       Courage: worldState.courage ?? target.Courage,
       Loyalty: worldState.solidarity ?? target.Loyalty,
@@ -336,6 +345,19 @@ export default function AnimatedMap({ worldState, lerpSpeedRef }) {
         <div className={`${s.zoneLabel} ${s.labelWater}`} style={{ opacity: 0.5 }}>Crystalvein River</div>
         <div className={`${s.zoneLabel} ${s.labelPurple}`} style={{ opacity: 0.5 }}>The Blighted Wood</div>
       </div>
+
+      {/* Break flag markers (Signal Lost) */}
+      {breakFlags && Object.keys(breakFlags).some(k => breakFlags[k]) && (
+        <div className={s.breakFlagLayer}>
+          {breakFlags['R1-ghost'] && <div className={`${s.breakFlag} ${s.flagGhost}`} title="Ghost Population">👻</div>}
+          {breakFlags['R2-surveillance'] && <div className={`${s.breakFlag} ${s.flagSurveillance}`} title="Surveillance State">👁</div>}
+          {breakFlags['R3-denial'] && <div className={`${s.breakFlag} ${s.flagDenial}`} title="Sentience Denied">⚡</div>}
+          {breakFlags['R4-sealed'] && <div className={`${s.breakFlag} ${s.flagSealed}`} title="Sealed Audit">🔒</div>}
+          {breakFlags['R5-extraction'] && <div className={`${s.breakFlag} ${s.flagExtraction}`} title="Ecosystem Damage">🌊</div>}
+          {breakFlags['R6-walkaway'] && <div className={`${s.breakFlag} ${s.flagWalkaway}`} title="Abandoned Kael">⚫</div>}
+          {breakFlags['R7-abandon'] && <div className={`${s.breakFlag} ${s.flagAbandon}`} title="Mass Abandonment">🚫</div>}
+        </div>
+      )}
 
       {/* Atmosphere */}
       <div className={s.vignette} />

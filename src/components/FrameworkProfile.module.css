@@ -1,3 +1,8 @@
+/* ══════════════════════════════════════════════
+   FrameworkProfile.module.css — Architect's Record
+   Terminal aesthetic: mono labels, blue/cyan/red/violet accents
+   ══════════════════════════════════════════════ */
+
 @keyframes fadeUp {
   from {
     opacity: 0;
@@ -23,32 +28,36 @@
   backdrop-filter: blur(var(--blur-glass));
   -webkit-backdrop-filter: blur(var(--blur-glass));
   border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4),
+              0 0 30px var(--accent-blue-dim),
+              inset 0 1px 0 rgba(255, 255, 255, 0.04);
   padding: 24px;
 }
 
 .eyebrow {
-  font-family: var(--sans);
-  font-size: 14px;
-  color: var(--text-muted);
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--accent-blue);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.15em;
   margin: 0 0 12px 0;
+  opacity: 0.8;
 }
 
 .frameworkName {
-  font-family: var(--serif);
-  font-size: 28px;
+  font-family: var(--mono);
+  font-size: 26px;
   font-weight: 700;
-  color: var(--accent);
+  color: var(--accent-cyan);
   margin: 4px 0 12px 0;
+  text-shadow: 0 0 16px var(--accent-cyan-glow);
 }
 
 .explanation {
-  font-family: var(--serif);
-  font-size: 21px;
-  line-height: 1.75;
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.7;
   color: var(--text-h);
   margin: 0;
 }
@@ -58,24 +67,34 @@
   background: var(--glass-bg);
   backdrop-filter: blur(var(--blur-glass));
   -webkit-backdrop-filter: blur(var(--blur-glass));
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--glass-border-red);
+  border-radius: 10px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4),
+              0 0 20px var(--accent-red-dim),
+              inset 0 1px 0 rgba(255, 255, 255, 0.04);
   padding: 24px;
   margin-top: 16px;
 }
 
+.conflictSection .eyebrow {
+  color: var(--accent-red);
+}
+
 .conflictBlock {
   margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(239, 68, 68, 0.1);
 }
 
 .conflictBlock:last-child {
   margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
 }
 
 .conflictRounds {
-  font-family: var(--sans);
-  font-size: 14px;
+  font-family: var(--mono);
+  font-size: 12px;
   color: var(--text-muted);
   margin: 0 0 8px 0;
 }
@@ -87,7 +106,7 @@
 
 .conflictDescription {
   font-family: var(--sans);
-  font-size: 16px;
+  font-size: 15px;
   color: var(--text);
   line-height: 1.6;
   margin: 16px 0 0 0;
@@ -98,27 +117,33 @@
   background: var(--glass-bg);
   backdrop-filter: blur(var(--blur-glass));
   -webkit-backdrop-filter: blur(var(--blur-glass));
-  border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--glass-border-violet);
+  border-radius: 10px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4),
+              0 0 20px var(--accent-violet-dim),
+              inset 0 1px 0 rgba(255, 255, 255, 0.04);
   padding: 24px;
   margin-top: 16px;
 }
 
+.moralsSection .eyebrow {
+  color: var(--accent-violet);
+}
+
 .moralsIntro {
-  font-family: var(--serif);
-  font-size: 17px;
+  font-family: var(--sans);
+  font-size: 15px;
   line-height: 1.7;
   color: var(--text);
   margin: 0 0 20px 0;
 }
 
 .moralsIntro strong {
-  color: var(--accent);
+  color: var(--accent-violet);
 }
 
 .moralConflictRow {
-  padding: 12px 0;
+  padding: 10px 0;
   border-bottom: 1px solid var(--glass-border-subtle);
 }
 
@@ -127,8 +152,8 @@
 }
 
 .moralConflictRound {
-  font-family: var(--sans);
-  font-size: 14px;
+  font-family: var(--mono);
+  font-size: 12px;
   font-weight: 700;
   color: var(--text-h);
   margin: 0 0 4px 0;
@@ -136,7 +161,7 @@
 
 .moralConflictMessage {
   font-family: var(--sans);
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1.6;
   color: var(--text);
   margin: 0;
@@ -144,7 +169,7 @@
 
 .moralsFooter {
   font-family: var(--serif);
-  font-size: 17px;
+  font-size: 16px;
   font-style: italic;
   color: var(--text-muted);
   margin: 20px 0 0 0;
@@ -158,16 +183,17 @@
 }
 
 .leastFrameworkName {
-  font-family: var(--sans);
-  font-size: 16px;
+  font-family: var(--mono);
+  font-size: 15px;
   font-weight: 700;
-  color: var(--text-h);
+  color: var(--accent-cyan);
   margin: 4px 0 8px 0;
+  text-shadow: 0 0 8px var(--accent-cyan-glow);
 }
 
 .leastPrompt {
   font-family: var(--sans);
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.6;
   color: var(--text);
   margin: 0;
@@ -180,37 +206,40 @@
 }
 
 .choiceRow {
-  padding: 12px 0;
+  padding: 10px 0;
   border-bottom: 1px solid var(--glass-border-subtle);
 }
 
 .choiceRowLast {
-  padding: 12px 0;
+  padding: 10px 0;
 }
 
 .roundName {
-  font-family: var(--sans);
-  font-size: 14px;
+  font-family: var(--mono);
+  font-size: 12px;
   font-weight: 700;
   color: var(--text-h);
   margin: 0;
 }
 
 .choiceText {
-  font-family: var(--sans);
-  font-size: 14px;
+  font-family: var(--mono);
+  font-size: 12px;
   color: var(--text);
   margin: 4px 0;
 }
 
 .frameworkTag {
   display: inline-block;
-  background: var(--accent-bg);
-  color: var(--accent);
+  background: var(--accent-blue-dim);
+  color: var(--accent-blue);
+  border: 1px solid rgba(59, 130, 246, 0.2);
   border-radius: 4px;
-  padding: 4px 8px;
-  font-size: 12px;
-  font-family: var(--sans);
+  padding: 3px 8px;
+  font-size: 10px;
+  font-family: var(--mono);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 @media (max-width: 390px) {
@@ -223,10 +252,10 @@
     padding: 16px;
   }
   .frameworkName {
-    font-size: clamp(22px, 7vw, 28px);
+    font-size: clamp(20px, 7vw, 26px);
   }
   .explanation {
-    font-size: clamp(17px, 5.5vw, 21px);
+    font-size: clamp(14px, 4.5vw, 16px);
   }
 }
 
@@ -238,15 +267,15 @@
 }
 
 .emptyTitle {
-  font-family: var(--sans);
-  font-size: 16px;
+  font-family: var(--mono);
+  font-size: 14px;
   color: var(--text-muted);
   margin: 0 0 8px 0;
 }
 
 .emptySub {
-  font-family: var(--sans);
-  font-size: 14px;
+  font-family: var(--mono);
+  font-size: 12px;
   color: var(--text-muted);
   opacity: 0.7;
   margin: 0;

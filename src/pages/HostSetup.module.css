@@ -10,57 +10,43 @@
   overflow: hidden;
 }
 
-.bg {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
-
-.bg::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse at center top, rgba(10, 10, 20, 0.4) 0%, rgba(10, 10, 20, 0.8) 100%);
-}
-
 .loading {
   color: var(--text-muted);
+  font-family: var(--mono);
   font-size: 1rem;
 }
 
 .heading {
-  font-size: clamp(24px, 4vw, 32px);
-  font-weight: 700;
-  color: var(--text-h);
-  font-family: var(--serif);
+  font-size: clamp(18px, 3vw, 26px);
+  font-weight: 600;
+  color: var(--accent-blue);
+  font-family: var(--mono);
   margin: 0 0 20px 0;
   text-align: center;
-  text-shadow: 0 0 40px rgba(245, 158, 11, 0.3), 0 0 80px rgba(245, 158, 11, 0.1);
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 20px var(--accent-blue-glow), 0 0 60px rgba(59, 130, 246, 0.1);
 }
 
 .roomLabel {
-  color: var(--accent);
-  font-size: 0.85rem;
+  color: var(--text-muted);
+  font-family: var(--mono);
+  font-size: 0.8rem;
   text-transform: uppercase;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.15em;
   text-align: center;
   margin: 0 0 8px 0;
-  opacity: 0.8;
 }
 
 .roomCode {
   font-size: clamp(80px, 16vw, 140px);
   font-weight: 700;
   letter-spacing: 0.2em;
-  color: var(--accent);
-  font-family: var(--sans);
+  color: var(--accent-blue);
+  font-family: var(--mono);
   text-align: center;
   line-height: 1;
   margin-bottom: 20px;
-  text-shadow: 0 0 40px rgba(245, 158, 11, 0.6), 0 0 80px rgba(245, 158, 11, 0.35), 0 0 120px rgba(245, 158, 11, 0.15);
+  text-shadow: 0 0 30px var(--accent-blue-glow), 0 0 60px rgba(59, 130, 246, 0.2);
 }
 
 .qrCode {
@@ -71,17 +57,82 @@
 .qrInstruction {
   font-size: 13px;
   color: var(--text-muted);
+  font-family: var(--mono);
   text-align: center;
   margin: 12px 0 0 0;
 }
 
 .instructions {
-  font-size: 15px;
+  font-size: 13px;
   color: var(--text-muted);
+  font-family: var(--mono);
   text-align: center;
-  max-width: 380px;
+  max-width: 420px;
   margin: 16px auto 24px auto;
-  line-height: 1.5;
+  line-height: 1.6;
+}
+
+.modeSelector {
+  width: 100%;
+  max-width: 360px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.modeLabel {
+  color: var(--accent-blue);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin: 0 0 10px 0;
+  opacity: 0.85;
+}
+
+.modeToggle {
+  display: flex;
+  gap: 0;
+  border: 1px solid var(--glass-border);
+  border-radius: 8px;
+}
+
+.modeBtn {
+  flex: 1;
+  padding: 10px 16px;
+  background: var(--glass-bg);
+  color: var(--text-muted);
+  border: none;
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.modeBtn:first-child {
+  border-radius: 7px 0 0 7px;
+}
+
+.modeBtn:last-child {
+  border-radius: 0 7px 7px 0;
+}
+
+.modeBtn:hover {
+  background: rgba(59, 130, 246, 0.05);
+}
+
+.modeBtnActive {
+  background: var(--accent-blue-dim);
+  color: #67e8f9;
+  font-weight: 600;
+}
+
+.modeHint {
+  color: var(--text-muted);
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  margin: 8px 0 0 0;
+  opacity: 0.7;
 }
 
 .openBtn {
@@ -89,22 +140,23 @@
   width: 100%;
   max-width: 360px;
   padding: 16px 24px;
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-  color: #0a0a14;
-  border: none;
+  background: var(--glass-bg);
+  color: var(--accent-blue);
+  border: 1px solid var(--accent-blue);
   border-radius: 8px;
-  font-size: 1.1rem;
-  font-weight: 700;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
-  font-family: var(--sans);
-  transition: transform 150ms ease, box-shadow 150ms ease;
-  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  letter-spacing: 0.02em;
+  font-family: var(--mono);
+  letter-spacing: 0.06em;
+  transition: background 150ms ease, box-shadow 150ms ease, transform 150ms ease;
+  box-shadow: 0 0 12px rgba(59, 130, 246, 0.1);
 }
 
 .openBtn:hover:not(:disabled) {
+  background: var(--accent-blue-dim);
+  box-shadow: 0 0 24px var(--accent-blue-glow);
   transform: translateY(-1px);
-  box-shadow: 0 6px 24px rgba(245, 158, 11, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
 .openBtn:disabled {

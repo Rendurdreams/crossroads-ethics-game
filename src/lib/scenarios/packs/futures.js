@@ -1,3 +1,5 @@
+import { KINGDOM_ARC_AXES } from '../../axisConstants.js'
+
 export const futuresPack = {
   id: 'futures',
   name: 'The Weight of Tomorrow',
@@ -6,6 +8,8 @@ export const futuresPack = {
   ai_generated: false,
   generator_prompt: null,
   ethicalLens: 'What do you owe the people who come after you?',
+  axisSet: KINGDOM_ARC_AXES,
+  defaultWorldState: { trust: 50, courage: 50, solidarity: 50, awareness: 50 },
   scenarios: [
     {
       id: 'ft-round-1',

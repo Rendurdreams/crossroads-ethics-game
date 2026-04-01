@@ -1,3 +1,5 @@
+import { KINGDOM_ARC_AXES } from '../../axisConstants.js'
+
 export const kingdomArcPack = {
   id: 'kingdom-arc',
   name: 'Kingdom of Ash',
@@ -6,6 +8,8 @@ export const kingdomArcPack = {
   ai_generated: false,
   generator_prompt: null,
   ethicalLens: 'What does a ruler owe?',
+  axisSet: KINGDOM_ARC_AXES,
+  defaultWorldState: { trust: 50, courage: 50, solidarity: 50, awareness: 50 },
   scenarios: [
     {
       id: 'round-1',

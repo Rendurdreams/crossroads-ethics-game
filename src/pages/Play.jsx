@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { supabase } from '../lib/supabase.js'
-import { getDefaultPack, getScenarioByRound, getReflectionScenario } from '../lib/scenarios.js'
+import { getPackById, getDefaultPack, getScenarioByRound, getReflectionScenario } from '../lib/scenarios.js'
+import { getAxisLabels } from '../lib/axisConstants.js'
 import { generateScribeRecord } from '../lib/scribeRecord.js'
-
-const pack = getDefaultPack()
+import { getProfileById } from '../lib/senatorProfiles.js'
+import { getBreakFlagForChoice } from '../lib/breakFlags.js'
 import { FRAMEWORKS } from '../lib/frameworks.js'
 import { findMoralConflicts } from '../lib/detection.js'
 import ScenarioCard from '../components/ScenarioCard.jsx'
@@ -38,6 +39,7 @@ export default function Play() {
   const roundVariants = shouldReduce ? { initial: {}, animate: {}, exit: {} } : roundTransition
 
   // Existing state
+  const [pack, setPack] = useState(getDefaultPack)
   const [player, setPlayer] = useState(null)
   const [session, setSession] = useState(null)
   const [playerCount, setPlayerCount] = useState(0)
@@ -96,6 +98,7 @@ export default function Play() {
               .then(({ data: sessionData }) => {
                 if (sessionData) {
                   setSession(sessionData)
+                  if (sessionData.pack_id) setPack(getPackById(sessionData.pack_id))
                   if (sessionData.status !== 'lobby') {
                     setGameStarted(true)
                   }
@@ -175,6 +178,7 @@ export default function Play() {
         },
         (payload) => {
           setSession(payload.new)
+          if (payload.new.pack_id) setPack(getPackById(payload.new.pack_id))
           if (payload.new.status === 'active') {
             setGameStarted(true)
           }
@@ -334,7 +338,8 @@ export default function Play() {
   // Atmosphere warmth computation
   function computeWarmth(worldState) {
     if (!worldState) return 0.5
-    return (worldState.trust + worldState.courage + worldState.solidarity + worldState.awareness) / 400
+    const values = Object.values(worldState).filter(v => typeof v === 'number')
+    return values.length > 0 ? values.reduce((a, b) => a + b, 0) / (values.length * 100) : 0.5
   }
 
   // --- Render ---
@@ -353,8 +358,12 @@ export default function Play() {
     )
   }
 
-  // Lobby waiting view
+  // Lobby waiting view — with senator profile dossier
   if (!gameStarted) {
+    const lobbyProfile = pack?.id === 'signal-lost' && player?.senator_profile_id
+      ? getProfileById(player.senator_profile_id)
+      : null
+
     return (
       <motion.div
         className={styles.page}
@@ -364,13 +373,52 @@ export default function Play() {
         exit="exit"
         style={{ '--atmosphere-warmth': 0.5 }}
       >
-        <div className={styles.avatar}>{player?.avatar}</div>
-        <div className={styles.name}>{player?.name}</div>
-        <p className={styles.waiting}>The council assembles.</p>
-        <p className={styles.count}>{playerCount} councillor{playerCount !== 1 ? 's' : ''} present</p>
-        {session?.room_code && (
-          <p className={styles.roomReminder}>Chamber: {session.room_code}</p>
-        )}
+        <div className={styles.lobbyContent}>
+          {lobbyProfile ? (
+            <div className={styles.dossier}>
+              <p className={styles.dossierEyebrow}>YOUR SENATOR</p>
+              <h2 className={styles.dossierName}>{lobbyProfile.name}</h2>
+              <p className={styles.dossierSubtitle}>{lobbyProfile.subtitle}</p>
+              <div className={styles.dossierVars}>
+                {lobbyProfile.variables.health && (
+                  <div className={styles.dossierVar}>
+                    <span className={styles.dossierVarLabel}>HEALTH</span>
+                    <span className={styles.dossierVarText}>{lobbyProfile.variables.health}</span>
+                  </div>
+                )}
+                {lobbyProfile.variables.money && (
+                  <div className={styles.dossierVar}>
+                    <span className={styles.dossierVarLabel}>FINANCIAL</span>
+                    <span className={styles.dossierVarText}>{lobbyProfile.variables.money}</span>
+                  </div>
+                )}
+                {lobbyProfile.variables.family && (
+                  <div className={styles.dossierVar}>
+                    <span className={styles.dossierVarLabel}>FAMILY</span>
+                    <span className={styles.dossierVarText}>{lobbyProfile.variables.family}</span>
+                  </div>
+                )}
+                {lobbyProfile.variables.politics && (
+                  <div className={styles.dossierVar}>
+                    <span className={styles.dossierVarLabel}>POLITICS</span>
+                    <span className={styles.dossierVarText}>{lobbyProfile.variables.politics}</span>
+                  </div>
+                )}
+              </div>
+              <p className={styles.dossierFooter}>Memorize your position. Every dilemma will cost you differently.</p>
+            </div>
+          ) : (
+            <>
+              <div className={styles.avatar}>{player?.avatar}</div>
+              <div className={styles.name}>{player?.name}</div>
+            </>
+          )}
+          <p className={styles.waiting}>{lobbyProfile ? 'Waiting for the session to begin.' : 'The council assembles.'}</p>
+          <p className={styles.count}>{playerCount} councillor{playerCount !== 1 ? 's' : ''} present</p>
+          {session?.room_code && (
+            <p className={styles.roomReminder}>Chamber: {session.room_code}</p>
+          )}
+        </div>
       </motion.div>
     )
   }
@@ -391,7 +439,7 @@ export default function Play() {
         style={{ '--atmosphere-warmth': warmth }}
       >
         <div className={styles.profileWrapper}>
-          <FrameworkProfile player={player} />
+          <FrameworkProfile player={player} pack={pack} groupDebrief={session?.group_debrief_context ?? null} />
 
           {showReflection && (
             <motion.div
@@ -464,12 +512,11 @@ export default function Play() {
                 <div className={styles.passConsequence}>
                   <p className={styles.passConsequenceText}>You have abstained from this decree.</p>
                   <div className={styles.metersSection}>
-                    <p className={styles.metersLabel}>THE REALM</p>
+                    <p className={styles.metersLabel}>{pack?.id === 'signal-lost' ? 'THE WORLD' : 'THE REALM'}</p>
                     <div className={styles.meters}>
-                      <MeterBar label="Trust" value={session.world_state?.trust ?? 50} />
-                      <MeterBar label="Courage" value={session.world_state?.courage ?? 50} />
-                      <MeterBar label="Solidarity" value={session.world_state?.solidarity ?? 50} />
-                      <MeterBar label="Awareness" value={session.world_state?.awareness ?? 50} />
+                      {Object.entries(getAxisLabels(pack)).map(([key, label]) => (
+                        <MeterBar key={key} label={label} value={session.world_state?.[key] ?? 50} />
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -482,6 +529,9 @@ export default function Play() {
 
     if (lockedChoiceIndex !== null) {
       const chosenOption = currentScenario.choices[lockedChoiceIndex]
+      const profileConsequence = (chosenOption.profileConsequences && player?.senator_profile_id)
+        ? chosenOption.profileConsequences[player.senator_profile_id] ?? null
+        : null
       const choiceFrameworks = chosenOption.frameworks ?? []
       const roundMoralConflict = (() => {
         if (choiceFrameworks.length === 0) return false
@@ -514,34 +564,24 @@ export default function Play() {
                 exit="exit"
               >
                 <ConsequenceReveal
-                  consequence={chosenOption.consequence}
+                  consequence={profileConsequence ?? chosenOption.consequence}
                   conscienceLayer={chosenOption.conscienceLayer ?? null}
                   frameworks={choiceFrameworks}
                   scenarioId={currentScenario.id}
                   choiceIndex={lockedChoiceIndex}
                   round={session.current_round}
-                  worldState={session.world_state ?? { trust: 50, courage: 50, solidarity: 50, awareness: 50 }}
+                  worldState={session.world_state ?? (pack?.defaultWorldState ?? { trust: 50, courage: 50, solidarity: 50, awareness: 50 })}
                   moralValues={player?.moral_values ?? null}
                   moralStances={player?.moral_stances ?? null}
                   hasMoralConflict={roundMoralConflict}
+                  pack={pack}
                 />
 
-                {!showHowOthersChose && (
-                  <button
-                    className={styles.howOthersBtn}
-                    onClick={() => setShowHowOthersChose(true)}
-                  >
-                    See how others chose
-                  </button>
-                )}
-
-                {showHowOthersChose && (
-                  <HowOthersChose
-                    scenarioId={currentScenario.id}
-                    liveChoices={roundChoicesForComparison}
-                    totalPlayers={totalPlayerCount}
-                  />
-                )}
+                <HowOthersChose
+                  scenarioId={currentScenario.id}
+                  liveChoices={roundChoicesForComparison}
+                  totalPlayers={totalPlayerCount}
+                />
               </motion.div>
             </AnimatePresence>
           </div>
@@ -571,12 +611,11 @@ export default function Play() {
               <div className={styles.passConsequence}>
                 <p className={styles.passConsequenceText}>The decree was sealed before your counsel arrived.</p>
                 <div className={styles.metersSection}>
-                  <p className={styles.metersLabel}>THE REALM</p>
+                  <p className={styles.metersLabel}>{pack?.id === 'signal-lost' ? 'THE WORLD' : 'THE REALM'}</p>
                   <div className={styles.meters}>
-                    <MeterBar label="Trust" value={session.world_state?.trust ?? 50} />
-                    <MeterBar label="Courage" value={session.world_state?.courage ?? 50} />
-                    <MeterBar label="Solidarity" value={session.world_state?.solidarity ?? 50} />
-                    <MeterBar label="Awareness" value={session.world_state?.awareness ?? 50} />
+                    {Object.entries(getAxisLabels(pack)).map(([key, label]) => (
+                      <MeterBar key={key} label={label} value={session.world_state?.[key] ?? 50} />
+                    ))}
                   </div>
                 </div>
               </div>
@@ -591,7 +630,7 @@ export default function Play() {
   if (session?.status === 'active' && currentScenario) {
     const isTimerPressureRound = session?.current_round === 5
     const isWalkRound = session?.current_round === 6
-    const isBombshellRound = currentScenario?.id === 'round-bombshell'
+    const isBombshellRound = currentScenario?.id === 'round-bombshell' || currentScenario?.id === 'signal-r8'
 
     // Round reflection detection — show reflection textarea instead of ScenarioCard
     const isReflectionRound = currentScenario?.choices?.length === 0
@@ -661,7 +700,17 @@ export default function Play() {
         <ContentNote
           note={currentScenario.contentNote}
           onContinue={() => setContentNoteAcknowledged(true)}
-          onPass={() => setPassedRound(true)}
+          onPass={() => {
+            setPassedRound(true)
+            setMyChoiceHistory(prev => [...prev, {
+              round: session.current_round,
+              scenarioId: currentScenario.id,
+              choiceIndex: null,
+              frameworks: [],
+              passed: true,
+              moral_weight: currentScenario.weight === 'heavy' ? 3 : currentScenario.weight === 'medium' ? 2 : 1
+            }])
+          }}
         />
       )
     }
@@ -715,14 +764,39 @@ export default function Play() {
             >
               <div className={styles.roundHeader}>
                 {player?.avatar && <span className={styles.headerAvatar}>{player.avatar}</span>}
-                <span className={styles.roundLabel}>The Council Deliberates — Dilemma {session.current_round}</span>
+                <span className={styles.roundLabel}>
+                  {pack?.id === 'signal-lost'
+                    ? `Round ${session.current_round} of ${session.total_rounds}`
+                    : `The Council Deliberates — Dilemma ${session.current_round}`}
+                </span>
               </div>
+
+              {/* Senator profile YOUR STAKE panel (Signal Lost only) */}
+              {pack?.id === 'signal-lost' && player?.senator_profile_id && (() => {
+                const profile = getProfileById(player.senator_profile_id)
+                let stake = profile?.stakes?.[`r${session.current_round}`]
+                const dynamicEntries = profile?.dynamicStakes?.[`r${session.current_round}`]
+                if (dynamicEntries && myChoiceHistory.length > 0) {
+                  const matched = dynamicEntries.find(d => d.condition(myChoiceHistory))
+                  if (matched) stake = stake ? `${stake} ${matched.text}` : matched.text
+                }
+                return profile ? (
+                  <div className={styles.stakePanel}>
+                    <p className={styles.stakeName}>{profile.name}</p>
+                    {stake && <p className={styles.stakeText}>YOUR STAKE: {stake}</p>}
+                  </div>
+                ) : null
+              })()}
 
               {isBombshellRound && (
                 <div className={styles.scribeRecord}>
                   <p className={styles.scribeLabel}>THE SCRIBE&apos;S RECORD</p>
-                  <p className={styles.scribeText}>{generateScribeRecord(myChoiceHistory)}</p>
+                  <p className={styles.scribeText}>{generateScribeRecord(myChoiceHistory, session?.break_flags ?? {})}</p>
                 </div>
+              )}
+
+              {currentScenario.previousRoundCallback && session.current_round > 1 && (
+                <p className={styles.narrativeBridge}>{currentScenario.previousRoundCallback}</p>
               )}
 
               {isWalkRound ? (
@@ -735,6 +809,7 @@ export default function Play() {
                     onChoice={handleChoice}
                     submitting={submitting}
                     lockedIndex={lockedChoiceIndex}
+                    scenario={currentScenario}
                   />
                 </>
               ) : (
@@ -754,28 +829,91 @@ export default function Play() {
                       onClick={handleSubmitChoice}
                       disabled={submitting}
                     >
-                      {submitting ? 'Submitting...' : 'Seal Your Decree'}
+                      {submitting ? 'SUBMITTING...' : (pack?.id === 'signal-lost' ? 'CAST YOUR VOTE' : 'Seal Your Decree')}
                     </button>
                   )}
                 </>
               )}
 
-              {lockedChoiceIndex !== null && (
-                <div className={styles.waitingSection}>
-                  <p className={styles.waitingText}>Awaiting the council&apos;s judgment.</p>
-                  <p className={styles.submittedCounter}>
-                    <span className={styles.submittedNumber}>{submittedCount}</span>
-                    {' '}of {totalPlayerCount} submitted
-                  </p>
-                </div>
+              {/* Pre-lock: show meters and timer inline */}
+              {lockedChoiceIndex === null && (
+                <>
+                  <div className={styles.metersSection} style={{ marginTop: 12 }}>
+                    <p className={styles.metersLabel}>{pack?.id === 'signal-lost' ? 'WORLD STATE' : 'THE REALM'}</p>
+                    <div className={styles.meters}>
+                      {Object.entries(getAxisLabels(pack)).map(([key, label]) => (
+                        <MeterBar key={key} label={label} value={session.world_state?.[key] ?? 50} />
+                      ))}
+                    </div>
+                  </div>
+                  {timerRemaining !== null && (
+                    <div className={`${styles.timerSection} ${isTimerPressureRound ? styles.timerPressure : ''}`}>
+                      <TimerDisplay remaining={timerRemaining} total={timerTotal} />
+                      {isTimerPressureRound && timerRemaining !== null && timerRemaining <= 30 && (
+                        <p className={styles.timerUrgency}>The council waits for no one.</p>
+                      )}
+                    </div>
+                  )}
+                </>
               )}
 
-              {timerRemaining !== null && (
-                <div className={`${styles.timerSection} ${isTimerPressureRound ? styles.timerPressure : ''}`}>
-                  <TimerDisplay remaining={timerRemaining} total={timerTotal} />
-                  {isTimerPressureRound && timerRemaining !== null && timerRemaining <= 30 && (
-                    <p className={styles.timerUrgency}>The council waits for no one.</p>
-                  )}
+              {/* Post-lock: dashboard with collapsible panels */}
+              {lockedChoiceIndex !== null && (
+                <div className={styles.dashboard}>
+                  {/* Fixed status bar */}
+                  <div className={styles.dashStatus}>
+                    <p className={styles.dashStatusText}>
+                      {pack?.id === 'signal-lost' ? 'VOTE RECORDED' : 'DECREE SEALED'}
+                    </p>
+                    <p className={styles.submittedCounter}>
+                      <span className={styles.submittedNumber}>{submittedCount}</span>
+                      {' '}of {totalPlayerCount} submitted
+                    </p>
+                    {timerRemaining !== null && (
+                      <div className={styles.dashTimer}>
+                        <TimerDisplay remaining={timerRemaining} total={timerTotal} />
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Your choice — always visible */}
+                  <div className={styles.dashChoice}>
+                    <p className={styles.dashChoiceLabel}>YOUR CHOICE</p>
+                    <p className={styles.dashChoiceText}>{currentScenario.choices[lockedChoiceIndex]?.text}</p>
+                  </div>
+
+                  {/* Collapsible: Why field */}
+                  <details className={styles.dashPanel}>
+                    <summary className={styles.dashPanelHeader}>REFLECTION</summary>
+                    <div className={styles.dashPanelBody}>
+                      <textarea
+                        className={styles.whyField}
+                        placeholder="In your own words, why? (optional)"
+                        maxLength={280}
+                        rows={2}
+                      />
+                    </div>
+                  </details>
+
+                  {/* Collapsible: World State */}
+                  <details className={styles.dashPanel}>
+                    <summary className={styles.dashPanelHeader}>{pack?.id === 'signal-lost' ? 'WORLD STATE' : 'THE REALM'}</summary>
+                    <div className={styles.dashPanelBody}>
+                      <div className={styles.meters}>
+                        {Object.entries(getAxisLabels(pack)).map(([key, label]) => (
+                          <MeterBar key={key} label={label} value={session.world_state?.[key] ?? 50} />
+                        ))}
+                      </div>
+                    </div>
+                  </details>
+
+                  {/* Collapsible: Scenario text */}
+                  <details className={styles.dashPanel}>
+                    <summary className={styles.dashPanelHeader}>THE DILEMMA</summary>
+                    <div className={styles.dashPanelBody}>
+                      <p className={styles.dashScenarioText}>{currentScenario.text}</p>
+                    </div>
+                  </details>
                 </div>
               )}
             </motion.div>

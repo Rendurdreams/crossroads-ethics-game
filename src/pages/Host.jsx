@@ -3,7 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion'
 import { supabase } from '../lib/supabase.js'
 import { getPackById, getScenarioByRound } from '../lib/scenarios.js'
+import { getAxisLabels } from '../lib/axisConstants.js'
+import { getProfileById } from '../lib/senatorProfiles.js'
 import { applyChoicesToWorld, computeNarrative } from '../lib/worldState.js'
+import { getBreakFlagForChoice } from '../lib/breakFlags.js'
 import { computeProfile, findConflicts, findMoralConflicts } from '../lib/detection.js'
 import { FRAMEWORKS } from '../lib/frameworks.js'
 import PlayerRoster from '../components/PlayerRoster.jsx'
@@ -75,7 +78,6 @@ export default function Host() {
   const [showTally, setShowTally] = useState(false)
   const [showLesson, setShowLesson] = useState(false)
   const [showHowOthers, setShowHowOthers] = useState(false)
-
   const timerChannelRef = useRef(null)
   const lerpSpeedRef = useRef(2)
   const prevWorldRef = useRef(null)
@@ -305,13 +307,25 @@ export default function Host() {
       roundState.choices, pack.scenarios, roundIndex, session.world_state
     )
 
+    // Check for break flags triggered this round (Signal Lost)
+    let updatedBreakFlags = session.break_flags ?? {}
+    if (pack?.id === 'signal-lost') {
+      const round = session.current_round
+      roundState.choices.forEach(c => {
+        const flag = getBreakFlagForChoice(round, c.choice_index)
+        if (flag && !updatedBreakFlags[flag.id]) {
+          updatedBreakFlags = { ...updatedBreakFlags, [flag.id]: true }
+        }
+      })
+    }
+
     // Start reveal BEFORE DB write — lerpSpeed=8 must be set before
     // Supabase subscription fires with new world_state (per pitfall 3)
     setRevealPhase('revealing')
     lerpSpeedRef.current = 8
 
     await supabase.from('sessions')
-      .update({ status: 'round_complete', world_state: newWorldState })
+      .update({ status: 'round_complete', world_state: newWorldState, break_flags: updatedBreakFlags })
       .eq('id', sessionId)
 
     // After 2.5s: transition to revealed state, slow down lerp
@@ -468,7 +482,7 @@ export default function Host() {
         packName: pack.name,
         totalPlayers: allPlayers.length,
         frameworkBreakdown: groupFrameworkCounts,
-        finalWorldState: session?.world_state ?? { trust: 50, courage: 50, solidarity: 50, awareness: 50 },
+        finalWorldState: session?.world_state ?? (pack?.defaultWorldState ?? { trust: 50, courage: 50, solidarity: 50, awareness: 50 }),
         notableMoralConflicts
       }
 
@@ -501,10 +515,11 @@ export default function Host() {
     )
   }
 
-  const worldState = session?.world_state ?? { trust: 50, courage: 50, solidarity: 50, awareness: 50 }
+  const defaultWorld = pack?.defaultWorldState ?? { trust: 50, courage: 50, solidarity: 50, awareness: 50 }
+  const worldState = session?.world_state ?? defaultWorld
 
-  // ── Meter display labels (value names, not landmark names) ──────────
-  const METER_LABELS = { trust: 'Honesty', courage: 'Courage', solidarity: 'Loyalty', awareness: 'Empathy' }
+  // ── Meter display labels — derived from active pack's axis set ──────
+  const METER_LABELS = getAxisLabels(pack)
 
   // ── End state ──────────────────────────────────────────────────────────
 
@@ -523,7 +538,7 @@ export default function Host() {
     return (
       <motion.div {...motionProps} style={{ position: 'fixed', inset: 0 }}>
         <div className={styles.canvas}>
-          <AnimatedMap worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
+          <AnimatedMap worldState={worldState} lerpSpeedRef={lerpSpeedRef} breakFlags={session?.break_flags} />
         </div>
 
         <div className={styles.topBar}>
@@ -577,11 +592,18 @@ export default function Host() {
 
               <p className={styles.endSectionLabel} style={{ marginTop: 20 }}>FINAL STATE</p>
               <div className={styles.endMeters}>
-                <MeterBar label="Honesty" value={worldState.trust} />
-                <MeterBar label="Courage" value={worldState.courage} />
-                <MeterBar label="Loyalty" value={worldState.solidarity} />
-                <MeterBar label="Empathy" value={worldState.awareness} />
+                {Object.entries(METER_LABELS).map(([key, label]) => (
+                  <MeterBar key={key} label={label} value={worldState[key] ?? 50} />
+                ))}
               </div>
+
+              <button
+                className={styles.rubricBtn}
+                onClick={() => navigate(`/grading/${sessionId}`)}
+                style={{ marginTop: 24 }}
+              >
+                Grading Rubric
+              </button>
             </div>
           </div>
         </div>
@@ -600,19 +622,15 @@ export default function Host() {
     const dominantFw = dominantFrameworkThisRound(fwCounts)
     const prevWorld = prevWorldRef.current
 
-    const deltas = prevWorld ? {
-      trust: Math.round(worldState.trust - prevWorld.trust),
-      courage: Math.round(worldState.courage - prevWorld.courage),
-      solidarity: Math.round(worldState.solidarity - prevWorld.solidarity),
-      awareness: Math.round(worldState.awareness - prevWorld.awareness),
-    } : null
-
-    const METER_LABELS = { trust: 'Honesty', courage: 'Courage', solidarity: 'Loyalty', awareness: 'Empathy' }
+    const axisKeys = Object.keys(METER_LABELS)
+    const deltas = prevWorld ? Object.fromEntries(
+      axisKeys.map(key => [key, Math.round((worldState[key] ?? 0) - (prevWorld[key] ?? 0))])
+    ) : null
 
     return (
       <motion.div {...motionProps} style={{ position: 'fixed', inset: 0 }}>
         <div className={styles.canvas}>
-          <AnimatedMap worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
+          <AnimatedMap worldState={worldState} lerpSpeedRef={lerpSpeedRef} breakFlags={session?.break_flags} />
         </div>
 
         {/* ── Scenario text for presenter ── */}
@@ -746,9 +764,9 @@ export default function Host() {
           )}
         </AnimatePresence>
 
-        {/* ── How Others Chose overlay (toggle-on after round close) ── */}
+        {/* ── How Others Chose overlay (only when lesson is NOT showing) ── */}
         <AnimatePresence>
-          {showHowOthers && (
+          {showHowOthers && !showLesson && (
             <motion.div
               className={styles.howOthersOverlay}
               initial={{ opacity: 0, y: 12 }}
@@ -765,7 +783,7 @@ export default function Host() {
           )}
         </AnimatePresence>
 
-        {/* ── Lesson overlay (manual — D-05 Phase 2, D-11) ── */}
+        {/* ── Lesson overlay — moral tension + research comparison ── */}
         <AnimatePresence>
           {showLesson && (
             <>
@@ -794,38 +812,45 @@ export default function Host() {
                   </p>
                 )}
 
-                {tally.length > 0 && (
-                  <div className={styles.lessonTally}>
-                    {tally.map((t, i) => (
-                      <div key={i} className={styles.tallyRow}>
-                        <span className={styles.tallyLabel}>
-                          {t.text}
-                          <span className={styles.tallyFramework}>
-                            {' '}{t.frameworks.map(f => FRAMEWORKS[f]?.name).join(' + ')}
-                          </span>
-                        </span>
-                        <div className={styles.tallyBarTrack}>
-                          <div className={styles.tallyBarFill} style={{ width: `${t.pct}%` }} />
-                        </div>
-                        <span className={styles.tallyPct}>{t.pct}%</span>
-                      </div>
+                {/* Conflict spotlight — cross-profile tension */}
+                {currentScenario?.conflictSpotlight && (
+                  <div className={styles.spotlightCallout}>
+                    <p className={styles.spotlightLabel}>SPOTLIGHT</p>
+                    <p className={styles.spotlightText}>{currentScenario.conflictSpotlight.description}</p>
+                  </div>
+                )}
+
+                {/* Discussion prompts — host talking points */}
+                {currentScenario?.discussionPrompts?.length > 0 && (
+                  <div className={styles.discussionPrompts}>
+                    <p className={styles.discussionLabel}>DISCUSSION</p>
+                    {currentScenario.discussionPrompts.map((prompt, i) => (
+                      <p key={i} className={styles.discussionItem}>{prompt}</p>
                     ))}
                   </div>
                 )}
 
-                {showHowOthers && (
-                  <div className={styles.lessonResearch}>
-                    <HowOthersChose
-                      scenarioId={currentScenario?.id}
-                      liveChoices={roundState.choices}
-                      totalPlayers={players.length}
-                    />
-                  </div>
+                {/* Host notes — presenter cheat sheet */}
+                {currentScenario?.hostNotes?.length > 0 && (
+                  <details className={styles.hostNotes}>
+                    <summary className={styles.hostNotesLabel}>HOST NOTES</summary>
+                    {currentScenario.hostNotes.map((note, i) => (
+                      <p key={i} className={styles.hostNoteItem}>{note}</p>
+                    ))}
+                  </details>
                 )}
+
+                <div className={styles.lessonResearch}>
+                  <HowOthersChose
+                    scenarioId={currentScenario?.id}
+                    liveChoices={roundState.choices}
+                    totalPlayers={players.length}
+                  />
+                </div>
 
                 <button
                   className={styles.actionBtn}
-                  style={{ marginTop: 32 }}
+                  style={{ marginTop: 24 }}
                   onClick={() => {
                     setShowLesson(false)
                     if (isLastRound) {
@@ -850,7 +875,7 @@ export default function Host() {
   return (
     <motion.div {...motionProps} style={{ position: 'fixed', inset: 0 }}>
       <div className={styles.canvas}>
-        <AnimatedMap worldState={worldState} lerpSpeedRef={lerpSpeedRef} />
+        <AnimatedMap worldState={worldState} lerpSpeedRef={lerpSpeedRef} breakFlags={session?.break_flags} />
       </div>
 
       <div className={styles.lobbyOverlay}>

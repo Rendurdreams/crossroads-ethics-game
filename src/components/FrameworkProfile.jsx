@@ -46,7 +46,7 @@ const ARC_NARRATIVES = {
  *   moral_stances?: object
  * }, pack: object|null }} props
  */
-export default function FrameworkProfile({ player, pack }) {
+export default function FrameworkProfile({ player, pack, groupDebrief }) {
   const shouldReduce = useReducedMotion()
   const containerV = shouldReduce ? {} : containerVariants
   const sectionV = shouldReduce ? { hidden: {}, show: {} } : sectionVariants
@@ -164,10 +164,12 @@ export default function FrameworkProfile({ player, pack }) {
       )}
 
       {/* Consistency label (when no shift but trajectory data exists) */}
-      {trajectory && !trajectory.shifted && consistencyScore === 'high' && dominant && (
+      {trajectory && !trajectory.shifted && (consistencyScore === 'remarkably_consistent' || consistencyScore === 'consistent') && dominant && (
         <motion.div className={styles.leastUsedSection} variants={sectionV}>
           <p className={styles.conflictDescription}>
-            Your reasoning was remarkably consistent -- you held {FRAMEWORKS[dominant]?.name ?? dominant} through escalating stakes.
+            {consistencyScore === 'remarkably_consistent'
+              ? `Your reasoning was remarkably consistent — you held ${FRAMEWORKS[dominant]?.name ?? dominant} through the highest-stakes rounds without breaking.`
+              : `Your reasoning was consistent — ${FRAMEWORKS[dominant]?.name ?? dominant} guided most of your decisions.`}
           </p>
         </motion.div>
       )}
@@ -280,15 +282,67 @@ export default function FrameworkProfile({ player, pack }) {
         </motion.div>
       )}
 
-      {/* D-27 Slot 8: Framework You Used Least (existing) */}
+      {/* D-27 Slot 8: Framework You Used Least — with specific round references */}
       {dominant !== null && leastUsedKey && FRAMEWORKS[leastUsedKey] && (
         <motion.div className={styles.leastUsedSection} variants={sectionV}>
           <p className={styles.eyebrow}>The Framework You Used Least</p>
           <h3 className={styles.leastFrameworkName}>{FRAMEWORKS[leastUsedKey].name}</h3>
           <p className={styles.leastPrompt}>{FRAMEWORKS[leastUsedKey].question}</p>
-          <p className={styles.leastPrompt} style={{ marginTop: '8px' }}>
-            {FRAMEWORKS[leastUsedKey].description}
-          </p>
+          {(() => {
+            const missedRounds = (choiceHistory ?? [])
+              .filter(c => !(c.frameworks ?? []).includes(leastUsedKey))
+              .map(c => {
+                const scenario = pack ? getScenarioByRound(pack, c.round) : null
+                if (!scenario) return null
+                const leastChoice = scenario.choices?.find(ch => (ch.frameworks ?? []).includes(leastUsedKey))
+                if (!leastChoice) return null
+                return { round: c.round, title: scenario.title, choiceText: leastChoice.text }
+              })
+              .filter(Boolean)
+              .slice(0, 2)
+
+            return missedRounds.length > 0 ? (
+              <div style={{ marginTop: '10px' }}>
+                {missedRounds.map((m, i) => (
+                  <p key={i} className={styles.leastPrompt} style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                    In Round {m.round} ({m.title}), the {FRAMEWORKS[leastUsedKey].name.toLowerCase()} choice was: &ldquo;{m.choiceText}&rdquo; &mdash; you chose something else.
+                  </p>
+                ))}
+              </div>
+            ) : null
+          })()}
+        </motion.div>
+      )}
+
+      {/* D-27 Slot 8b: Group Comparison */}
+      {groupDebrief && groupDebrief.frameworkBreakdown && (
+        <motion.div className={styles.leastUsedSection} variants={sectionV}>
+          <p className={styles.eyebrow}>Your Class</p>
+          {(() => {
+            const breakdown = groupDebrief.frameworkBreakdown
+            const totalVotes = Object.values(breakdown).reduce((a, b) => a + b, 0)
+            if (totalVotes === 0) return null
+            const groupDominant = Object.entries(breakdown).sort((a, b) => b[1] - a[1])[0]
+            const groupDominantPct = Math.round((groupDominant[1] / totalVotes) * 100)
+            const playerMatchesGroup = dominant === groupDominant[0]
+
+            return (
+              <>
+                <p className={styles.conflictDescription}>
+                  {groupDebrief.totalPlayers} senators voted across {pack?.scenarios?.length ?? 8} rounds.
+                  The most common framework was <strong>{FRAMEWORKS[groupDominant[0]]?.name ?? groupDominant[0]}</strong> ({groupDominantPct}% of all choices).
+                  {playerMatchesGroup
+                    ? ' You were part of the majority.'
+                    : ` You were not — your reasoning diverged from most of your class.`}
+                </p>
+                {groupDebrief.notableMoralConflicts?.length > 0 && (
+                  <p className={styles.conflictDescription} style={{ marginTop: '8px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    {groupDebrief.notableMoralConflicts.length} senator{groupDebrief.notableMoralConflicts.length === 1 ? '' : 's'} experienced moral conflicts between their stated values and their votes.
+                  </p>
+                )}
+              </>
+            )
+          })()}
         </motion.div>
       )}
 
@@ -301,6 +355,15 @@ export default function FrameworkProfile({ player, pack }) {
           </p>
           <p className={styles.conflictDescription} style={{ marginTop: '8px', fontSize: '14px', color: 'var(--text-muted)' }}>
             A different context might have drawn different reasoning.
+          </p>
+        </motion.div>
+      )}
+
+      {/* Replay prompt */}
+      {pack?.id === 'signal-lost' && player?.senator_profile_id && (
+        <motion.div className={styles.leastUsedSection} variants={sectionV} style={{ opacity: 0.7, textAlign: 'center' }}>
+          <p className={styles.conflictDescription} style={{ fontStyle: 'italic', fontSize: '0.85rem' }}>
+            You played as one of six senators. Each has different stakes — financial interests, family connections, political debts. The same dilemmas land differently when your skin in the game changes. There are five other senators waiting.
           </p>
         </motion.div>
       )}
