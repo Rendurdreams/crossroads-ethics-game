@@ -390,6 +390,16 @@ export const kingdomArcPack = {
           conscienceLayer: "You will not be here to see what they think of you. That is its own kind of courage.",
           worldImpact: { trust: 10, courage: -10, solidarity: 10, awareness: 25 }
         }
+      ],
+      hostNotes: [
+        'Frameworks: Virtue + Deontology (full transparency — integrity demands it) vs. Consequentialism + Care (strategic honesty — protect the people who depend on stability) vs. Consequentialism + Virtue (step down — the most honest act is giving up the power to spin the narrative). Say: "This final round turns the lens on YOU. Every previous round you judged others. Now someone is judging you. Virtue ethics says character is consistent — you cannot demand honesty from others and withhold it yourself."',
+        'Watch for: students who suddenly reason differently when they are the one being judged. That shift is the entire lesson — we apply frameworks selectively, and noticing that selectivity is the beginning of real ethical thinking.',
+        'Connection to morals vs ethics: this is the capstone. Your morals told you what felt right for seven rounds. Now the question is whether your ethical reasoning applies to yourself. The gap between how we judge others and how we judge ourselves is where moral philosophy lives.'
+      ],
+      discussionPrompts: [
+        'Did you apply the same ethical framework to yourself that you applied to others in earlier rounds? If not, why not?',
+        'Is stepping down (C) the most ethical choice or just the easiest way to avoid accountability?',
+        'After eight rounds: do you think ethics should be consistent, or is it okay to reason differently in different situations? What is the philosophical term for each position?'
       ]
     }
   ]
