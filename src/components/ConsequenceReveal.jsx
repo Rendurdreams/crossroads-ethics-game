@@ -1,8 +1,5 @@
-import { useState } from 'react'
 import { FRAMEWORKS, CONFLICT_PAIRS } from '../lib/frameworks.js'
 import { findMoralConflicts } from '../lib/detection.js'
-import { getAxisLabels } from '../lib/axisConstants.js'
-import MeterBar from '../components/MeterBar.jsx'
 import styles from './ConsequenceReveal.module.css'
 
 function findTension(frameworkKey) {
@@ -14,38 +11,6 @@ function findTension(frameworkKey) {
     tension: pair.tension,
     description: pair.description
   }
-}
-
-function WorldHealthBar({ worldState, axisLabels, isSignalLost }) {
-  const [expanded, setExpanded] = useState(false)
-  const keys = Object.keys(axisLabels)
-  const values = keys.map(k => worldState?.[k] ?? 50)
-  const health = Math.round(values.reduce((a, b) => a + b, 0) / values.length)
-  const color = health >= 50 ? 'var(--accent-cyan, #06b6d4)' : 'var(--accent-red, #ef4444)'
-  const bgColor = health >= 50 ? 'rgba(6, 182, 212, 0.15)' : 'rgba(239, 68, 68, 0.15)'
-
-  return (
-    <div className={styles.impactSection}>
-      <button
-        className={styles.healthBar}
-        onClick={() => setExpanded(v => !v)}
-        style={{ borderColor: color }}
-      >
-        <div className={styles.healthFill} style={{ width: `${health}%`, background: color, boxShadow: `0 0 12px ${bgColor}` }} />
-        <span className={styles.healthLabel} style={{ color }}>
-          {isSignalLost ? 'WORLD' : 'REALM'} {health}%
-        </span>
-        <span className={styles.healthToggle}>{expanded ? '\u25B4' : '\u25BE'}</span>
-      </button>
-      {expanded && (
-        <div className={styles.impactGrid}>
-          {Object.entries(axisLabels).map(([key, label]) => (
-            <MeterBar key={key} label={label} value={worldState?.[key] ?? 50} />
-          ))}
-        </div>
-      )}
-    </div>
-  )
 }
 
 export default function ConsequenceReveal({ consequence, conscienceLayer, frameworks, scenarioId, choiceIndex, round, worldState, moralValues, moralStances, hasMoralConflict, pack }) {
@@ -61,10 +26,6 @@ export default function ConsequenceReveal({ consequence, conscienceLayer, framew
   }] : []
   const moralConflicts = findMoralConflicts(singleRoundHistory, moralValues ?? null, moralStances ?? null)
   const moralConflict = moralConflicts.length > 0 ? moralConflicts[0] : null
-
-  // Use pack-aware axis labels
-  const axisLabels = getAxisLabels(pack)
-  const isSignalLost = pack?.id === 'signal-lost'
 
   // Skip conscienceLayer if it's identical to consequence
   const showConscienceLayer = conscienceLayer && conscienceLayer !== consequence
@@ -95,8 +56,7 @@ export default function ConsequenceReveal({ consequence, conscienceLayer, framew
           </p>
         )}
 
-        {/* World impact — health bar with tap-to-expand */}
-        <WorldHealthBar worldState={worldState} axisLabels={axisLabels} isSignalLost={isSignalLost} />
+        {/* Health bar removed from player phone — displayed on host projector only */}
       </div>
     </div>
   )

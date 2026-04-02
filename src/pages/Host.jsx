@@ -176,17 +176,21 @@ export default function Host() {
   }, [sessionId])
 
   // ── React to remote-driven status changes ──────────────────────────────
+  const lastRoundRef = useRef(session?.current_round)
   useEffect(() => {
     if (!session) return
-    if (session.status === 'active') {
-      // Remote advanced to next round — clear overlays
+
+    // Round advanced — clear overlays
+    if (session.current_round !== lastRoundRef.current) {
+      lastRoundRef.current = session.current_round
       setShowLesson(false)
       setShowTally(false)
       setShowHowOthers(false)
       setRevealPhase('idle')
     }
+
+    // Round closed — trigger reveal sequence (only once per round)
     if (session.status === 'round_complete' && !roundState.roundClosed) {
-      // Remote closed the round
       dispatch({ type: 'ROUND_CLOSE' })
       setRevealPhase('revealing')
       lerpSpeedRef.current = 8
