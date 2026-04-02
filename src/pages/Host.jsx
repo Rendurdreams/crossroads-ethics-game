@@ -13,6 +13,7 @@ import PlayerRoster from '../components/PlayerRoster.jsx'
 import MeterBar from '../components/MeterBar.jsx'
 import CommandHUD from '../components/CommandHUD.jsx'
 import HowOthersChose from '../components/HowOthersChose.jsx'
+import { QRCodeSVG } from 'qrcode.react'
 import styles from './Host.module.css'
 
 // ─── Round state machine ───────────────────────────────────────────────────
@@ -909,6 +910,17 @@ export default function Host() {
       <div className={styles.lobbyOverlay}>
         <p className={styles.lobbyRoomLabel}>CHAMBER CODE</p>
         <div className={styles.lobbyRoomCode}>{session?.room_code}</div>
+
+        <div className={styles.lobbyQr}>
+          <QRCodeSVG
+            value={`${window.location.origin}/?code=${session.room_code}`}
+            size={160}
+            bgColor="transparent"
+            fgColor="#3b82f6"
+            level="M"
+          />
+          <p className={styles.lobbyQrLabel}>Scan to join</p>
+        </div>
 
         <div className={styles.lobbyCard}>
           <PlayerRoster players={players} />
