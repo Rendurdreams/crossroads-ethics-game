@@ -237,6 +237,16 @@ export const kingdomArcPack = {
           conscienceLayer: "You saved some. You preserved some. Nothing is clean.",
           worldImpact: { trust: 2, courage: 6, solidarity: 6, awareness: -2 }
         }
+      ],
+      hostNotes: [
+        'Frameworks: Care + Consequentialism (use it now — save the people in front of you) vs. Deontology + Virtue (preserve it — future generations have rights too) vs. Consequentialism (ration it — optimize across time). Say: "This is intergenerational ethics. Care ethics focuses on the people you can see. Deontology says future people have the same rights as present people. The conflict is real because you cannot serve both fully."',
+        'Watch for: how students weigh visible suffering (now) against invisible suffering (future). Most will favor the present. Ask: if the future people were in the room, would you decide differently?',
+        'Connection to morals vs ethics: morally, we feel pulled toward people we can see suffering. Ethically, climate change and resource depletion are the same dilemma at global scale. This round is that problem in miniature.'
+      ],
+      discussionPrompts: [
+        'Do people who have not been born yet have rights? If so, who represents them?',
+        'If you used the wellspring now, is that a choice or just the absence of one?',
+        'How is this dilemma similar to real-world debates about climate policy or national debt?'
       ]
     },
 
