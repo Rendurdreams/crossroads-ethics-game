@@ -691,6 +691,11 @@ export default function Host() {
           <CommandHUD phase={hudPhase} worldHealth={worldHealth} />
         </div>
 
+        {/* DEBUG: remove after testing */}
+        <div style={{ position: 'fixed', top: 8, right: 8, zIndex: 999, background: 'red', color: 'white', padding: '4px 8px', fontFamily: 'monospace', fontSize: 11 }}>
+          lesson={showLesson ? 'YES' : 'NO'} | closed={roundState.roundClosed ? 'Y' : 'N'} | reveal={revealPhase} | status={session?.status}
+        </div>
+
         {/* ── Scenario text for presenter ── */}
         {!showLesson && (
           <div className={styles.scenarioOverlay}>
