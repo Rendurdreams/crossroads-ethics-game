@@ -180,9 +180,10 @@ export default function Host() {
   useEffect(() => {
     if (!session) return
 
-    // Round advanced — clear overlays
+    // Round advanced — reset state for new round
     if (session.current_round !== lastRoundRef.current) {
       lastRoundRef.current = session.current_round
+      dispatch({ type: 'ROUND_START', duration: getScenarioTimer(session.current_round) })
       setShowLesson(false)
       setShowTally(false)
       setShowHowOthers(false)
