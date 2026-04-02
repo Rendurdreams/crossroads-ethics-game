@@ -19,6 +19,11 @@ export const FRAMEWORKS = {
     name: 'Virtue Ethics',
     description: 'Forget the rules and the results -- what would a genuinely good person do here? Integrity, courage, honesty aren\'t tools to get what you want. They\'re the point.',
     question: 'What would a person of good character do?'
+  },
+  utilitarianism: {
+    name: 'Utilitarianism',
+    description: 'The greatest good for the greatest number. If saving five means sacrificing one, the math is clear. It\'s consequentialism at its most demanding -- outcomes measured in total welfare, not just results.',
+    question: 'What maximizes welfare for the most people?'
   }
 }
 
@@ -44,5 +49,20 @@ export const CONFLICT_PAIRS = [
     frameworks: ['virtue', 'care'],
     tension: 'personal integrity vs. protecting someone you love',
     description: 'You acted from character in one round and from loyalty in another. When courage and compassion point in different directions, which defines who you are?'
+  },
+  {
+    frameworks: ['utilitarianism', 'deontology'],
+    tension: 'welfare of the many vs. inviolable rights',
+    description: 'You maximized welfare in one round and held an absolute duty in another. Utilitarianism says the numbers decide. Deontology says some things can\'t be traded — no matter the math.'
+  },
+  {
+    frameworks: ['utilitarianism', 'care'],
+    tension: 'the greatest number vs. the person in front of you',
+    description: 'You chose total welfare in one round and a specific relationship in another. The utilitarian counts everyone equally. Care ethics says proximity creates obligation.'
+  },
+  {
+    frameworks: ['utilitarianism', 'virtue'],
+    tension: 'maximizing outcomes vs. acting from character',
+    description: 'You optimized for the most people in one round and stood on principle in another. Utilitarianism asks what works. Virtue ethics asks who you become.'
   }
 ]

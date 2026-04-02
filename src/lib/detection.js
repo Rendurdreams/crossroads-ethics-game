@@ -444,7 +444,7 @@ const WEIGHT_MAP = { low: 1, medium: 2, heavy: 3, reflective: 0 }
  * @returns {{ dominant: string|null, counts: object, leastUsed: string|null, trajectory: {early: string|null, late: string|null, shifted: boolean}, consistency_score: string|null, virtue_streak: number, virtue_heavy_count: number }}
  */
 export function computeProfile(choiceHistory) {
-  const counts = { consequentialism: 0, deontology: 0, care: 0, virtue: 0 }
+  const counts = { consequentialism: 0, deontology: 0, care: 0, virtue: 0, utilitarianism: 0 }
 
   choiceHistory.forEach(choice => {
     choice.frameworks.forEach(f => {
@@ -464,7 +464,7 @@ export function computeProfile(choiceHistory) {
 
   function weightedDominant(entries) {
     if (entries.length === 0) return null
-    const wCounts = { consequentialism: 0, deontology: 0, care: 0, virtue: 0 }
+    const wCounts = { consequentialism: 0, deontology: 0, care: 0, virtue: 0, utilitarianism: 0 }
     let totalWeighted = 0
     entries.forEach(entry => {
       const w = entry.moral_weight ?? 1

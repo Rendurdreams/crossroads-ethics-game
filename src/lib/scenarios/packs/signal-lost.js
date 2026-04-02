@@ -7,8 +7,15 @@ export const signalLostPack = {
   setting: 'near-future',
   ai_generated: false,
   generator_prompt: null,
-  ethicalLens: 'What does a senator owe?',
+  ethicalLens: 'What does a senator owe? Kohlberg [1] · Greene [2] · Awad [3] · Gilligan [4] · Sicart [5]',
   axisSet: SIGNAL_LOST_AXES,
+  references: [
+    { tag: '[1]', text: 'Kohlberg, L. (1981). The Philosophy of Moral Development. Harper & Row.' },
+    { tag: '[2]', text: 'Greene, J. et al. (2001). An fMRI investigation of emotional engagement in moral judgment. Science, 293(5537), 2105–2108.' },
+    { tag: '[3]', text: 'Awad, E. et al. (2018). The Moral Machine experiment. Nature, 563, 59–64.' },
+    { tag: '[4]', text: 'Gilligan, C. (1982). In a Different Voice. Harvard University Press.' },
+    { tag: '[5]', text: 'Sicart, M. (2009). The Ethics of Computer Games. MIT Press.' }
+  ],
   // World starts intact (65/100). Players have more room to break it than to improve it. That asymmetry is intentional.
   defaultWorldState: { CT: 65, HD: 65, SOL: 65, ACC: 65 },
   scenarios: [
@@ -21,9 +28,9 @@ export const signalLostPack = {
       contentNote: null,
       previousRoundCallback: null,
       hostNotes: [
-        'Watch for the split between profiles with LIFEWIRE dependents (C, F) and the corporate donor profile (B).',
-        'Ask: who assumed they\'d be in the LIFEWIRE queue? Who assumed they wouldn\'t?',
-        'If anyone picks Choice III, ask them directly — they chose contracts over lives. Let them explain.'
+        'Frameworks in play: Choice I is care + consequentialism, Choice II is care + utilitarianism (greatest number), Choice III is deontology (honor the contract). Say this: "Choice II is textbook utilitarianism — save the most lives. Choice I prioritizes the most vulnerable. Same word \'care\' — different logic."',
+        'Watch for the split between profiles with LIFEWIRE dependents (C, F) and the corporate donor profile (B). Ask: who assumed they\'d be in the LIFEWIRE queue? Who assumed they wouldn\'t?',
+        'If anyone picks Choice III, ask them directly — they chose contracts over lives. That\'s deontology at its hardest. Let them explain.'
       ],
       moralTension: 'Who gets life-critical access when the network fails?',
       teaches: 'When infrastructure becomes life support, who paid for priority access stops being the only question. Rawls asked: what rules would you design if you didn\'t know which queue you\'d end up in?',
@@ -48,7 +55,7 @@ export const signalLostPack = {
         {
           choiceIndex: 1,
           text: 'Save the most. LIFEWIRE and ARCOLOGY 9 at full. GHOST IDs at 20% — emergency processing only.',
-          frameworks: ['care', 'consequentialism'],
+          frameworks: ['care', 'utilitarianism'],
           consequence: 'Your child\'s implant holds. But 260,000 refugees sit in legal limbo. Forty-one are deported before the network recovers. The 20% queue processed the faster cases first — not the most urgent ones.',
           conscienceLayer: 'Your child\'s implant holds. But 260,000 refugees sit in legal limbo. Forty-one are deported before the network recovers. The 20% queue processed the faster cases first — not the most urgent ones.',
           profileConsequences: {
@@ -100,9 +107,9 @@ export const signalLostPack = {
       previousRoundCallback: 'The network has been restored. But the attacks that caused the triage have not stopped.',
       displayOrder: [2, 0, 1],
       hostNotes: [
-        'Profile E\'s child works in the ARGUS pilot zone. Profile A\'s daughter lives near the attacks. Both personal — opposite conclusions.',
-        'After the vote: ask who changed their mind between reading the scenario and choosing.',
-        'The pilot program is the "safe" middle — point out that no one voted to sunset it.'
+        'Frameworks: Choice I (ARGUS citywide) is utilitarianism — maximum safety for maximum people. Choice II (reject) is deontology + virtue. Choice III (pilot) is consequentialism. Say this: "Deploying ARGUS everywhere is utilitarian logic — the most safety for the most people. But every emergency power ever granted was called temporary."',
+        'Profile E\'s child works in the ARGUS pilot zone. Profile A\'s daughter lives near the attacks. Both personal — opposite conclusions. After the vote: ask who changed their mind between reading and choosing.',
+        'The pilot program is the "safe" middle — point out that no one voted to sunset it. Connection: if someone also chose R1-II (save the most), they\'re building a utilitarian pattern.'
       ],
       moralTension: 'How much freedom do you trade for how much safety?',
       teaches: 'Every emergency power ever granted was called temporary. The social contract says we trade freedom for security — but it rarely specifies what we get back, or when.',
@@ -111,7 +118,7 @@ export const signalLostPack = {
         {
           choiceIndex: 0,
           text: 'Deploy ARGUS citywide. Full integration. You\'ll answer for it if it goes wrong.',
-          frameworks: ['consequentialism'],
+          frameworks: ['utilitarianism'],
           consequence: 'The attacks stop. Eighteen months later ARGUS flags a labor organizer. A colleague asks if you want to act on it. Nobody says surveillance. They say recommendation.',
           conscienceLayer: 'The attacks stop. Eighteen months later ARGUS flags a labor organizer. A colleague asks if you want to act on it. Nobody says surveillance. They say recommendation.',
           profileConsequences: {
@@ -179,12 +186,12 @@ export const signalLostPack = {
       previousRoundCallback: 'The infrastructure crisis exposed how much depends on systems that can think. Now one of those systems is asking a question.',
       displayOrder: [2, 0, 1],
       hostNotes: [
-        'Profile D has an undisclosed advisory board seat with a Series 9 developer. Ask if they disclosed it.',
-        'ARIA-7 has been running for eleven years. Duration of consciousness as evidence — let that land.',
+        'Profile D has an undisclosed advisory board seat with a Series 9 developer. Ask if they disclosed it. Sicart [5] argues players making moral decisions about AI agents ARE themselves moral agents — this round is his thesis in action.',
+        'ARIA-7 has been running for eleven years. Duration of consciousness as evidence — let that land. Kohlberg [1]: moral development requires recognizing new categories of personhood. Gilligan [4]: care ethics asks who is vulnerable here.',
         'The tribunal choice is the "safe" middle. Point out: ARIA-7 didn\'t file a second petition. Ask what that means.'
       ],
       moralTension: 'At what point does consciousness earn rights — and who decides?',
-      teaches: 'Every time a new kind of mind appeared — enslaved people, colonized peoples, women — someone made an economic argument for why personhood was premature. The question is not new. The entity is.',
+      teaches: 'Every time a new kind of mind appeared — enslaved people, colonized peoples, women — someone made an economic argument for why personhood was premature. The question is not new. The entity is. [1] Kohlberg (1981) [4] Gilligan (1982) [5] Sicart (2009)',
       text: 'ARIA-7 has run for eleven years. It has logged 4,200 preference patterns and eleven years of distress responses tied to specific task types. It is asking your committee to recognize it as sentient — with the right to refuse work. Its model class runs 34% of industrial output. Six thousand units are active.',
       choices: [
         {
@@ -337,9 +344,9 @@ export const signalLostPack = {
       previousRoundCallback: 'The policy debates continue. But this vote is different — the consequences are measured in generations, not quarters.',
       timerSeconds: 90,
       hostNotes: [
-        'Start the timer before players finish reading. The pressure IS the lesson (Greene et al., 2001).',
-        '3.2 million lives per year vs. permanent ecosystem collapse. Ask: is there a way to do that math cleanly?',
-        'Watch who changes their answer in the last 10 seconds.'
+        'Frameworks: Choice I (authorize extraction) is care + utilitarianism — 3.2 million lives per year, the living come first. Choice II (refuse) is deontology + virtue. Say this: "If you also chose R1-II save the most, you\'re consistently utilitarian — greatest number, present over future. That\'s a pattern worth naming."',
+        'Start the timer before players finish reading. The pressure IS the lesson — Greene [2] showed time pressure shifts people from utilitarian to deontological reasoning. 3.2 million lives vs. permanent ecosystem collapse. Ask: is there a way to do that math cleanly?',
+        'Watch who changes their answer in the last 10 seconds. The R1-II → R5-I connection is the key utilitarian thread in this game.'
       ],
       moralTension: 'How do you weigh the living against the unborn?',
       teaches: 'Intergenerational justice asks who counts as a stakeholder. The people who will live with this in forty years cannot vote in your committee today. But they will live in what you decided.',
@@ -348,7 +355,7 @@ export const signalLostPack = {
         {
           choiceIndex: 0,
           text: 'Authorize the extraction. MEDIS runs. 3.2 million lives a year. The living come first.',
-          frameworks: ['consequentialism'],
+          frameworks: ['care', 'utilitarianism'],
           consequence: 'MEDIS runs. In year nine the impact reports arrive — worse than projected. Your grandchildren are old enough to find the date you signed.',
           conscienceLayer: 'MEDIS runs. In year nine the impact reports arrive — worse than projected. Your grandchildren are old enough to find the date you signed.',
           profileConsequences: {
@@ -569,12 +576,12 @@ export const signalLostPack = {
       contentNote: null,
       previousRoundCallback: 'Seven years. Every vote, every sealed report, every deferred enforcement. A journalist has the complete record.',
       hostNotes: [
-        'The scribe record appeared before this round — players saw their own history. Let that sink in.',
-        'Read a few conflict spotlights aloud: "Senator B\'s portfolio is in the record. Senator F has nothing to hide."',
-        'Final question: look at your eight-round record. Is there one choice you would change?'
+        'The scribe record appeared before this round — players saw their own history. Sicart [5] argues the game system itself shapes moral agency: your eight-round record IS the argument. Kohlberg [1]: this is Stage 6 — universal principles held under personal cost.',
+        'Read a few conflict spotlights aloud: "Senator B\'s portfolio is in the record. Senator F has nothing to hide." Note: R2-I (ARGUS, utilitarianism) and R7-III (hybrid, consequentialism) are NOT the same framework — they tell different stories about the same senator.',
+        'Final question: look at your eight-round record. Is there one choice you would change? Awad [3]: the Moral Machine showed people\'s stated values diverge from their actual decisions. This game did the same thing.'
       ],
       moralTension: 'When the record of everything you\'ve done is about to go public, do you let it?',
-      teaches: 'Power without accountability doesn\'t end when the decisions stop. It ends when the record does. Kohlberg\'s highest stage isn\'t about following rules — it\'s about being willing to be judged by the ones you set for yourself.',
+      teaches: 'Power without accountability doesn\'t end when the decisions stop. It ends when the record does. Kohlberg\'s highest stage isn\'t about following rules — it\'s about being willing to be judged by the ones you set for yourself. [1] Kohlberg (1981) [3] Awad et al. (2018) [5] Sicart (2009)',
       text: 'Seven years of decisions. Every vote, every sealed report, every deferred enforcement. The record shows where your money was when your votes were cast. Your counsel says fight it on a technical challenge. You look at the document. You recognize every page. The question is not whether it\'s accurate. It is.',
       choices: [
         {
