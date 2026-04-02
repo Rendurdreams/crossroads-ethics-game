@@ -850,6 +850,26 @@ export default function Host() {
                 <p className={styles.lessonTitle}>{currentScenario?.moralTension}</p>
                 <p className={styles.lessonBody}>{currentScenario?.teaches}</p>
 
+                {/* Class vote tally */}
+                {tally.length > 0 && (
+                  <div className={styles.lessonTally}>
+                    {tally.map((t, i) => (
+                      <div key={i} className={styles.lessonTallyRow}>
+                        <span className={styles.lessonTallyLabel}>
+                          {t.text.length > 50 ? t.text.substring(0, 50) + '...' : t.text}
+                          <span className={styles.tallyFramework}>
+                            {' '}{t.frameworks.map(f => FRAMEWORKS[f]?.name).join(' + ')}
+                          </span>
+                        </span>
+                        <div className={styles.tallyBarTrack}>
+                          <div className={styles.tallyBarFill} style={{ width: `${t.pct}%` }} />
+                        </div>
+                        <span className={styles.tallyPct}>{t.pct}%</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 {dominantFw && (
                   <p className={styles.frameworkCallout}>
                     Most chose: <strong>{FRAMEWORKS[dominantFw]?.name}</strong>
