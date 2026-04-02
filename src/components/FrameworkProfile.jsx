@@ -29,6 +29,40 @@ const ARC_NARRATIVES = {
 }
 
 /**
+ * Generate the final mirror sentence — the last thing the player reads.
+ * Built from dominant framework + moral conflicts + what they didn't do.
+ */
+function generateMirrorSentence(dominant, leastUsed, choiceHistory, moralConflicts, pack) {
+  const conflictCount = moralConflicts?.length ?? 0
+  const totalRounds = choiceHistory?.length ?? 0
+
+  // If they had no conflicts — consistency message
+  if (conflictCount === 0 && dominant && FRAMEWORKS[dominant]) {
+    return `You held ${FRAMEWORKS[dominant].name.toLowerCase()} across ${totalRounds} rounds without your values and your votes diverging once. That kind of consistency is rare. Whether it was conviction or comfort is a question only you can answer.`
+  }
+
+  // If they had many conflicts — the tension message
+  if (conflictCount >= 4) {
+    return `Your values said one thing. Your votes said another — in ${conflictCount} of ${totalRounds} rounds. Psychologists call this the value-behavior gap. It doesn't mean you were wrong. It means the situation was stronger than the principle. That's worth sitting with.`
+  }
+
+  // Find the specific contradiction to name
+  if (moralConflicts?.length > 0) {
+    const firstConflict = moralConflicts[0]
+    const valueName = firstConflict.valueName ?? firstConflict.stanceKey ?? 'your stated values'
+
+    if (dominant && leastUsed && FRAMEWORKS[dominant] && FRAMEWORKS[leastUsed]) {
+      return `You leaned on ${FRAMEWORKS[dominant].name.toLowerCase()} more than anything else. But in Round ${firstConflict.round}, ${valueName} pulled you somewhere your reasoning didn't follow. The framework you used least — ${FRAMEWORKS[leastUsed].name.toLowerCase()} — might have had the answer you avoided.`
+    }
+
+    return `In Round ${firstConflict.round}, you made a choice that sat uneasily with ${valueName}. That discomfort is not a flaw in your reasoning. It's the beginning of it.`
+  }
+
+  // Fallback
+  return 'The record is complete. What you did with these eight rounds is yours to carry.'
+}
+
+/**
  * FrameworkProfile -- Player end screen
  * Shows dominant framework, moral arc, conflict map, least-used prompt, and choice log.
  *
@@ -396,6 +430,13 @@ export default function FrameworkProfile({ player, pack, groupDebrief }) {
             </div>
           )
         })}
+      </motion.div>
+
+      {/* Mirror moment — the last thing they see */}
+      <motion.div className={styles.mirrorSection} variants={sectionV}>
+        <p className={styles.mirrorText}>
+          {generateMirrorSentence(dominant, leastUsedKey, choiceHistory, moralConflicts, pack)}
+        </p>
       </motion.div>
 
     </motion.div>

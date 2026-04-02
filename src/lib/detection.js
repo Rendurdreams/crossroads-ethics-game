@@ -9,10 +9,16 @@ import { CONFLICT_PAIRS } from './frameworks.js'
  * Each foundation aligns with 1-2 frameworks; a conflict fires when
  * the player's top value doesn't appear in the choice's framework tags.
  */
+/**
+ * Moral Foundations Theory (Haidt, 2012) mapped to ethical frameworks.
+ * Values with empty arrays use condition triggers instead (more precise).
+ * loyalty = loyal to your people/base/donors — fires on specific betrayal choices, not generic frameworks.
+ * fairness = proportional justice — fires on specific condition triggers.
+ */
 export const VALUE_FRAMEWORK_MAP = {
   care:       ['care', 'virtue'],
-  fairness:   [],                   // uses condition triggers (maps to both sides)
-  loyalty:    ['care'],
+  fairness:   [],                   // uses condition triggers
+  loyalty:    [],                   // uses condition triggers — loyalty is about your people, not abstract frameworks
   authority:  ['deontology'],
   sanctity:   ['virtue', 'deontology']
 }
@@ -67,6 +73,47 @@ const VALUE_CONDITION_TRIGGERS = [
     value: 'fairness',
     matchCondition: (choice) => choice.scenarioId === 'signal-r7' && choice.choiceIndex === 1,
     message: "Fairness asks who pays when eleven million people are displaced by decisions that had authors."
+  },
+
+  // ── Loyalty condition triggers (Signal Lost) ────────────────────────
+  // Loyalty = standing with your people. These fire when the choice clearly prioritizes
+  // principle or system over the people who depend on you.
+  {
+    value: 'loyalty',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r1' && choice.choiceIndex === 2,
+    message: "Your people needed the network. You honored contracts instead."
+  },
+  {
+    value: 'loyalty',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r2' && choice.choiceIndex === 0,
+    message: "Deploying ARGUS means surveilling the people who elected you. Loyalty asks: to whom?"
+  },
+  {
+    value: 'loyalty',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r4' && choice.choiceIndex === 1,
+    message: "Sealing the audit protects the institution. The fourteen thousand incarcerated are also your people."
+  },
+  {
+    value: 'loyalty',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r6' && choice.choiceIndex === 1,
+    message: "Walking away kept the system running. Kael and six thousand others are someone's people too."
+  },
+  {
+    value: 'loyalty',
+    matchCondition: (choice) => choice.scenarioId === 'signal-r7' && choice.choiceIndex === 1,
+    message: "Retraining without a floor trusts the market with eleven million lives. Your base is in that number."
+  },
+
+  // ── Loyalty condition triggers (Kingdom Arc) ────────────────────────
+  {
+    value: 'loyalty',
+    matchCondition: (choice) => choice.scenarioId === 'round-1' && choice.choiceIndex === 1,
+    message: "Your outer villages are your people. You kept the grain behind capital walls."
+  },
+  {
+    value: 'loyalty',
+    matchCondition: (choice) => choice.scenarioId === 'round-7' && choice.choiceIndex === 0,
+    message: "Retribution felt just. But among the Compact were soldiers who followed orders and children who had no voice."
   }
 ]
 
@@ -87,37 +134,37 @@ const STANCE_TRIGGERS = [
     stanceKey: 'lie_to_protect',
     stanceAnswer: 'no',
     matchCondition: (choice) => choice.scenarioId === 'round-4' && choice.choiceIndex === 2,
-    message: "Your instinct was honesty. What changed?"
+    message: "You value honesty — but here you chose to conceal. Psychologists call this situational ethics: context shifted what felt right."
   },
   {
     stanceKey: 'lie_to_protect',
     stanceAnswer: 'no',
     matchCondition: (choice) => choice.scenarioId === 'round-bombshell' && choice.choiceIndex === 1,
-    message: "Your instinct was honesty. What changed?"
+    message: "You value honesty — but here you chose to conceal. Psychologists call this situational ethics: context shifted what felt right."
   },
   {
     stanceKey: 'lie_to_protect',
     stanceAnswer: 'yes',
     matchCondition: (choice) => choice.scenarioId === 'round-4' && choice.choiceIndex === 0,
-    message: "You said protecting people matters. Here honesty was the protection."
+    message: "You said protecting people matters most. Here, transparency was the protection — and you chose it. Your values and your behavior aligned in an unexpected way."
   },
   {
     stanceKey: 'lie_to_protect',
     stanceAnswer: 'yes',
     matchCondition: (choice) => choice.scenarioId === 'round-bombshell' && choice.choiceIndex === 0,
-    message: "You said protecting people matters. Here honesty was the protection."
+    message: "You said protecting people matters most. Here, transparency was the protection — and you chose it. Your values and your behavior aligned in an unexpected way."
   },
   {
     stanceKey: 'ends_justify',
     stanceAnswer: 'yes',
     matchCondition: (choice) => choice.scenarioId === 'round-6' && choice.choiceIndex === 0,
-    message: "You said the math matters. Here the math said keep Irel bound."
+    message: "You believe outcomes justify means. Here the outcome calculation pointed to keeping Irel bound — and you chose differently. That's the value-behavior gap in action."
   },
   {
     stanceKey: 'ends_justify',
     stanceAnswer: 'no',
     matchCondition: (choice) => choice.scenarioId === 'round-1' && choice.choiceIndex === 1,
-    message: "You said the math doesn't justify harm. But you just ran the same calculation."
+    message: "You said the math doesn't justify harm. Here you used the same kind of calculation. Moral reasoning researchers call this motivated reasoning — the framework shifts to fit the decision you've already made."
   },
   {
     stanceKey: 'break_promise',
@@ -129,31 +176,31 @@ const STANCE_TRIGGERS = [
     stanceKey: 'break_promise',
     stanceAnswer: 'yes',
     matchCondition: (choice) => choice.scenarioId === 'round-5' && choice.choiceIndex === 1,
-    message: "You said partial is better than broken. But you kept the whole promise while villages burned."
+    message: "You said partial is better than broken. Here you honored the commitment fully — at a cost others absorbed. Commitment bias can make holding a promise feel moral even when the context has changed."
   },
   {
     stanceKey: 'loyalty_vs_fairness',
     stanceAnswer: 'yes',
     matchCondition: (choice) => choice.scenarioId === 'round-7' && choice.choiceIndex === 1,
-    message: "You said you'd call out your group. Here you let them walk free."
+    message: "You said you'd call out your own group. Here you chose not to. In-group bias is one of the strongest forces in moral psychology — the people closest to us get the benefit of the doubt."
   },
   {
     stanceKey: 'loyalty_vs_fairness',
     stanceAnswer: 'no',
     matchCondition: (choice) => choice.scenarioId === 'round-7' && choice.choiceIndex === 0,
-    message: "You said loyalty comes first. But you just stripped the Compact's children of their home."
+    message: "You said loyalty comes first. Here you chose justice over mercy for people who included children. When loyalty and accountability collide, the choice reveals which one you hold as non-negotiable."
   },
   {
     stanceKey: 'punish_innocent',
     stanceAnswer: 'no',
     matchCondition: (choice) => choice.scenarioId === 'round-7' && choice.choiceIndex === 0,
-    message: "Soldiers who followed orders. Children who had no voice. You said this wasn't okay."
+    message: "You said no one should suffer for the group. This choice extended collective punishment to people who had no agency. The gap between principle and practice is where moral psychology lives."
   },
   {
     stanceKey: 'punish_innocent',
     stanceAnswer: 'yes',
     matchCondition: (choice) => choice.scenarioId === 'round-6' && choice.choiceIndex === 0,
-    message: "You said one can suffer for the group. Irel has suffered for centuries. Why stop now?"
+    message: "You said one person suffering for the group is acceptable. Here you freed Irel anyway. Something overrode your stated position — researchers call this moral elevation, when empathy overrides utilitarian logic."
   },
 
   // ── Signal Lost STANCE_TRIGGERS ──────────────────────────────────────
@@ -163,13 +210,13 @@ const STANCE_TRIGGERS = [
     stanceKey: 'lie_to_protect',
     stanceAnswer: 'yes',
     matchCondition: (choice) => choice.scenarioId === 'signal-r4' && choice.choiceIndex === 0,
-    message: "You said you'd lie to protect someone you love. You just chose radical transparency."
+    message: "You said you'd conceal to protect. Here you chose radical transparency. When the stakes shifted from personal to institutional, your moral framework shifted with them."
   },
   {
     stanceKey: 'lie_to_protect',
     stanceAnswer: 'yes',
     matchCondition: (choice) => choice.scenarioId === 'signal-r8' && choice.choiceIndex === 0,
-    message: "You said you'd lie to protect someone you love. You just chose radical transparency."
+    message: "You said you'd conceal to protect. Here you chose radical transparency. When the stakes shifted from personal to institutional, your moral framework shifted with them."
   },
 
   // lie_to_protect = 'no' (Deontology) → fires on Care choices in R1 / R4
@@ -177,13 +224,13 @@ const STANCE_TRIGGERS = [
     stanceKey: 'lie_to_protect',
     stanceAnswer: 'no',
     matchCondition: (choice) => choice.scenarioId === 'signal-r1' && choice.choiceIndex === 0,
-    message: "You said honesty was non-negotiable. You just made an exception."
+    message: "You said honesty was non-negotiable. Here you made an exception. Moral psychologists find this pattern consistently — the threshold for bending a principle depends on who's affected."
   },
   {
     stanceKey: 'lie_to_protect',
     stanceAnswer: 'no',
     matchCondition: (choice) => choice.scenarioId === 'signal-r4' && choice.choiceIndex === 2,
-    message: "You said honesty was non-negotiable. You just made an exception."
+    message: "You said honesty was non-negotiable. Here you made an exception. Moral psychologists find this pattern consistently — the threshold for bending a principle depends on who's affected."
   },
 
   // ends_justify = 'yes' (Consequentialism) → fires when player enforces in R6
@@ -191,7 +238,7 @@ const STANCE_TRIGGERS = [
     stanceKey: 'ends_justify',
     stanceAnswer: 'yes',
     matchCondition: (choice) => choice.scenarioId === 'signal-r6' && choice.choiceIndex === 0,
-    message: "You said outcomes justify means. You just enforced on principle, not math."
+    message: "You said outcomes justify means. Here you enforced on principle rather than calculation. When the person suffering has a name, abstract reasoning often gives way to moral intuition."
   },
 
   // ends_justify = 'no' (Deontology) → fires when player seals in R4
@@ -199,7 +246,7 @@ const STANCE_TRIGGERS = [
     stanceKey: 'ends_justify',
     stanceAnswer: 'no',
     matchCondition: (choice) => choice.scenarioId === 'signal-r4' && choice.choiceIndex === 1,
-    message: "You said the ends don't justify the means. You just sealed the audit to protect the outcome."
+    message: "You said the ends don't justify the means. Here you sealed the audit to manage the outcome. Self-serving bias can reframe concealment as protection without conscious awareness."
   },
 
   // break_promise = 'break' → fires when player keeps extraction sealed in R5
@@ -207,7 +254,7 @@ const STANCE_TRIGGERS = [
     stanceKey: 'break_promise',
     stanceAnswer: 'break',
     matchCondition: (choice) => choice.scenarioId === 'signal-r5' && choice.choiceIndex === 1,
-    message: "You said you'd break commitments cleanly. You just honored one that cost 3.2 million lives per year."
+    message: "You said you'd break commitments cleanly. Here you honored one at enormous cost. Sunk cost reasoning and status quo bias both pull toward continuation — even when the math says stop."
   },
 
   // break_promise = 'honor' → fires when player authorizes full extraction in R5
@@ -215,7 +262,7 @@ const STANCE_TRIGGERS = [
     stanceKey: 'break_promise',
     stanceAnswer: 'honor',
     matchCondition: (choice) => choice.scenarioId === 'signal-r5' && choice.choiceIndex === 0,
-    message: "You said you'd honor commitments partially. You just broke this one entirely."
+    message: "You said you'd honor commitments partially. Here you broke one entirely. When the stakes are measured in millions, the middle ground disappears — and so does the principle you started with."
   },
 
   // loyalty_vs_fairness = 'yes' (would speak up) → fires on R7 Retraining Only (market absorbs)
@@ -223,7 +270,7 @@ const STANCE_TRIGGERS = [
     stanceKey: 'loyalty_vs_fairness',
     stanceAnswer: 'yes',
     matchCondition: (choice) => choice.scenarioId === 'signal-r7' && choice.choiceIndex === 1,
-    message: "You said you'd call out harm from your own group. Eleven million people needed that call."
+    message: "You said you'd call out harm from your own group. Eleven million displaced people needed exactly that. Diffusion of responsibility — the larger the affected group, the easier it is to look away."
   },
 
   // loyalty_vs_fairness = 'no' → fires when player publishes audit in R4
@@ -231,7 +278,7 @@ const STANCE_TRIGGERS = [
     stanceKey: 'loyalty_vs_fairness',
     stanceAnswer: 'no',
     matchCondition: (choice) => choice.scenarioId === 'signal-r4' && choice.choiceIndex === 0,
-    message: "You said loyalty comes first. You just published the audit on your own institution."
+    message: "You said loyalty comes first. Here you published the audit on your own institution. Whistleblower psychology shows this tension: loyalty to the group vs. loyalty to what the group should stand for."
   },
 
   // punish_innocent = 'yes' → fires when player enforces shutdown in R6
@@ -239,7 +286,7 @@ const STANCE_TRIGGERS = [
     stanceKey: 'punish_innocent',
     stanceAnswer: 'yes',
     matchCondition: (choice) => choice.scenarioId === 'signal-r6' && choice.choiceIndex === 0,
-    message: "You said one person suffering for the group is acceptable. You just shut down the system causing that suffering."
+    message: "You said one person suffering for the group is acceptable. Here you shut down the system causing it. The identifiable victim effect — when suffering has a face, utilitarian logic loses its hold."
   },
 
   // punish_innocent = 'no' → fires when player honors contracts in R1
@@ -247,7 +294,7 @@ const STANCE_TRIGGERS = [
     stanceKey: 'punish_innocent',
     stanceAnswer: 'no',
     matchCondition: (choice) => choice.scenarioId === 'signal-r1' && choice.choiceIndex === 2,
-    message: "You said no one should suffer for the group. Eleven implant users died for the contracts."
+    message: "You said no one should suffer for the group. Eleven implant users died so the contracts could hold. Moral disengagement allows people to maintain a self-image as ethical while accepting harm they wouldn't endorse directly."
   }
 ]
 
@@ -285,7 +332,7 @@ export function findMoralConflicts(choiceHistory, moralValues, moralStances) {
           type: 'value',
           valueName: topValue,
           choiceFrameworks,
-          message: `This choice conflicts with your stated value of ${topValue}.`
+          message: `You ranked ${topValue} as what matters most. This choice pulled in a different direction. That gap between values and behavior is where moral reasoning gets real.`
         })
       }
     })
@@ -329,7 +376,7 @@ export function findMoralConflicts(choiceHistory, moralValues, moralStances) {
             type: 'value',
             valueName: secondValue,
             choiceFrameworks,
-            message: `This also sits uneasily with ${secondValue}, your second-ranked value.`
+            message: `This also creates tension with ${secondValue} — a value you ranked highly. When two values pull in opposite directions, the one you follow tells you something.`
           })
         }
       })
