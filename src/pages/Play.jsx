@@ -116,6 +116,24 @@ export default function Play() {
                   }
                 }
 
+                // Restore choice history from Supabase (survives page refresh)
+                supabase
+                  .from('choices')
+                  .select('round_number, choice_index, scenario_id, frameworks')
+                  .eq('session_id', sessionId)
+                  .eq('player_id', storedPlayerId)
+                  .order('round_number')
+                  .then(({ data: choicesData }) => {
+                    if (choicesData && choicesData.length > 0) {
+                      setMyChoiceHistory(choicesData.map(c => ({
+                        round: c.round_number,
+                        choiceIndex: c.choice_index,
+                        scenarioId: c.scenario_id,
+                        frameworks: c.frameworks ?? []
+                      })))
+                    }
+                  })
+
                 // Fetch player count
                 supabase
                   .from('players')
