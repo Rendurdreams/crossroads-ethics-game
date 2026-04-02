@@ -110,12 +110,12 @@
 **Goal:** Replace tall gradient meter bars on player phone with compact monospace strip; move host teaching notes to phone-only; declutter host projector post-round overlay
 **Requirements**: D-01 through D-15 (20-CONTEXT.md)
 **Depends on:** Phase 19
-**Plans:** 3 plans
+**Plans:** 2/3 plans executed
 
 Plans:
 - [x] 20-01: Compact meter strip with color-coded axes (CompactMeterStrip.jsx)
-- [ ] 20-02: Host teaching notes — phone-only facilitator cue card (HostRemote.jsx)
-- [ ] 20-03: Host projector declutter — remove notes from post-round overlay (Host.jsx)
+- [x] 20-02: Host teaching notes — phone-only facilitator cue card (HostRemote.jsx)
+- [x] 20-03: Host projector declutter — remove notes from post-round overlay (Host.jsx)
 
 ---
 
