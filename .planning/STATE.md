@@ -2,14 +2,15 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Signal Lost
-status: roadmap-ready
-stopped_at: Roadmap created — Phase 16 ready to plan
-last_updated: "2026-03-31"
+status: executing
+stopped_at: Roadmap created — 4 phases (16–19), 33 requirements mapped, files written
+last_updated: "2026-04-02T02:01:45.939Z"
+last_activity: 2026-04-01 -- Phase 20 plan 20-01 complete: CompactMeterStrip live on player phone
 progress:
-  total_phases: 4
+  total_phases: 5
   completed_phases: 0
-  total_plans: 0
-  completed_plans: 0
+  total_plans: 6
+  completed_plans: 1
 ---
 
 # Project State
@@ -19,14 +20,14 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** Players finish understanding their own ethical reasoning — named, visible, connected to a philosophical tradition. In v2.0: sci-fi senator simulation with dynamic profiles, discussion mode, break flags, and grading rubric.
-**Current focus:** Phase 16 — Data Foundation
+**Current focus:** Phase 20 — ui-overhaul
 
 ## Current Position
 
-Phase: 16 of 19 (Data Foundation)
-Plan: —
-Status: Ready to plan
-Last activity: 2026-03-31 — v2.0 roadmap created, 4 phases defined, 33/33 requirements mapped
+Phase: 20 (ui-overhaul) — EXECUTING
+Plan: 2 of 3
+Status: Plan 20-01 complete; plans 20-02 and 20-03 pending
+Last activity: 2026-04-01 -- Plan 20-01 complete
 
 ```
 v2.0 Signal Lost [                    ]   0% (0/4 phases)
@@ -35,6 +36,7 @@ v2.0 Signal Lost [                    ]   0% (0/4 phases)
 ## Performance Metrics
 
 **Velocity (v1.x reference):**
+
 - Total plans completed: 40+ across v1.0–v1.2
 - Average duration: ~200s/plan
 - Trend: Stable
@@ -60,6 +62,10 @@ Recent decisions affecting current work:
 - [v2.0 research]: senator_profile_id must be persisted to Supabase at join time (not local state) — reload resilience
 - [v2.0 research]: Continue button is Host.jsx-only — never render in Play.jsx; establish at component design, not retrofitted
 - [v2.0 research]: advance_round as atomic Supabase RPC prevents double-advance race in Discussion Mode
+
+### Roadmap Evolution
+
+- Phase 20 added: UI polish — health bar fix, host notes for ethics teaching, declutter host view
 
 ### Pending Todos
 
