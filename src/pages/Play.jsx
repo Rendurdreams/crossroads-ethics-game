@@ -13,7 +13,7 @@ import ScenarioCard from '../components/ScenarioCard.jsx'
 import ContentNote from '../components/ContentNote.jsx'
 import ConsequenceReveal from '../components/ConsequenceReveal.jsx'
 import TimerDisplay from '../components/TimerDisplay.jsx'
-import MeterBar from '../components/MeterBar.jsx'
+import CompactMeterStrip from '../components/CompactMeterStrip.jsx'
 import FrameworkProfile from '../components/FrameworkProfile.jsx'
 import HowOthersChose from '../components/HowOthersChose.jsx'
 import WalkMechanic from '../components/WalkMechanic.jsx'
@@ -31,39 +31,7 @@ const roundTransition = {
   animate: { opacity: 1, transition: { duration: 0.4, delay: 0.35 } }
 }
 
-function computeWorldHealth(worldState, pack) {
-  if (!worldState) return 50
-  const keys = Object.keys(pack?.axisSet ?? worldState)
-  const values = keys.map(k => worldState[k] ?? 50)
-  return Math.round(values.reduce((a, b) => a + b, 0) / values.length)
-}
 
-function WorldHealthBar({ worldState, pack }) {
-  const [expanded, setExpanded] = useState(false)
-  const health = computeWorldHealth(worldState, pack)
-  const color = health >= 50 ? 'var(--accent-cyan)' : 'var(--accent-red)'
-  const bgColor = health >= 50 ? 'rgba(6, 182, 212, 0.15)' : 'rgba(239, 68, 68, 0.15)'
-  const axisLabels = getAxisLabels(pack)
-
-  return (
-    <div className={styles.healthBlock}>
-      <button className={styles.healthBar} onClick={() => setExpanded(v => !v)} style={{ borderColor: color }}>
-        <div className={styles.healthFill} style={{ width: `${health}%`, background: color, boxShadow: `0 0 12px ${bgColor}` }} />
-        <span className={styles.healthLabel} style={{ color }}>
-          {pack?.id === 'signal-lost' ? 'WORLD' : 'REALM'} {health}%
-        </span>
-        <span className={styles.healthToggle}>{expanded ? '\u25B4' : '\u25BE'}</span>
-      </button>
-      {expanded && (
-        <div className={styles.healthDetail}>
-          {Object.entries(axisLabels).map(([key, label]) => (
-            <MeterBar key={key} label={label} value={worldState?.[key] ?? 50} />
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
 
 export default function Play() {
   const { sessionId } = useParams()
@@ -557,7 +525,7 @@ export default function Play() {
               >
                 <div className={styles.passConsequence}>
                   <p className={styles.passConsequenceText}>You have abstained from this decree.</p>
-                  <WorldHealthBar worldState={session.world_state} pack={pack} />
+                  <CompactMeterStrip worldState={session.world_state} pack={pack} roundClosed={session.status === 'round_complete'} />
                 </div>
               </motion.div>
             </AnimatePresence>
@@ -648,7 +616,7 @@ export default function Play() {
             </p>
           </div>
 
-          <WorldHealthBar worldState={session.world_state} pack={pack} />
+          <CompactMeterStrip worldState={session.world_state} pack={pack} roundClosed={session.status === 'round_complete'} />
 
           {missedProfile && (
             <details className={styles.dashPanel}>
@@ -847,7 +815,7 @@ export default function Play() {
               </div>
             )}
 
-            <WorldHealthBar worldState={session.world_state} pack={pack} />
+            <CompactMeterStrip worldState={session.world_state} pack={pack} roundClosed={session.status === 'round_complete'} />
 
             <button className={styles.phaseAdvanceBtn} onClick={() => setRoundPhase('dilemma')}>
               Read the Dilemma
@@ -914,7 +882,7 @@ export default function Play() {
                   </button>
                 )}
 
-                <WorldHealthBar worldState={session.world_state} pack={pack} />
+                <CompactMeterStrip worldState={session.world_state} pack={pack} roundClosed={session.status === 'round_complete'} />
 
                 {timerRemaining !== null && (
                   <div className={`${styles.timerSection} ${isTimerPressureRound ? styles.timerPressure : ''}`}>
@@ -979,7 +947,7 @@ export default function Play() {
               </details>
 
               {/* World State — health bar with tap-to-expand */}
-              <WorldHealthBar worldState={session.world_state} pack={pack} />
+              <CompactMeterStrip worldState={session.world_state} pack={pack} roundClosed={session.status === 'round_complete'} />
 
               {/* Senator Profile */}
               {profile && (
