@@ -286,6 +286,16 @@ export const kingdomArcPack = {
           conscienceLayer: "One year. The scholars work. Irel screams for twelve more months. Then the year is up.",
           worldImpact: { trust: -2, courage: -6, solidarity: 2, awareness: 10 }
         }
+      ],
+      hostNotes: [
+        'Frameworks: Deontology + Virtue (destroy the system — some things are wrong regardless of consequences) vs. Consequentialism (maintain it — the cost of collapse is too high) vs. Care + Consequentialism (reform from within — protect people while changing the structure). Say: "This is about complicity. If a system is unjust but you depend on it, are you responsible for what it does? Deontology says participating in injustice is itself unjust. Consequentialism says burning it down might be worse."',
+        'Watch for: students who chose reform (C) — ask whether gradual reform has ever actually fixed a deeply unjust system, or if it just makes the participants feel better about staying in it.',
+        'Connection to morals vs ethics: morally, people feel the system is wrong. Ethically, they calculate the cost of destroying it. That gap — knowing something is wrong but reasoning yourself into accepting it — is the core of institutional complicity.'
+      ],
+      discussionPrompts: [
+        'Is it possible to participate in an unjust system without being complicit in its injustice?',
+        'If reform is too slow and revolution is too destructive, what is the ethical option?',
+        'Name a real institution where this dilemma plays out. What do most people choose — and why?'
       ]
     },
 
