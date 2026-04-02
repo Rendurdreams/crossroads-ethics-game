@@ -190,6 +190,16 @@ export const kingdomArcPack = {
           conscienceLayer: "One year becomes two. The council grows comfortable with silence.",
           worldImpact: { trust: -4, courage: 2, solidarity: -2, awareness: 8 }
         }
+      ],
+      hostNotes: [
+        'Frameworks: Deontology + Virtue (release everything — truth is a duty) vs. Consequentialism (seal it — bad outcomes justify withholding) vs. Care + Consequentialism (controlled release — protect people from harmful information gradually). Say: "This is about paternalism. Consequentialism says it is okay to control information if the outcome is better. Deontology says truth is not yours to withhold."',
+        'Watch for: the split between A (full release) and C (controlled release). Both value truth but disagree on timing. That disagreement reveals whether you think people have an unconditional right to know or a conditional one.',
+        'Connection to morals vs ethics: morally, most people say they value honesty. But when honesty could cause panic or harm, we see the gap between the moral value (honesty matters) and the ethical calculation (but not right now, not like this).'
+      ],
+      discussionPrompts: [
+        'Who gets to decide what other people are "ready" to hear? What makes that person qualified?',
+        'If you chose to seal the archive — how is that different from lying?',
+        'Is there information in the real world that governments or institutions withhold "for your own good"? Do you think they should?'
       ]
     },
 
