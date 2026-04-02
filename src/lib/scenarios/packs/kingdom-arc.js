@@ -143,6 +143,16 @@ export const kingdomArcPack = {
           conscienceLayer: "You bought time. The question remains. So does the cost.",
           worldImpact: { trust: 4, courage: 2, solidarity: 4, awareness: 6 }
         }
+      ],
+      hostNotes: [
+        'Frameworks: Deontology + Virtue (free them — personhood creates duties) vs. Consequentialism (keep them working — outcomes matter more) vs. Care + Consequentialism (gradual transition — protect relationships and minimize disruption). Say: "This round is about moral status. Deontology says if something can think and feel, you have a duty to it. Consequentialism asks whether acting on that duty is worth the cost."',
+        'Watch for: students who chose B (keep them working) — push on what criteria they used to deny personhood. That reasoning mirrors real historical arguments used to justify forced labor.',
+        'Connection to morals vs ethics: most people morally feel uncomfortable with slavery. But when the system depends on it, consequentialism can rationalize continuation. This is where moral intuition and ethical reasoning should agree — and the round tests whether they do.'
+      ],
+      discussionPrompts: [
+        'What would the Hollow Folk need to do or say for you to consider them people? And is that standard fair?',
+        'If freeing them collapses the economy, does that change whether they deserve freedom? Why or why not?',
+        'Name the ethical framework that best justifies your choice — and then name the one that most challenges it.'
       ]
     },
 
