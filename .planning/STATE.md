@@ -2,14 +2,14 @@
 gsd_state_version: 1.0
 milestone: v2.0
 milestone_name: Signal Lost
-status: executing
-stopped_at: Roadmap created — 4 phases (16–19), 33 requirements mapped, files written
-last_updated: "2026-04-02T02:01:45.939Z"
-last_activity: 2026-04-01 -- Phase 20 plan 20-01 complete: CompactMeterStrip live on player phone
+status: planning
+stopped_at: Completed 20-02-PLAN.md — host projector declutter and HostRemote cue card
+last_updated: "2026-04-01"
+last_activity: 2026-04-01 — Phase 20 plan 02 complete; projector stripped of host notes, HostRemote has ETHICS CUE CARD
 progress:
-  total_phases: 5
+  total_phases: 4
   completed_phases: 0
-  total_plans: 6
+  total_plans: 3
   completed_plans: 1
 ---
 
@@ -20,17 +20,17 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-31)
 
 **Core value:** Players finish understanding their own ethical reasoning — named, visible, connected to a philosophical tradition. In v2.0: sci-fi senator simulation with dynamic profiles, discussion mode, break flags, and grading rubric.
-**Current focus:** Phase 20 — ui-overhaul
+**Current focus:** Phase 16 — Data Foundation
 
 ## Current Position
 
-Phase: 20 (ui-overhaul) — EXECUTING
+Phase: 20 of 20 (UI Polish — Health Bar Fix, Host Notes, Declutter)
 Plan: 2 of 3
-Status: Plan 20-01 complete; plans 20-02 and 20-03 pending
-Last activity: 2026-04-01 -- Plan 20-01 complete
+Status: In progress
+Last activity: 2026-04-01 — Plan 20-02 complete; plan 20-03 (kingdom-arc hostNotes rewrite) ready
 
 ```
-v2.0 Signal Lost [                    ]   0% (0/4 phases)
+Phase 20 [███░░░░░░░░░░░░░░░░░]  33% (1/3 plans)
 ```
 
 ## Performance Metrics
@@ -62,10 +62,9 @@ Recent decisions affecting current work:
 - [v2.0 research]: senator_profile_id must be persisted to Supabase at join time (not local state) — reload resilience
 - [v2.0 research]: Continue button is Host.jsx-only — never render in Play.jsx; establish at component design, not retrofitted
 - [v2.0 research]: advance_round as atomic Supabase RPC prevents double-advance race in Discussion Mode
-
-### Roadmap Evolution
-
-- Phase 20 added: UI polish — health bar fix, host notes for ethics teaching, declutter host view
+- [20-02]: Projector lesson overlay keeps vote tally, moral tension, teaches, frameworkCallout, spotlightCallout, HowOthersChose — removes discussionPrompts and hostNotes
+- [20-02]: ETHICS CUE CARD on HostRemote computes FRAMEWORKS IN PLAY at runtime from choices flatMap — no new data field required
+- [20-02]: Facilitator-only content (host notes, discussion prompts) lives exclusively in HostRemote, never on Host.jsx projector
 
 ### Pending Todos
 
@@ -79,7 +78,7 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-31
-Stopped at: Roadmap created — 4 phases (16–19), 33 requirements mapped, files written
+Last session: 2026-04-01
+Stopped at: Completed 20-02-PLAN.md — host projector declutter and HostRemote facilitator cue card
 Resume file: None
-Next action: /gsd:plan-phase 16
+Next action: /gsd:execute-phase 20 (plan 20-03)
