@@ -144,9 +144,6 @@ export default function Host() {
         },
         (payload) => {
           setSession(payload.new)
-          if (payload.new.status === 'round_complete') {
-            dispatch({ type: 'ROUND_CLOSE' })
-          }
         }
       )
       .subscribe()

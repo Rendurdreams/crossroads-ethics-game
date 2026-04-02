@@ -46,16 +46,16 @@ function WorldHealthBar({ worldState, pack, roundClosed }) {
 
   return (
     <div className={styles.healthBlock}>
+      {expanded && (
+        <CompactMeterStrip worldState={worldState} pack={pack} roundClosed={roundClosed} />
+      )}
       <button className={styles.healthBar} onClick={() => setExpanded(v => !v)} style={{ borderColor: color }}>
         <div className={styles.healthFill} style={{ width: `${health}%`, background: color, boxShadow: `0 0 12px ${bgColor}` }} />
         <span className={styles.healthLabel} style={{ color }}>
           {pack?.id === 'signal-lost' ? 'WORLD' : 'REALM'} {health}%
         </span>
-        <span className={styles.healthToggle}>{expanded ? '\u25B4' : '\u25BE'}</span>
+        <span className={styles.healthToggle}>{expanded ? '\u25BE' : '\u25B4'}</span>
       </button>
-      {expanded && (
-        <CompactMeterStrip worldState={worldState} pack={pack} roundClosed={roundClosed} />
-      )}
     </div>
   )
 }
