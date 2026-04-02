@@ -5,6 +5,7 @@ import { getPackById, getDefaultPack, getScenarioByRound, getPlayableScenarios }
 import { applyChoicesToWorld } from '../lib/worldState.js'
 import { computeProfile, findConflicts, findMoralConflicts } from '../lib/detection.js'
 import { getBreakFlagForChoice } from '../lib/breakFlags.js'
+import { FRAMEWORKS } from '../lib/frameworks.js'
 import styles from './HostRemote.module.css'
 
 const TIMER_PRESETS = [30, 45, 60, 90, 120]
@@ -446,23 +447,49 @@ export default function HostRemote() {
             )
           })}
 
-          {/* Discussion prompts + host notes */}
-          {currentScenario?.hostNotes?.length > 0 && (
-            <div className={styles.notesBlock}>
-              <p className={styles.notesLabel}>HOST NOTES</p>
-              {currentScenario.hostNotes.map((note, i) => (
-                <p key={i} className={styles.noteItem}>{note}</p>
-              ))}
-            </div>
-          )}
+          {/* Facilitator cue card */}
+          {currentScenario && (
+            <div className={styles.cueCard}>
+              <p className={styles.cueHeader}>ETHICS CUE CARD</p>
 
-          {currentScenario?.discussionPrompts?.length > 0 && (
-            <details className={styles.notesBlock}>
-              <summary className={styles.notesLabel} style={{ cursor: 'pointer' }}>DISCUSSION PROMPTS</summary>
-              {currentScenario.discussionPrompts.map((prompt, i) => (
-                <p key={i} className={styles.noteItem}>{prompt}</p>
-              ))}
-            </details>
+              {/* Frameworks in play this round — computed from choices */}
+              <div className={styles.cueSection}>
+                <p className={styles.cueLabel}>FRAMEWORKS IN PLAY</p>
+                <p className={styles.cueText}>
+                  {[...new Set(currentScenario.choices.flatMap(c => c.frameworks))]
+                    .map(f => FRAMEWORKS[f]?.name || f)
+                    .join(' \u2022 ')}
+                </p>
+              </div>
+
+              {/* Moral tension */}
+              {currentScenario.moralTension && (
+                <div className={styles.cueSection}>
+                  <p className={styles.cueLabel}>MORAL TENSION</p>
+                  <p className={styles.cueText}>{currentScenario.moralTension}</p>
+                </div>
+              )}
+
+              {/* Host notes — ethics cheat sheet bullets */}
+              {currentScenario.hostNotes?.length > 0 && (
+                <div className={styles.cueSection}>
+                  <p className={styles.cueLabel}>SAY THIS</p>
+                  {currentScenario.hostNotes.map((note, i) => (
+                    <p key={i} className={styles.cueBullet}>{note}</p>
+                  ))}
+                </div>
+              )}
+
+              {/* Discussion prompts */}
+              {currentScenario.discussionPrompts?.length > 0 && (
+                <div className={styles.cueSection}>
+                  <p className={styles.cueLabel}>ASK THE CLASS</p>
+                  {currentScenario.discussionPrompts.map((prompt, i) => (
+                    <p key={i} className={styles.cueBullet}>{prompt}</p>
+                  ))}
+                </div>
+              )}
+            </div>
           )}
 
           {/* Controls */}
