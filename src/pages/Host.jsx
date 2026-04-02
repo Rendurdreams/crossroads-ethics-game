@@ -11,7 +11,7 @@ import { computeProfile, findConflicts, findMoralConflicts } from '../lib/detect
 import { FRAMEWORKS } from '../lib/frameworks.js'
 import PlayerRoster from '../components/PlayerRoster.jsx'
 import MeterBar from '../components/MeterBar.jsx'
-import AnimatedMap from '../components/AnimatedMap.jsx'
+import CommandHUD from '../components/CommandHUD.jsx'
 import HowOthersChose from '../components/HowOthersChose.jsx'
 import styles from './Host.module.css'
 
@@ -571,6 +571,14 @@ export default function Host() {
   const defaultWorld = pack?.defaultWorldState ?? { trust: 50, courage: 50, solidarity: 50, awareness: 50 }
   const worldState = session?.world_state ?? defaultWorld
 
+  // CommandHUD phase
+  const hudPhase = session?.status === 'finished' ? 'finished'
+    : session?.status === 'round_complete' ? (revealPhase === 'revealing' ? 'reveal' : 'idle')
+    : session?.status === 'active' ? 'active'
+    : 'idle'
+  const worldHealthValues = Object.values(worldState)
+  const worldHealth = Math.round(worldHealthValues.reduce((a, b) => a + b, 0) / worldHealthValues.length)
+
   // ── Meter display labels — derived from active pack's axis set ──────
   const METER_LABELS = getAxisLabels(pack)
 
@@ -591,7 +599,7 @@ export default function Host() {
     return (
       <motion.div {...motionProps} style={{ position: 'fixed', inset: 0 }}>
         <div className={styles.canvas}>
-          <AnimatedMap worldState={worldState} lerpSpeedRef={lerpSpeedRef} breakFlags={session?.break_flags} />
+          <CommandHUD phase={hudPhase} worldHealth={worldHealth} />
         </div>
 
         <div className={styles.topBar}>
@@ -683,7 +691,7 @@ export default function Host() {
     return (
       <motion.div {...motionProps} style={{ position: 'fixed', inset: 0 }}>
         <div className={styles.canvas}>
-          <AnimatedMap worldState={worldState} lerpSpeedRef={lerpSpeedRef} breakFlags={session?.break_flags} />
+          <CommandHUD phase={hudPhase} worldHealth={worldHealth} />
         </div>
 
         {/* ── Scenario text for presenter ── */}
@@ -902,7 +910,7 @@ export default function Host() {
   return (
     <motion.div {...motionProps} style={{ position: 'fixed', inset: 0 }}>
       <div className={styles.canvas}>
-        <AnimatedMap worldState={worldState} lerpSpeedRef={lerpSpeedRef} breakFlags={session?.break_flags} />
+        <CommandHUD phase={hudPhase} worldHealth={worldHealth} />
       </div>
 
       <div className={styles.lobbyOverlay}>
