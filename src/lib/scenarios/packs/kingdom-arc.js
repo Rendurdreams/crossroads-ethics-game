@@ -47,6 +47,16 @@ export const kingdomArcPack = {
           conscienceLayer: "Some villages are saved. Others are not. You will never know if you chose correctly.",
           worldImpact: { trust: 2, courage: 8, solidarity: 4, awareness: 10 }
         }
+      ],
+      hostNotes: [
+        'Frameworks: Care Ethics + Consequentialism (share equally) vs. pure Consequentialism (protect the core) vs. Deontology + Virtue (triage by need). Say: "This is the classic utilitarian dilemma — greatest good for the greatest number. But notice: the care ethics choice and the consequentialist choice overlap on option A. They agree on action but for completely different reasons."',
+        'Watch for: students who chose B (protect the core) — they used consequentialism too, but defined "best outcome" differently. That split is the whole problem with "greatest good" — who defines good?',
+        'Connection to morals vs ethics: your gut reaction (moral intuition) might say "share equally" because it feels fair. Consequentialism as a framework asks you to prove it actually produces the best result. Sometimes fairness and outcomes conflict.'
+      ],
+      discussionPrompts: [
+        'Choices A and B are both consequentialist — they just disagree about which outcome matters most. What does that tell you about consequentialism as a framework?',
+        'If you chose C (triage), you prioritized the most vulnerable. Is that a rule you would follow every time, or did this specific situation make it feel right?',
+        'Would your answer change if you knew which village you lived in?'
       ]
     },
 
