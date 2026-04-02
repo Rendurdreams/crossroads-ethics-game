@@ -341,6 +341,16 @@ export const kingdomArcPack = {
           conscienceLayer: "The Compact's elders judge their own. Some victims feel unheard. The kingdom watches a different culture define justice.",
           worldImpact: { trust: 6, courage: 4, solidarity: 6, awareness: 8 }
         }
+      ],
+      hostNotes: [
+        'Frameworks: Deontology + Virtue (accountability — justice requires consequences) vs. Care + Consequentialism (mercy — healing requires letting go) vs. Virtue + Care (restorative justice — face the harm directly) vs. Cultural Relativism (their customs, their rules). Say: "This round introduces a fifth framework: cultural relativism — the idea that justice looks different in different contexts. But watch: the other three options all assume a universal standard exists. The tension between universal ethics and cultural context is one of the hardest problems in moral philosophy."',
+        'Watch for: students who chose D (cultural relativism). Push on this: if a culture practices something you find deeply wrong, does relativism require you to accept it? Where is the line?',
+        'Connection to morals vs ethics: your morals come from your culture. Ethical frameworks try to transcend culture. This round asks whether that transcendence is possible — or whether every "universal" framework is just someone else\'s culture in disguise.'
+      ],
+      discussionPrompts: [
+        'Is there a moral principle that applies to every culture, everywhere, always? What is it — and who decided?',
+        'If you chose restorative justice, what happens if the wrongdoer refuses to participate? Does the system still work?',
+        'Cultural relativism says "their rules apply to them." Does that mean no culture can ever be morally criticized by outsiders?'
       ]
     },
 
