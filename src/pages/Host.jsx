@@ -868,26 +868,6 @@ export default function Host() {
                   </div>
                 )}
 
-                {/* Discussion prompts — host talking points */}
-                {currentScenario?.discussionPrompts?.length > 0 && (
-                  <div className={styles.discussionPrompts}>
-                    <p className={styles.discussionLabel}>DISCUSSION</p>
-                    {currentScenario.discussionPrompts.map((prompt, i) => (
-                      <p key={i} className={styles.discussionItem}>{prompt}</p>
-                    ))}
-                  </div>
-                )}
-
-                {/* Host notes — presenter cheat sheet */}
-                {currentScenario?.hostNotes?.length > 0 && (
-                  <details className={styles.hostNotes}>
-                    <summary className={styles.hostNotesLabel}>HOST NOTES</summary>
-                    {currentScenario.hostNotes.map((note, i) => (
-                      <p key={i} className={styles.hostNoteItem}>{note}</p>
-                    ))}
-                  </details>
-                )}
-
                 <div className={styles.lessonResearch}>
                   <HowOthersChose
                     scenarioId={currentScenario?.id}
