@@ -192,10 +192,9 @@ export default function Host() {
     // Round closed — trigger reveal sequence (only once per round)
     if (session.status === 'round_complete' && !roundState.roundClosed) {
       dispatch({ type: 'ROUND_CLOSE' })
-      setRevealPhase('revealing')
-      lerpSpeedRef.current = 8
-      setTimeout(() => { setRevealPhase('revealed'); lerpSpeedRef.current = 2 }, 2500)
-      setTimeout(() => { setShowLesson(true); setShowHowOthers(true) }, 3000)
+      setRevealPhase('revealed')
+      setShowLesson(true)
+      setShowHowOthers(true)
     }
   }, [session?.status, session?.current_round])
 

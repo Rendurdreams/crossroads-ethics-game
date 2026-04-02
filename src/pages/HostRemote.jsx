@@ -448,7 +448,23 @@ export default function HostRemote() {
           })}
 
           {/* Facilitator cue card */}
-          {currentScenario && (
+          {currentScenario && (() => {
+            // Replace "Profile A" etc. with actual player names
+            const profileNameMap = {}
+            players.forEach(p => {
+              if (p.senator_profile_id) {
+                profileNameMap[p.senator_profile_id] = p.name
+              }
+            })
+            function injectNames(text) {
+              if (!text) return text
+              return text.replace(/Profile ([A-F])\b/g, (match, letter) => {
+                const name = profileNameMap[letter]
+                return name ? `${name} (${letter})` : match
+              })
+            }
+
+            return (
             <div className={styles.cueCard}>
               <p className={styles.cueHeader}>ETHICS CUE CARD</p>
 
@@ -475,7 +491,7 @@ export default function HostRemote() {
                 <div className={styles.cueSection}>
                   <p className={styles.cueLabel}>SAY THIS</p>
                   {currentScenario.hostNotes.map((note, i) => (
-                    <p key={i} className={styles.cueBullet}>{note}</p>
+                    <p key={i} className={styles.cueBullet}>{injectNames(note)}</p>
                   ))}
                 </div>
               )}
@@ -485,12 +501,13 @@ export default function HostRemote() {
                 <div className={styles.cueSection}>
                   <p className={styles.cueLabel}>ASK THE CLASS</p>
                   {currentScenario.discussionPrompts.map((prompt, i) => (
-                    <p key={i} className={styles.cueBullet}>{prompt}</p>
+                    <p key={i} className={styles.cueBullet}>{injectNames(prompt)}</p>
                   ))}
                 </div>
               )}
             </div>
-          )}
+            )
+          })()}
 
           {/* Controls */}
           {!isLastRound && (
