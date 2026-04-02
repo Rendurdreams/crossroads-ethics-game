@@ -912,13 +912,16 @@ export default function Host() {
         <div className={styles.lobbyRoomCode}>{session?.room_code}</div>
 
         <div className={styles.lobbyQr}>
-          <QRCodeSVG
-            value={`${window.location.origin}/?code=${session.room_code}`}
-            size={160}
-            bgColor="transparent"
-            fgColor="#3b82f6"
-            level="M"
-          />
+          <div className={styles.lobbyQrBox}>
+            <QRCodeSVG
+              value={`${window.location.origin}/?code=${session.room_code}`}
+              size={180}
+              bgColor="#ffffff"
+              fgColor="#000000"
+              level="H"
+              includeMargin={true}
+            />
+          </div>
           <p className={styles.lobbyQrLabel}>Scan to join</p>
         </div>
 
