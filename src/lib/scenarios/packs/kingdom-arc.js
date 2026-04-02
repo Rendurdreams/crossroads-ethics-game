@@ -94,6 +94,16 @@ export const kingdomArcPack = {
           conscienceLayer: "A compromise that satisfies no one — and may protect everyone.",
           worldImpact: { trust: -2, courage: 2, solidarity: 2, awareness: 6 }
         }
+      ],
+      hostNotes: [
+        'Frameworks: Consequentialism (Iron Protocol — safety maximizes outcomes) vs. Virtue + Care (Open Flame — trust and courage) vs. Deontology + Consequentialism (conditional measure — rules with limits). Say: "This is the security vs. liberty tradeoff. Every framework gives you a different answer about when it is okay to restrict freedom."',
+        'Watch for: how many students chose the Iron Protocol — it is the most popular choice in pilot tests. Ask them: at what point does a temporary safety measure become permanent? That is the consequentialist blind spot.',
+        'Connection to morals vs ethics: most people morally feel that safety matters. But deontology says some rights cannot be traded away even for safety. The tension between "I want to be safe" (moral feeling) and "rights are non-negotiable" (ethical principle) is the lesson.'
+      ],
+      discussionPrompts: [
+        'If you chose the Iron Protocol, when would you lift it? What conditions would have to be true? And who decides?',
+        'The Open Flame option trusts people but some of them die. Is trusting people ethical if it gets them killed?',
+        'Can you name a real-world example where a temporary security measure became permanent?'
       ]
     },
 
